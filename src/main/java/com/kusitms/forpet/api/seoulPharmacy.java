@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -21,6 +22,9 @@ import java.util.Map;
 
 @Component
 public class seoulPharmacy {
+    @Value("${key2}")
+    String KEY;
+
     @Autowired
     private APIRepository apiRepository;
 
@@ -35,7 +39,9 @@ public class seoulPharmacy {
 
         for (int page : array) {
             try {
-                URL url = new URL("http://openapi.seoul.go.kr:8088/6a704c4757757575373945764a5071/json/LOCALDATA_020302/"
+                URL url = new URL("http://openapi.seoul.go.kr:8088/"
+                        + String.format("%s", KEY)
+                        + "/json/LOCALDATA_020302/"
                         + String.format("%d", page)
                         + String.format("/%d/", page + 998));
                 System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -58,18 +64,20 @@ public class seoulPharmacy {
                     if (data.get("TRDSTATENM").equals("폐업") || (String) data.get("RDNWHLADDR") == "") {
                         continue;
                     }
-                    System.out.println(data.get("BPLCNM"));
-                    Map<String, String> geo = geocoding.getGeoDataByAddress((String) data.get("RDNWHLADDR"));
-                    if (geo != null) {
-                        String lng = geo.get("lng");
-                        String lag = geo.get("lat");
-                        placeInfo infoObj = new placeInfo(cnt, "동물약국",
-                                (String) data.get("BPLCNM"), (String) data.get("RDNWHLADDR"), lng, lag);
-                        apiRepository.save(infoObj);
-                        System.out.println(cnt);
-                        System.out.println("---------------------------------------------------------");
-                        cnt++;
 
+                    if(((String)data.get("RDNWHLADDR")).contains("강남") || ((String)data.get("RDNWHLADDR")).contains("서초")) {
+                        System.out.println(data.get("RDNWHLADDR"));
+                        Map<String, String> geo = geocoding.getGeoDataByAddress((String) data.get("RDNWHLADDR"));
+                        if (geo != null) {
+                            String lng = geo.get("lng");
+                            String lag = geo.get("lat");
+                            placeInfo infoObj = new placeInfo(cnt, "동물약국",
+                                    (String) data.get("BPLCNM"), (String) data.get("RDNWHLADDR"), lng, lag);
+                            apiRepository.save(infoObj);
+                            System.out.println(cnt);
+                            System.out.println("---------------------------------------------------------");
+                            cnt++;
+                        }
                     }
                 }
 
@@ -88,3 +96,5 @@ public class seoulPharmacy {
     }
 
 }
+
+
