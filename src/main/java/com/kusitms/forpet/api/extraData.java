@@ -35,8 +35,9 @@ public class extraData {
         for(String key : map.keySet()) {
             Map<String, String> geo = geocoding.getGeoDataByAddress(key);
             System.out.println();
+            System.out.println();
             placeInfo infoObj = new placeInfo(cnt, "미용실",
-                    key, map.get(key), geo.get("lng"), geo.get("lat"));
+                    map.get(key), key, geo.get("lng"), geo.get("lat"));
             apiRepository.save(infoObj);
             cnt++;
         }
@@ -51,7 +52,7 @@ public class extraData {
         for(String key : map.keySet()) {
             Map<String, String> geo = geocoding.getGeoDataByAddress(key);
             placeInfo infoObj = new placeInfo(cnt, "보호소",
-                   key, map.get(key), geo.get("lng"), geo.get("lat"));
+                    map.get(key), key, geo.get("lng"), geo.get("lat"));
             apiRepository.save(infoObj);
             cnt++;
         }
@@ -66,7 +67,7 @@ public class extraData {
         for(String key : map.keySet()) {
             Map<String, String> geo = geocoding.getGeoDataByAddress(key);
             placeInfo infoObj = new placeInfo(cnt, "유치원",
-                    key, map.get(key), geo.get("lng"), geo.get("lat"));
+                    map.get(key), key, geo.get("lng"), geo.get("lat"));
             apiRepository.save(infoObj);
             cnt++;
         }
@@ -89,7 +90,7 @@ public class extraData {
         for(String key : map.keySet()) {
             Map<String, String> geo = geocoding.getGeoDataByAddress(key);
             placeInfo infoObj = new placeInfo(cnt, "카페",
-                    key, map.get(key), geo.get("lng"), geo.get("lat"));
+                    map.get(key), key, geo.get("lng"), geo.get("lat"));
             apiRepository.save(infoObj);
             cnt++;
         }
