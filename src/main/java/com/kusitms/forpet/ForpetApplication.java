@@ -2,16 +2,19 @@ package com.kusitms.forpet;
 
 import com.kusitms.forpet.api.animalHosp;
 import com.kusitms.forpet.api.seoulPharmacy;
+import com.kusitms.forpet.config.AppProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import javax.annotation.PostConstruct;
 
 @RequiredArgsConstructor
 @SpringBootApplication
+@EnableConfigurationProperties(AppProperties.class) // 구성 속성 활성화
 public class ForpetApplication {
 
 	@Autowired
