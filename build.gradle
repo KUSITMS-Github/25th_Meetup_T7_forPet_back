@@ -46,6 +46,8 @@ dependencies {
 	// configuration processor
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
+	// devtools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 }
 
 tasks.named('test') {
