@@ -1,12 +1,16 @@
 package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.placeInfo;
+import com.kusitms.forpet.dto.ReviewRequestDto;
 import com.kusitms.forpet.dto.placeDto;
 import com.kusitms.forpet.service.APIService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -34,4 +38,6 @@ public class APIController {
         private int count;
         private T data;
     }
+
+
 }

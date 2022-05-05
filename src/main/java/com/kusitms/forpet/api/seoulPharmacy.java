@@ -72,7 +72,7 @@ public class seoulPharmacy {
                             String lng = geo.get("lng");
                             String lag = geo.get("lat");
                             placeInfo infoObj = new placeInfo(cnt, "동물약국",
-                                    (String) data.get("BPLCNM"), (String) data.get("RDNWHLADDR"), lng, lag);
+                                    (String) data.get("BPLCNM"), (String) data.get("RDNWHLADDR"), lng, lag, 0, 0, null);
                             apiRepository.save(infoObj);
                             System.out.println(cnt);
                             System.out.println("---------------------------------------------------------");
