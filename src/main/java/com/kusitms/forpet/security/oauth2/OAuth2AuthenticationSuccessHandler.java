@@ -1,8 +1,11 @@
 package com.kusitms.forpet.security.oauth2;
 
 import com.kusitms.forpet.config.AppProperties;
+import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.exception.BadRequestException;
 import com.kusitms.forpet.security.TokenProvider;
+import com.kusitms.forpet.security.UserPrincipal;
+import com.kusitms.forpet.service.UserService;
 import com.kusitms.forpet.util.CookieUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -28,6 +31,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
+    private final UserService userService;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String targetUrl = determineTargetUrl(request, response, authentication);
@@ -42,22 +46,31 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
 
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        User user = userService.findByEmail(userPrincipal.getEmail());
+
+        System.out.println("user email : " + user.getName());
+        // 회원가입 여부를 판단하여 다르게 리다이렉트
+        if (user.getNickname() == null) {
+            return UriComponentsBuilder.fromUriString("http://localhost:8080/member/join/terms")
+                    .queryParam("email", user.getEmail())
+                    .build().toUriString();
+        }
         Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 
         if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
-            throw new BadRequestException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
+            throw new BadRequestException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication" + redirectUri.get());
         }
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-
-        logger.debug("토큰 발행 시작");
 
         String token = tokenProvider.createToken(authentication);
 
         System.out.println("access_token : " + UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("access_token", token)
                 .build().toUriString());
+
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("access_token", token)
                 .build().toUriString();

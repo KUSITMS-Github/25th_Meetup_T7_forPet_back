@@ -1,6 +1,7 @@
 package com.kusitms.forpet.security.oauth2;
 
 import com.kusitms.forpet.domain.User;
+import com.kusitms.forpet.dto.UserDto;
 import com.kusitms.forpet.exception.OAuth2AuthenticationProcessingException;
 import com.kusitms.forpet.repository.UserRepository;
 import com.kusitms.forpet.security.UserPrincipal;

@@ -103,7 +103,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                     .authorizeRequests()
                     .antMatchers("/",
                         "/error",
-                        "/favicon.ico")
+                        "/favicon.ico",
+                            "/member/join/*")
                     .permitAll()
                     .antMatchers("/auth/**", "/oauth2/**")
                     .permitAll()
