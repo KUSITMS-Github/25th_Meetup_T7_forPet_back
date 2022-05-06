@@ -26,12 +26,12 @@ public class ForpetApplication {
 		 * Bean 등록 후 API 데이터 DB 저장
 		 * 처음 한번만 실행
 		 */
-		//BeanContext.get(animalHosp.class).load();
-		//BeanContext.get(seoulPharmacy.class).load();
-		//BeanContext.get(extraData.class).save_salon();
-		//BeanContext.get(extraData.class).save_center();
-		//BeanContext.get(extraData.class).save_school();
-		//BeanContext.get(extraData.class).save_cafe();
+		BeanContext.get(animalHosp.class).load();
+		BeanContext.get(seoulPharmacy.class).load();
+		BeanContext.get(extraData.class).save_salon();
+		BeanContext.get(extraData.class).save_center();
+		BeanContext.get(extraData.class).save_school();
+		BeanContext.get(extraData.class).save_cafe();
 	}
 
 	@PostConstruct
