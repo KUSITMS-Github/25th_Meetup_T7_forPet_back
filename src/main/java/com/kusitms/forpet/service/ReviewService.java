@@ -28,11 +28,11 @@ public class ReviewService {
         Review review = Review.createReview(//Member member,
                             star, content, writer, placeInfo);
         // 별점수, 리뷰수 업데이트
-        placeInfo placeInfo1 = placeInfo.setStarAvgAndReviewCnt(placeInfo);
+        placeInfo = placeInfo.setStarAvgAndReviewCnt(placeInfo);
 
         //리뷰 저장
         reviewRepository.save(review);
-        apiRepository.save(placeInfo1);
+        apiRepository.save(placeInfo);
 
         return review.getId();
     }

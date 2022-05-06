@@ -27,37 +27,15 @@ public class ReviewController {
         /**
          * 작성회원 찾기
          */
-
-
+        //User user = userRepository.findById();
+        //String nickName = user.getNickName();
+        ////////////프로필 이미지 처리//////////////
 
         Long id = reviewService.createReviewByPlaceId(placeid, requestDto.getStar(), requestDto.getContent(), requestDto.getWriter());
 
         return id;
     }
 
-
-    //카테고리 선택
-    @GetMapping("/offline-map/category")
-    public List<CategoryDto> getPlaceInfoByCategory(@RequestParam(value = "category")String category) {
-        List<placeInfo> list = apiRepository.findAllByCategory(category);
-
-        //entity -> dto 변환
-        List<CategoryDto> collect = list.stream().map(m -> new CategoryDto(m.getId(), m.getName(), m.getCategory(), m.getAddress(), m.getStarAvg(), m.getReviewCnt()))
-                .collect(Collectors.toList());
-
-        return collect;
-
-    }
-
-    //마커 선택(가게 정보)
-    @GetMapping("/offline-map/{placeid}/marker")
-    public CategoryDto getPlaceInfoByMarker(@PathVariable("placeid") Long placeid) {
-        placeInfo placeInfo = apiRepository.findById(placeid).get();
-        CategoryDto categoryDto = new CategoryDto(placeInfo.getId(), placeInfo.getName(), placeInfo.getCategory(),
-                                            placeInfo.getAddress(), placeInfo.getStarAvg(), placeInfo.getReviewCnt());
-
-        return categoryDto;
-    }
 
     //마커 선택(리뷰 정보)
     @GetMapping("offline-map/{placeid}/marker/review")
@@ -71,4 +49,5 @@ public class ReviewController {
         return collect;
 
     }
+
 }

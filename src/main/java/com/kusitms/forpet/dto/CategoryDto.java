@@ -12,4 +12,5 @@ public class CategoryDto {
     private String address;    //소재지 주소(도로명)
     private double starAvg;    //별점 평균
     private int reviewCnt;  //리뷰 수
+    private int bookmarkCnt; //북마크 수
 }

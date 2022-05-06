@@ -30,6 +30,14 @@ public class Review {
     @JoinColumn(name = "place_id")
     private placeInfo placeInfo;
 
+    /**
+     * User와 연관관계
+     */
+    //@ManyToOne
+    //@JoinColumn(name = "user테이블의 primary key")
+    //private User user;
+
+
 
     //==연관관계 메서드==//
     public void setPlaceInfo(placeInfo placeInfo) {
