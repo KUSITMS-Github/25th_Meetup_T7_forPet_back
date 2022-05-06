@@ -36,6 +36,10 @@ public class placeInfo {
     @OneToMany(mappedBy = "placeInfo")
     private List<Review> reviewList = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "placeInfo")
+    private List<Bookmark> bookMarkList = new ArrayList<>();
+
 
     //== 비즈니스 로직 ==//
     public placeInfo setStarAvgAndReviewCnt(placeInfo placeInfo) {
