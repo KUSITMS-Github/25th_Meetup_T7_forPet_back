@@ -1,9 +1,4 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    url: jdbc:mysql://fopet.cies4vfjosiu.ap-northeast-2.rds.amazonaws.com:3306/forpet
-    password: forpet1234
   jpa:
     properties:
       hibernate:
@@ -12,6 +7,10 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
+  profiles:
+    include:
+      - db
+      - kakao
 logging:
   level:
     org:
@@ -19,3 +18,4 @@ logging:
         type:
           description:
             sql: trace
+
