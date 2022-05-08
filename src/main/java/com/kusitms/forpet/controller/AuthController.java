@@ -8,7 +8,6 @@ import com.kusitms.forpet.repository.UserRefreshTokenRepository;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.util.CookieUtils;
 import com.kusitms.forpet.util.HeaderUtil;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,12 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.kusitms.forpet.domain.User;
-
-import java.util.Date;
-
-import static com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REFRESH_TOKEN;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,7 +43,7 @@ public class AuthController {
                 .map(Cookie::getValue)
                 .orElse((null));
         if(!tokenProvider.validateToken(refreshToken)) {
-            return ApiResponse.fail();
+            return ApiResponse.invalidRefreshToken();
         }
 
         // userId로 DB refresh token 확인
