@@ -26,6 +26,9 @@ public class Review {
     private String writer;
     private LocalDateTime createDate;
 
+    @Lob
+    private String imageUrlList;
+
     @ManyToOne
     @JoinColumn(name = "place_id")
     private placeInfo placeInfo;
@@ -47,7 +50,7 @@ public class Review {
 
     //==생성 메서드==//
     public static Review createReview(//Member member,
-                                       int star, String content, String writer, placeInfo placeInfo){
+                                      int star, String content, String writer, placeInfo placeInfo, String imageUrlList){
         Review review = new Review();
         //review.setMember(member);
         review.setStar(star);
@@ -55,6 +58,7 @@ public class Review {
         review.setWriter(writer);
         review.setCreateDate(LocalDateTime.now());
         review.setPlaceInfo(placeInfo);
+        review.setImageUrlList(imageUrlList);
         return review;
     }
 }

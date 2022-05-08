@@ -13,5 +13,7 @@ public class ReviewDto {
     private String content;
     private String writer;
     private LocalDateTime createDate;
+    private String[] imageUrlList;
 
 }
+
