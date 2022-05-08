@@ -43,22 +43,25 @@ public class PlaceInfoController {
         List<placeInfo> list = apiRepository.findAllByCategory(category);
 
         //entity -> dto 변환
-        List<CategoryDto> collect = list.stream().map(m -> new CategoryDto(m.getId(), m.getName(), m.getCategory(), m.getAddress(), m.getStarAvg(), m.getReviewCnt(), m.getBookMarkList().size()))
+        List<CategoryDto> collect = list.stream().map(m -> new CategoryDto(m.getId(), m.getName(), m.getCategory(), m.getAddress(), m.getStarAvg(), m.getReviewCnt()))
                 .collect(Collectors.toList());
 
         return collect;
 
     }
 
+
     //마커 선택(가게 정보)
     @GetMapping("/offline-map/{placeid}/marker")
     public CategoryDto getPlaceInfoByMarker(@PathVariable("placeid") Long placeid) {
         placeInfo placeInfo = apiRepository.findById(placeid).get();
         CategoryDto categoryDto = new CategoryDto(placeInfo.getId(), placeInfo.getName(), placeInfo.getCategory(),
-                placeInfo.getAddress(), placeInfo.getStarAvg(), placeInfo.getReviewCnt(), placeInfo.getBookMarkList().size());
+                placeInfo.getAddress(), placeInfo.getStarAvg(), placeInfo.getReviewCnt());
 
         return categoryDto;
     }
+
+
 
     /**
      * 검색 API

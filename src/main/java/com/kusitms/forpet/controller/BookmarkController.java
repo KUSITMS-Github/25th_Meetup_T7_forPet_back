@@ -4,10 +4,7 @@ import com.kusitms.forpet.domain.Bookmark;
 import com.kusitms.forpet.repository.BookmarkRepository;
 import com.kusitms.forpet.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +27,12 @@ public class BookmarkController {
 
         return id;
 
+    }
+
+    //카테고리별 북마크
+    @GetMapping("offline-map/bookmark/category")
+    public List<Bookmark> showBookmarkByCategory(@RequestParam String category) {
+        return bookmarkRepository.find(category);
     }
 
     /*
