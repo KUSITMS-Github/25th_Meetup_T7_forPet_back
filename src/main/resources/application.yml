@@ -1,6 +1,8 @@
 spring:
   profiles:
-    include: key
+    include:
+      - key
+      - s3
   jpa:
     properties:
       hibernate:
@@ -8,7 +10,8 @@ spring:
         show_sql: 'true'
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
+
 logging:
   level:
     org:
@@ -16,3 +19,7 @@ logging:
         type:
           description:
             sql: trace
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error

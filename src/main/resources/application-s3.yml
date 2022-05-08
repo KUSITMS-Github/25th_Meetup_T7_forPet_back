@@ -1,0 +1,11 @@
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIARFHPDARTDPUQ4NJZ
+      secretKey: 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
+    s3:
+      bucket: kusitms-forpet
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
