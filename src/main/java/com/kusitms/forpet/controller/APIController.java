@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class APIController {
     private final APIService apiService;
 
-    @GetMapping("/api")
+    @GetMapping("/offline-map")
     public Result getApi() {
         List<placeInfo> list = apiService.findAll();
         //entity -> dto 변환

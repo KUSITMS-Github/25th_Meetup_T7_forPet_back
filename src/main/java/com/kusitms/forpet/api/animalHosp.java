@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +16,9 @@ import java.net.*;
 import java.util.Map;
 @Component
 public class animalHosp {
+    @Value("${key1}")
+    String KEY;
+
     @Autowired
     private APIRepository apiRepository;
 
@@ -23,12 +27,13 @@ public class animalHosp {
 
     public void load() {
         String result = "";
-        long cnt = 1;
+        long cnt = 26;
         for (int page = 1; page < 9; page++) {
             try {
                 URL url = new URL("https://api.odcloud.kr/api/15089965/v1/uddi:86c99769-6ddc-47a3-9f18-f3bd3a96ab1e?"
                         + String.format("page=%d", page)
-                        + "&perPage=10&returnType=JSON&serviceKey=PVYXnxBcuhj8wGiAzbuZR%2BVealEeaM%2B2EN43zPPcw4PxvB4EK2RUrQZIVagoN891gKBGyrI%2BV507IE5GN06WHQ%3D%3D");
+                        + "&perPage=10&returnType=JSON&serviceKey="
+                        + String.format("%s", KEY));
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 BufferedReader bf;
@@ -63,4 +68,3 @@ public class animalHosp {
     }
 
 }
-
