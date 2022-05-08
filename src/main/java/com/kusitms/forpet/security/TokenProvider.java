@@ -16,6 +16,7 @@ import java.util.Date;
 public class TokenProvider {
     private final AppProperties appProperties;
 
+    // kakao login으로 access token 발급
     public String createAccessToken(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
@@ -24,6 +25,18 @@ public class TokenProvider {
 
         return Jwts.builder()
                 .setSubject(Long.toString(userPrincipal.getId()))
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS256, appProperties.getAuth().getTokenSecret())
+                .compact();
+    }
+    // access token 재발급
+    public String createAccessToken(Long userId) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getAccessTokenExpiry());
+
+        return Jwts.builder()
+                .setSubject(Long.toString(userId))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS256, appProperties.getAuth().getTokenSecret())
@@ -44,6 +57,19 @@ public class TokenProvider {
                 .compact();
     }
 
+    // refresh token 재발급
+    public String createRefreshToken(Long userId) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getRefreshTokenExpiry());
+
+        return Jwts.builder()
+                .setSubject(Long.toString(userId))
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS256, appProperties.getAuth().getTokenSecret())
+                .compact();
+    }
+
     public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(appProperties.getAuth().getTokenSecret())
@@ -51,6 +77,16 @@ public class TokenProvider {
                 .getBody();
 
         return Long.parseLong(claims.getSubject());
+    }
+    // token의 유효시간
+    public Long getValidTime(String token) {
+        Date now = new Date();
+
+        Claims claims = Jwts.parser()
+                .setSigningKey(appProperties.getAuth().getTokenSecret())
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getExpiration().getTime() - now.getTime();
     }
 
     public boolean validateToken(String authToken) {
