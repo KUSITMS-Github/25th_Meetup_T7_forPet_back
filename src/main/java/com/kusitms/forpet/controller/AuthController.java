@@ -4,8 +4,8 @@ import com.kusitms.forpet.config.AppProperties;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.UserRefreshToken;
 import com.kusitms.forpet.dto.ApiResponse;
-import com.kusitms.forpet.repository.UserRefreshTokenRepository;
 import com.kusitms.forpet.security.TokenProvider;
+import com.kusitms.forpet.service.UserService;
 import com.kusitms.forpet.util.CookieUtils;
 import com.kusitms.forpet.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthController {
 
     private final TokenProvider tokenProvider;
-    private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private final UserService userService;
     private final AppProperties appProperties;
 
     private final static long THREE_DAYS_MSEC = 259200000;
@@ -50,7 +50,7 @@ public class AuthController {
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
         User user = new User();
         user.setUserId(userId);
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserIdAndRefreshToken(user, refreshToken);
+        UserRefreshToken userRefreshToken = userService.findByUserIdAndRefreshToken(user, refreshToken);
         if(userRefreshToken == null) {
             return ApiResponse.invalidRefreshToken();
         }
