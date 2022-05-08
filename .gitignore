@@ -36,5 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 
-### application-key.yml###
-application-key.yml
+
+### key
+**/application-db.yml
+**/application-kakao.yml

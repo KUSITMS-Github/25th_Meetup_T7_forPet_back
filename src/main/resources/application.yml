@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    include: key
   jpa:
     properties:
       hibernate:
@@ -9,6 +7,10 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
+  profiles:
+    include:
+      - db
+      - kakao
 logging:
   level:
     org:
@@ -16,3 +18,4 @@ logging:
         type:
           description:
             sql: trace
+
