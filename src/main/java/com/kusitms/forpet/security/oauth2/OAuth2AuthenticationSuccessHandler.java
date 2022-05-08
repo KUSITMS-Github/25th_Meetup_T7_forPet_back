@@ -54,11 +54,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         User user = userService.findByEmail(userPrincipal.getEmail());
 
-        System.out.println("user id : " + user.getUserId());
         // 회원가입 여부를 판단하여 다르게 리다이렉트
         if (user.getNickname() == null) {
             return UriComponentsBuilder.fromUriString("http://localhost:8080/member/join/terms")
-                    .queryParam("email", user.getEmail())
+                    .queryParam("id", user.getUserId())
                     .build().toUriString();
         }
         Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)

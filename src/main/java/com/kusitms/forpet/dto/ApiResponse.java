@@ -5,11 +5,11 @@ import lombok.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@Getter
-@RequiredArgsConstructor
+@Data
 public class ApiResponse<T> {
     private final static int SUCCESS = 200;
-    private final static int NOT_FOUND = 400;
+    public static final int CREATED = 201;
+    private final static int NOT_FOUND = 404;
     private final static int FAILED = 500;
     private final static String SUCCESS_MESSAGE = "SUCCESS";
     private final static String NOT_FOUND_MESSAGE = "NOT FOUND";
