@@ -40,3 +40,5 @@ out/
 ### key
 **/application-db.yml
 **/application-kakao.yml
+
+**/application-s3.yml

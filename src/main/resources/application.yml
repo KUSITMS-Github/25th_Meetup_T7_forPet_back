@@ -11,6 +11,9 @@ spring:
     include:
       - db
       - kakao
+      - s3
+
+
 logging:
   level:
     org:
@@ -18,4 +21,8 @@ logging:
         type:
           description:
             sql: trace
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
 

@@ -50,7 +50,7 @@ public class animalHosp {
                     String lng = geo.get("lng");
                     String lag = geo.get("lat");
                     placeInfo infoObj = new placeInfo(cnt, "동물병원",
-                            (String) data.get("병원명"), (String) data.get("소재지 주소(도로명)"), lng, lag);
+                            (String) data.get("병원명"), (String) data.get("소재지 주소(도로명)"), lng, lag, 0, 0, null, null);
                     apiRepository.save(infoObj);
                     cnt++;
                 }
