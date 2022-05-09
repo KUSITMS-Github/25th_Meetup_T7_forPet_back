@@ -106,7 +106,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                         "/favicon.ico",
                             "/test/**")
                     .permitAll()
-                    .antMatchers("/auth/**", "/oauth2/**")
+                    .antMatchers("/auth/**", "/oauth2/**", "/offline-map/**")
                     .permitAll()
                     .anyRequest().authenticated()
                 .and()

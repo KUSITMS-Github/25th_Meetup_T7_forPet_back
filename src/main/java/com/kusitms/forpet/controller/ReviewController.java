@@ -19,32 +19,29 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     //리뷰생성
-    @PostMapping("/offline-map/{placeid}/review")
+    @PostMapping("/offline-map/{placeid}/{userid}/review")
     public Long createReviewByPlaceId(@PathVariable("placeid") Long placeid,
+                                      @PathVariable("userid") Long userid,
                                       @RequestPart(value = "reviewRequestDto") ReviewRequestDto requestDto,
                                       @RequestPart(value = "imageList") List<MultipartFile> multipartFile) {
-        /**
-         * 작성회원 찾기
-         */
-        //User user = userRepository.findById();
-        //String nickName = user.getNickName();
-        ////////////프로필 이미지 처리//////////////
 
-        Long id = reviewService.createReviewByPlaceId(placeid, requestDto.getStar(), requestDto.getContent(),
-                requestDto.getWriter(), multipartFile);
+
+        Long id = reviewService.createReviewByPlaceId(placeid, userid, requestDto.getStar(), requestDto.getContent(),
+                 multipartFile);
 
         return id;
     }
 
 
     //마커 선택(리뷰 정보)
-    @GetMapping("offline-map/{placeid}/marker/review")
+    @GetMapping("/offline-map/{placeid}/marker/review")
     public List<ReviewDto> getReviewByMarker(@PathVariable("placeid") Long placeid) {
         List<Review> list = reviewService.findReviewByPlaceId(placeid);
 
+
         //entity -> dto 변환
-        List<ReviewDto> collect = list.stream().map(m -> new ReviewDto(m.getId(), m.getStar(), m.getContent(),
-                        m.getWriter(), m.getCreateDate(), m.getImageUrlList().split("#")))
+        List<ReviewDto> collect = list.stream().map(m -> new ReviewDto(m.getId(), m.getUser().getNickname(), m.getUser().getImageUrl(), m.getStar(), m.getContent(),
+                        m.getCreateDate(), m.getImageUrlList().split("#")))
                 .collect(Collectors.toList());
 
         return collect;

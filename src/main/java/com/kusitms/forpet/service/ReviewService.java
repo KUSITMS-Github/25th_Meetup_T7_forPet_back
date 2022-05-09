@@ -1,9 +1,11 @@
 package com.kusitms.forpet.service;
 
 import com.kusitms.forpet.domain.Review;
+import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.placeInfo;
 import com.kusitms.forpet.repository.APIRepository;
 import com.kusitms.forpet.repository.ReviewRepository;
+import com.kusitms.forpet.repository.UserRepository;
 import com.kusitms.forpet.service.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,13 +21,15 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final APIRepository apiRepository;
     private final S3Uploader s3Uploader;
+    private final UserRepository userRepository;
 
     /**
      * 리뷰 생성
      */
     @Transactional
-    public Long createReviewByPlaceId(Long placeid, int star, String content, String writer, List<MultipartFile> multipartFiles) {
+    public Long createReviewByPlaceId(Long placeid, Long userid, int star, String content,  List<MultipartFile> multipartFiles) {
         placeInfo placeInfo = apiRepository.findById(placeid).get();
+        User user = userRepository.findById(userid).get();
 
         //리뷰 이미지 s3 저장
         List<String> imageNameList = s3Uploader.uploadImage(multipartFiles);
@@ -44,8 +48,8 @@ public class ReviewService {
         System.out.println(">>>>>>>>>>>>>>>>>>>>");
 
         //리뷰 생성
-        Review review = Review.createReview(//Member member,
-                star, content, writer, placeInfo, imageUrlList.toString());
+        Review review = Review.createReview(user,
+                star, content,placeInfo, imageUrlList.toString());
         // 별점수, 리뷰수 업데이트
         placeInfo = placeInfo.setStarAvgAndReviewCnt(placeInfo);
 

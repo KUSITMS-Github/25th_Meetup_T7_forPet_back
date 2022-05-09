@@ -9,9 +9,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReviewDto {
     private Long id;
+    private String nickName;
+    private String profileImageUrl;
     private int star;
     private String content;
-    private String writer;
     private LocalDateTime createDate;
     private String[] imageUrlList;
 

@@ -8,5 +8,4 @@ import lombok.Data;
 public class ReviewRequestDto {
     private int star;
     private String content;
-    private String writer;
 }

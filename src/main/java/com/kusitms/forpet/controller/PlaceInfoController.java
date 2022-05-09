@@ -66,7 +66,7 @@ public class PlaceInfoController {
     /**
      * 검색 API
      */
-    @GetMapping("/offline-map/serach")
+    @GetMapping("/offline-map/search")
     public List<placeInfo> search(@RequestParam(value = "keyword") String keyword) {
         return apiRepository.findByKeyword(keyword);
     }

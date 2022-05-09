@@ -6,6 +6,8 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
@@ -35,6 +37,17 @@ public class User {
     private String address1;
     private String address2;
     private String address3;
+
+    //리뷰 참조관계
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviewList = new ArrayList<>();
+
+    //북마크 참조관계
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Bookmark> bookmarkList = new ArrayList<>();
+
 
     @Builder(builderClassName= "social", builderMethodName = "socialBuilder")
     private User(String name, @Email String email, String imageUrl) {
