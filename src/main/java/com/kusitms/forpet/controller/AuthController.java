@@ -48,8 +48,8 @@ public class AuthController {
 
         // userId로 DB refresh token 확인
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
-        User user = new User();
-        user.setUserId(userId);
+        User user = User.builder()
+                        .userId(userId).build();
         UserRefreshToken userRefreshToken = userService.findByUserIdAndRefreshToken(user, refreshToken);
         if(userRefreshToken == null) {
             return ApiResponse.invalidRefreshToken();
