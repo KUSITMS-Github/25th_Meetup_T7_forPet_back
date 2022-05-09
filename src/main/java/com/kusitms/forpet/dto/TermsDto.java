@@ -1,13 +1,11 @@
 package com.kusitms.forpet.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
 
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@Getter
 public class TermsDto {
     private Long termsId;
     private String name;

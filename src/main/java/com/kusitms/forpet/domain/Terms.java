@@ -8,7 +8,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Builder
 public class Terms {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +19,9 @@ public class Terms {
 
     @Column(length=1)
     private String is_required;
+
+    @Builder
+    public Terms(long termsId) {
+        this.termsId = termsId;
+    }
 }

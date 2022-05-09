@@ -3,6 +3,7 @@ package com.kusitms.forpet.controller;
 import com.kusitms.forpet.domain.Terms;
 import com.kusitms.forpet.dto.ApiResponse;
 import com.kusitms.forpet.dto.TermsDto;
+import com.kusitms.forpet.dto.TermsRecordDto;
 import com.kusitms.forpet.dto.placeDto;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.JoinService;
@@ -23,12 +24,18 @@ public class JoinController {
     private final TokenProvider tokenProvider;
     private final JoinService joinService;
 
-    @GetMapping("/terms")
-    public Result getTerms(@RequestParam String id, HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/{id}/terms")
+    public Result getTerms(@PathVariable String id) {
         List<Terms> TermsList = joinService.findAll();
         List<TermsDto> collect = TermsList.stream().map(m -> new TermsDto(m.getTermsId(), m.getName(), m.getContent(), m.getIs_required()))
                 .collect(Collectors.toList());
         return new Result(id, collect);
+    }
+
+    @PostMapping("/terms")
+    public ApiResponse setTerms(@RequestBody TermsRecordDto dto) {
+        Long userId = joinService.saveTermsRecord(dto);
+        return ApiResponse.created("userId", userId);
     }
 
     //리턴값
