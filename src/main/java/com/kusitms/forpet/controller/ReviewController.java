@@ -3,11 +3,14 @@ package com.kusitms.forpet.controller;
 import com.kusitms.forpet.domain.Review;
 import com.kusitms.forpet.dto.ReviewDto;
 import com.kusitms.forpet.dto.ReviewRequestDto;
+import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.ReviewService;
+import com.kusitms.forpet.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,14 +20,17 @@ import java.util.stream.Collectors;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final TokenProvider tokenProvider;
 
     //리뷰생성
-    @PostMapping("/offline-map/{placeid}/{userid}/review")
-    public Long createReviewByPlaceId(@PathVariable("placeid") Long placeid,
-                                      @PathVariable("userid") Long userid,
+    @PostMapping("/offline-map/{placeid}/review")
+    public Long createReviewByPlaceId(HttpServletRequest request,
+                                      @PathVariable("placeid") Long placeid,
                                       @RequestPart(value = "reviewRequestDto") ReviewRequestDto requestDto,
                                       @RequestPart(value = "imageList") List<MultipartFile> multipartFile) {
 
+        String accessToken = HeaderUtil.getAccessToken(request);
+        Long userid = tokenProvider.getUserIdFromToken(accessToken);
 
         Long id = reviewService.createReviewByPlaceId(placeid, userid, requestDto.getStar(), requestDto.getContent(),
                  multipartFile);
