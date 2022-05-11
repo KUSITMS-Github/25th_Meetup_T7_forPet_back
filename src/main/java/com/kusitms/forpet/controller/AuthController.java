@@ -10,7 +10,6 @@ import com.kusitms.forpet.util.CookieUtils;
 import com.kusitms.forpet.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
@@ -19,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
 public class AuthController {
 
     private final TokenProvider tokenProvider;
@@ -30,20 +28,25 @@ public class AuthController {
     private final static String REFRESH_TOKEN = "refresh_token";
 
     // access token 재발급
-    @GetMapping("/refresh")
+    @GetMapping("/auth/refresh")
     public ApiResponse refreshToken (HttpServletRequest request, HttpServletResponse response) {
-        // access token 확인
+        // access token 확인, 유효성 검사
         String accessToken = HeaderUtil.getAccessToken(request);
         if(!tokenProvider.validateToken(accessToken)) {
             return ApiResponse.invalidAccessToken();
         }
 
-        // refresh token 확인
+        // refresh token 확인, 유효성 검사
         String refreshToken = CookieUtils.getCookie(request, REFRESH_TOKEN)
                 .map(Cookie::getValue)
                 .orElse((null));
         if(!tokenProvider.validateToken(refreshToken)) {
             return ApiResponse.invalidRefreshToken();
+        }
+
+        // jwt가 만료 기간을 넘지 않았다면 재발급 과정이 필요 없음.
+        if(tokenProvider.isExpiredToken(accessToken) && tokenProvider.isExpiredToken(refreshToken)) {
+            return ApiResponse.notExpiredTokenYet();
         }
 
         // userId로 DB refresh token 확인
@@ -71,5 +74,21 @@ public class AuthController {
             CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
         }
         return ApiResponse.success("token", newAccessToken);
+    }
+
+    @GetMapping("/logout")
+    public ApiResponse logout(HttpServletRequest request) {
+        // access token 확인
+        String accessToken = HeaderUtil.getAccessToken(request);
+        if(!tokenProvider.validateToken(accessToken)) {
+            return ApiResponse.invalidAccessToken();
+        }
+
+        // access token으로 userId 가져옴
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+        // db에 refresh token 삭제
+        userService.deleteRefreshTokenByUserId(userId);
+
+        return ApiResponse.success("message", "로그아웃 되었습니다.");
     }
 }
