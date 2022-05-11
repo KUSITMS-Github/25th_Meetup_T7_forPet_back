@@ -97,17 +97,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .and()
                     .formLogin().disable()
                     .httpBasic().disable()
+                    .logout().disable()
                     .exceptionHandling()
                     .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
                     .authorizeRequests()
                     .antMatchers("/",
                         "/error",
-                        "/favicon.ico",
-                            "/member/join/**",
-                            "/test/**")
+                        "/favicon.ico")
                     .permitAll()
-                    .antMatchers("/auth/**", "/oauth2/**", "/offline-map/**")
+                    .antMatchers("/auth/**", "/oauth2/**", "/logout")
+                    .permitAll()
+                    .antMatchers("/signup/**", "/signup").permitAll()
+                    .antMatchers("/offline-map/**")
                     .permitAll()
                     .anyRequest().authenticated()
                 .and()

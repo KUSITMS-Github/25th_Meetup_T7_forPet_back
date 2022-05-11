@@ -8,22 +8,20 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignUpDto {
+public class UserDto {
+    private Long userId;
+    private String name;
+    private String email;
+    private String imageUrl;
+
     private String nickname;
     @JsonProperty("phone_number")
     private String phoneNumber;
     @JsonProperty("pet_card_number")
     private String petCardNumber;
-    private Address address;
+    private SignUpDto.Address address;
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Address {
-        private String addr1;
-        private String addr2;
-        private String addr3;
-    }
-
+    private String petCardImageUrl;
+    private String customImageUrl;
 
 }

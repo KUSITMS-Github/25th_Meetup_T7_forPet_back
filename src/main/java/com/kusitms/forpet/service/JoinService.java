@@ -4,7 +4,9 @@ import com.kusitms.forpet.config.CoolSMSProperties;
 import com.kusitms.forpet.domain.Terms;
 import com.kusitms.forpet.domain.TermsRecord;
 import com.kusitms.forpet.domain.User;
+import com.kusitms.forpet.dto.SignUpDto;
 import com.kusitms.forpet.dto.TermsRecordDto;
+import com.kusitms.forpet.dto.UserDto;
 import com.kusitms.forpet.repository.TermsRecordRepository;
 import com.kusitms.forpet.repository.TermsRepository;
 import com.kusitms.forpet.repository.UserRepository;
@@ -13,11 +15,13 @@ import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ public class JoinService {
     private final TermsRecordRepository termsRecordRepository;
     private final UserRepository userRepository;
     private final CoolSMSProperties coolSMSProperties;
+    private final S3Uploader s3Uploader;
 
     public List<Terms> findAll() {
         return termsRepository.findAll();
@@ -80,6 +85,33 @@ public class JoinService {
             System.out.println(e.getMessage());
             System.out.println(e.getCode());
         }
+    }
 
+    public User createUser(Long id, SignUpDto dto, MultipartFile profileImage) {
+        // user update
+        Optional<User> user = userRepository.findById(id);
+        if(user.isPresent()) {
+            User newUser = user.get();
+            if(dto.getAddress() == null) {
+                dto.setAddress(new SignUpDto.Address());
+            }
+
+            newUser.signupUser(dto.getNickname(), dto.getPhoneNumber(), dto.getAddress());
+
+            // 프로필 사진
+            if(!profileImage.getOriginalFilename().equals("")) {
+                // image file -> url
+                String profileImageName = s3Uploader.uploadImage(profileImage);
+                StringBuilder profileImageUrl = new StringBuilder();
+                profileImageUrl.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
+                profileImageUrl.append(profileImageName);
+
+                newUser.updateCustomImage(profileImageUrl.toString());
+            }
+
+            userRepository.save(newUser);
+            return newUser;
+        }
+        return null;
     }
 }
