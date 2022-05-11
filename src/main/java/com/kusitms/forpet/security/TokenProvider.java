@@ -89,6 +89,7 @@ public class TokenProvider {
         return claims.getExpiration().getTime() - now.getTime();
     }
 
+    // 유효한 토큰인지 검사
     public boolean validateToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
@@ -97,13 +98,23 @@ public class TokenProvider {
             log.error("Invalid JWT signature");
         } catch (MalformedJwtException ex) {
             log.error("Invalid JWT token");
-        } catch (ExpiredJwtException ex) {
-            log.error("Expired JWT token");
         } catch (UnsupportedJwtException ex) {
             log.error("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
             log.error("JWT claims string is empty.");
         }
+        return false;
+    }
+
+    // 만료 토큰인지 검사
+    public boolean isExpiredToken(String authToken) {
+        try {
+            Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
+            return true;
+        } catch (ExpiredJwtException ex) {
+            log.error("Expired JWT token");
+        }
+
         return false;
     }
 }
