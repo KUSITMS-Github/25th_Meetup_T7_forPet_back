@@ -107,7 +107,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                             "/member/join/**",
                             "/test/**")
                     .permitAll()
-                    .antMatchers("/auth/**", "/oauth2/**")
+                    .antMatchers("/auth/**", "/oauth2/**", "/offline-map/**")
                     .permitAll()
                     .anyRequest().authenticated()
                 .and()
