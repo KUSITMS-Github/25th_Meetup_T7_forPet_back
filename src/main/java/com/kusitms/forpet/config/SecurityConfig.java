@@ -109,7 +109,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                     .antMatchers("/auth/**", "/oauth2/**", "/logout")
                     .permitAll()
                     .antMatchers("/signup/**", "/signup").permitAll()
-                    .antMatchers("/offline-map/**")
+                    .antMatchers("/offline-map/**", "/online-map/**")
                     .permitAll()
                     .anyRequest().authenticated()
                 .and()
