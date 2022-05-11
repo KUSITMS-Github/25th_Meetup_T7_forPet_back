@@ -15,7 +15,7 @@ import java.util.List;
 })
 @NoArgsConstructor
 @Getter
-@Setter
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,6 +56,10 @@ public class User {
         this.imageUrl = imageUrl;
     }
 
+    @Builder
+    private User(Long userId) {
+        this.userId = userId;
+    }
     public void updateNameAndImage(String name, String imageUrl) {
         this.name = name;
         this.imageUrl = imageUrl;

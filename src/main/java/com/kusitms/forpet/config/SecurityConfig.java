@@ -104,6 +104,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                     .antMatchers("/",
                         "/error",
                         "/favicon.ico",
+                            "/member/join/**",
                             "/test/**")
                     .permitAll()
                     .antMatchers("/auth/**", "/oauth2/**", "/offline-map/**")

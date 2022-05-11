@@ -11,8 +11,8 @@ spring:
     include:
       - db
       - kakao
+      - sms
       - s3
-
 
 logging:
   level:
