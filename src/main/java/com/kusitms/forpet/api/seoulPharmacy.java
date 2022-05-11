@@ -1,7 +1,7 @@
 package com.kusitms.forpet.api;
 
 import com.kusitms.forpet.domain.placeInfo;
-import com.kusitms.forpet.repository.APIRepository;
+import com.kusitms.forpet.repository.APIRep;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,7 +26,7 @@ public class seoulPharmacy {
     String KEY;
 
     @Autowired
-    private APIRepository apiRepository;
+    private APIRep apiRepository;
 
     @Autowired
     private geocoding geocoding;

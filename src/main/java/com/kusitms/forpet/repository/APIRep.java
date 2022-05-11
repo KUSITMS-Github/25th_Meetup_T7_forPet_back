@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface APIRepository extends JpaRepository<placeInfo, Long> {
+public interface APIRep extends JpaRepository<placeInfo, Long> {
 
     List<placeInfo> findAllByCategory(String category);
 
