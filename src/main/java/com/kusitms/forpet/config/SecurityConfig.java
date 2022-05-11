@@ -103,11 +103,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                     .authorizeRequests()
                     .antMatchers("/",
                         "/error",
-                        "/favicon.ico",
-                            "/member/join/**",
-                            "/test/**")
+                        "/favicon.ico")
                     .permitAll()
-                    .antMatchers("/auth/**", "/oauth2/**", "/offline-map/**")
+                    .antMatchers("/auth/**", "/oauth2/**")
+                    .permitAll()
+                    .antMatchers("/signup/**", "/signup").permitAll()
+                    .antMatchers("/offline-map/**")
                     .permitAll()
                     .anyRequest().authenticated()
                 .and()
