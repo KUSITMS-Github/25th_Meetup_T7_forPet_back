@@ -24,4 +24,8 @@ public class UserService {
     public UserRefreshToken findByUserIdAndRefreshToken(User user, String refreshToken) {
         return userRefreshTokenRepository.findByUserIdAndRefreshToken(user, refreshToken);
     }
+
+    public void deleteRefreshTokenByUserId(Long userId) {
+        userRefreshTokenRepository.deleteById(userId);
+    }
 }
