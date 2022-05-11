@@ -1,14 +1,17 @@
 package com.kusitms.forpet.controller;
 
+import com.kusitms.forpet.domain.PetCard;
 import com.kusitms.forpet.domain.Terms;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.dto.*;
-import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.JoinService;
+import com.kusitms.forpet.service.PetCardService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Random;
@@ -18,8 +21,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping("/signup")
 public class JoinController {
-    private final TokenProvider tokenProvider;
     private final JoinService joinService;
+    private final PetCardService petCardService;
 
     @GetMapping("/{id}/terms")
     public Result getTerms(@PathVariable String id) {
@@ -58,10 +61,10 @@ public class JoinController {
     /*
     닉네임 중복 체크
      */
-    @GetMapping("/check")
-    public Result checkNickname(@RequestParam String nickname) {
-        boolean isDulplicate = joinService.findByNickname(nickname);
-        return new Result("isDupNickname", isDulplicate);
+    @GetMapping("/check/nickname")
+    public ResponseEntity<Boolean> checkNickname(@RequestParam String nickname) {
+        boolean isDuplicate = joinService.findByNickname(nickname);
+        return ResponseEntity.ok(isDuplicate);
     }
 
     /*
@@ -84,13 +87,20 @@ public class JoinController {
     /*
     회원가입
     */
-    @PostMapping("")
-    public ApiResponse signup(@RequestBody SignUpDto dto) {
-        // 이미지 받기 추가
-        // db 저장
-        // 토큰 발급
-        return ApiResponse.success("test", dto);
+    @PostMapping("/{id}")
+    public ApiResponse signup(@PathVariable Long id,
+                              @RequestPart(value ="signup_dto") SignUpDto dto,
+                              @RequestPart(value = "profile_image", required=false) MultipartFile profileImage,
+                              @RequestPart(value = "pet_card_image", required=false) MultipartFile petCardImage) {
+
+        User user = joinService.createUser(id, dto, profileImage);
+        UserDto userDto = new UserDto(user.getUserId(), user.getName(), user.getEmail(), user.getImageUrl(), user.getNickname(), user.getPhone(), null,
+                new SignUpDto.Address(user.getAddress1(), user.getAddress2(), user.getAddress3()), null, user.getCustomImageUrl());
+        if(!petCardImage.getOriginalFilename().equals("")) {
+            PetCard petCard = petCardService.createPerCardByUserId(id, petCardImage, dto.getPetCardNumber());
+            userDto.setPetCardNumber(petCard.getCardNumber());
+            userDto.setPetCardImageUrl(petCard.getImageUrl());
+        }
+        return ApiResponse.created("user", dto);
     }
-
-
 }
