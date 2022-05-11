@@ -3,8 +3,8 @@ package com.kusitms.forpet.service;
 import com.kusitms.forpet.domain.Bookmark;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.placeInfo;
-import com.kusitms.forpet.repository.APIRepository;
-import com.kusitms.forpet.repository.BookmarkRepository;
+import com.kusitms.forpet.repository.APIRep;
+import com.kusitms.forpet.repository.BookmarkRep;
 import com.kusitms.forpet.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BookmarkService {
 
-    private final BookmarkRepository bookmarkRepository;
-    private final APIRepository apiRepository;
+    private final BookmarkRep bookmarkRepository;
+    private final APIRep apiRepository;
     private final UserRepository userRepository;
 
     /**

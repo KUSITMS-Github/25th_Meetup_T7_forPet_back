@@ -3,10 +3,9 @@ package com.kusitms.forpet.service;
 import com.kusitms.forpet.domain.Review;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.placeInfo;
-import com.kusitms.forpet.repository.APIRepository;
-import com.kusitms.forpet.repository.ReviewRepository;
+import com.kusitms.forpet.repository.APIRep;
+import com.kusitms.forpet.repository.ReviewRep;
 import com.kusitms.forpet.repository.UserRepository;
-import com.kusitms.forpet.service.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewService {
 
-    private final ReviewRepository reviewRepository;
-    private final APIRepository apiRepository;
+    private final ReviewRep reviewRepository;
+    private final APIRep apiRepository;
     private final S3Uploader s3Uploader;
     private final UserRepository userRepository;
 
