@@ -48,6 +48,9 @@ dependencies {
 
 	// devtools
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// coolSMS
+	implementation 'net.nurigo:javaSDK:2.2'
 }
 
 tasks.named('test') {
