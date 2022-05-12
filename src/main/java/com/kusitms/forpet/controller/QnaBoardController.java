@@ -38,8 +38,9 @@ public class QnaBoardController {
     }
 
 
+
     /**
-     * 최신순, 추천순 추가하기
+    //최신순, 추천순 추가하기
     //백과사전 글 리스트 조회
     @GetMapping("/qnaBoard")
     public List<QnaBoardResponseDto> getQnaBoard() {
@@ -49,12 +50,15 @@ public class QnaBoardController {
         List<QnaBoardResponseDto> collect = list.stream().map(m -> new QnaBoardResponseDto(m.getId(),
                         //m.getUser().getTag,
                         m.getUser().getNickname(),
-                        m.getTitle(), m.getContent(), m.getCreateDate(), m.getLikes(), m.getBookmarkQnaList().size(), m.getImageUrlList().split("#")))
+                        m.getTitle(), m.getContent(), m.getCreateDate(),
+                        m.getLikes(), m.getBookmarkQnaList().size(), m.getCommentQnaList().size(),
+                        m.getImageUrlList().split("#")))
                 .collect(Collectors.toList());
 
         return collect;
     }
-    */
+
+    **/
 
     //백과사전 좋아요
     @PostMapping("/qnaBoard/{boardId}/like")

@@ -16,6 +16,7 @@ public class QnaBoardResponseDto {
     private LocalDateTime createDate;
     private int likes;      //좋아요 수
     private int bookmark;   //북마크 수
+    private int comments;   //댓글 수
     private String[] imageUrlList;
 
     //좋아요 개수

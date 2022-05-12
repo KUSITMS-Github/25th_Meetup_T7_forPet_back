@@ -39,9 +39,15 @@ public class QnaBoard {
     @JoinColumn(name = "user_id")
     private User user;
 
+    //백과사전 북마크 연관관계
     @JsonIgnore
     @OneToMany(mappedBy = "qnaBoard")
     private List<BookmarkQna> bookmarkQnaList = new ArrayList<>();
+
+    //백과사전 댓글 연관관계
+    @JsonIgnore
+    @OneToMany(mappedBy = "qnaBoard")
+    private List<CommentQna> commentQnaList = new ArrayList<>();
 
 
 

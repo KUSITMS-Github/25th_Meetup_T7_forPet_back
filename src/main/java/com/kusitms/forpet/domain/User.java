@@ -59,6 +59,13 @@ public class User {
     private List<QnaBoard> QnaBoardList = new ArrayList<>();
 
 
+    //백과사전 댓글 참조관계
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<CommentQna> commentQnaList = new ArrayList<>();
+
+
+
     @Builder(builderClassName= "social", builderMethodName = "socialBuilder")
     private User(String name, @Email String email, String imageUrl) {
         this.name = name;

@@ -8,6 +8,7 @@ import com.kusitms.forpet.repository.QnaBoardRep;
 import com.kusitms.forpet.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class QnaBoardService {
     /**
      * qnaBoard 생성
      */
+    @Transactional
     public Long createQnaBoard(Long userid,
                                String title, String content, List<String> hashTagList,
                                List<MultipartFile> multipartFiles) {
@@ -61,6 +63,7 @@ public class QnaBoardService {
      * qnaBoard 좋아요
      * @param board_id
      */
+    @Transactional
     public int saveLikes(Long board_id) {
         QnaBoard qnaBoard = qnaBoardRepository.findById(board_id).get();
         qnaBoard.setLikes(qnaBoard.getLikes()+1);
@@ -76,6 +79,7 @@ public class QnaBoardService {
      * @param userid
      * @param boardId
      */
+    @Transactional
     public int createBookmark(Long userid, Long boardId) {
         User user = userRepository.findById(userid).get();
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId).get();
