@@ -34,10 +34,6 @@ public class RoleAccessDeniedHandler implements AccessDeniedHandler {
                 // GUEST 권한 : 회원가입이 되어 있지 않은 사용자
                 response.sendError(HttpServletResponse.SC_FORBIDDEN,
                         MESSAGE_FORBIDDEN_GUEST);
-            } else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                        "로그인 권한이 없는 사용자입니다. ");
-                SecurityContextHolder.clearContext();
             }
         }
     }

@@ -88,6 +88,13 @@ public class User {
         this.customImageUrl = customImageUrl;
     }
 
+    // 동네 등록
+    public void updateAddress(SignUpDto.Address address) {
+        this.address1 = address.getAddr1();
+        this.address2 = address.getAddr2();
+        this.address3 = address.getAddr3();
+    }
+
     // 회원가입
     public void signupUser(String nickname, String phone, SignUpDto.Address address) {
         this.nickname = nickname;

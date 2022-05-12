@@ -8,12 +8,27 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
+
+    public void save(User user) {
+        userRepository.saveAndFlush(user);
+    }
+
+    @Transactional(readOnly = true)
+    public User findByUserId(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if(user.isPresent()) {
+            return user.get();
+        }
+        return null;
+    }
 
     @Transactional(readOnly = true)
     public User findByEmail(String email) {
@@ -28,4 +43,5 @@ public class UserService {
     public void deleteRefreshTokenByUserId(Long userId) {
         userRefreshTokenRepository.deleteById(userId);
     }
+
 }
