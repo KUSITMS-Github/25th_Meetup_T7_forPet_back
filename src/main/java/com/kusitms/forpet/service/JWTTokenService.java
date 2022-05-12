@@ -17,18 +17,22 @@ public class JWTTokenService {
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final TokenProvider tokenProvider;
 
+    /*
+    회원가입 시 사용되는 JWT 발급
+     */
     public List<String> createJWTToken(User user) {
-        //refresh 토큰 설정
+        // access token 발급
+        String accessToken = tokenProvider.createAccessToken(user.getUserId());
+        // refresh token 발급
         String refreshToken = tokenProvider.createRefreshToken(user.getUserId());
-        // refresh 토큰 DB 저장
 
+        // refresh 토큰 DB 저장
         UserRefreshToken userRefreshToken = new UserRefreshToken();
         userRefreshToken.setUserId(user);
         userRefreshToken.setRefreshToken(refreshToken);
         userRefreshTokenRepository.saveAndFlush(userRefreshToken);
 
-        String accessToken = tokenProvider.createAccessToken(user.getUserId());
-
+        // 두가지 token 모두 반환
         List<String> token = new ArrayList<>();
         token.add(accessToken);
         token.add(refreshToken);

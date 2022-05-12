@@ -2,6 +2,7 @@ package com.kusitms.forpet.config;
 
 import com.kusitms.forpet.security.CustomUserDetailsService;
 import com.kusitms.forpet.security.RestAuthenticationEntryPoint;
+import com.kusitms.forpet.security.RoleAccessDeniedHandler;
 import com.kusitms.forpet.security.TokenAuthenticationFilter;
 import com.kusitms.forpet.security.oauth2.CustomOAuth2UserService;
 import com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
@@ -100,6 +101,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                     .logout().disable()
                     .exceptionHandling()
                     .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                    .accessDeniedHandler(new RoleAccessDeniedHandler())
                 .and()
                     .authorizeRequests()
                     .antMatchers("/",
