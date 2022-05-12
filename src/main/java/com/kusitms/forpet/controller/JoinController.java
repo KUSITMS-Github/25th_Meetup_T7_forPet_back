@@ -116,7 +116,7 @@ public class JoinController {
                 new SignUpDto.Address(user.getAddress1(), user.getAddress2(), user.getAddress3()), null, user.getCustomImageUrl(), token.get(0));
 
         if(!petCardImage.getOriginalFilename().equals("")) {
-            PetCard petCard = petCardService.createPerCardByUserId(id, petCardImage, dto.getPetCardNumber());
+            PetCard petCard = petCardService.createPetCardByUserId(id, petCardImage, dto.getPetCardNumber());
             userDto.setPetCardNumber(petCard.getCardNumber());
             userDto.setPetCardImageUrl(petCard.getImageUrl());
         }
