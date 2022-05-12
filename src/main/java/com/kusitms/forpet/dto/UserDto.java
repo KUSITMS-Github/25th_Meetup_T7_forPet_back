@@ -24,4 +24,7 @@ public class UserDto {
     private String petCardImageUrl;
     private String customImageUrl;
 
+    @JsonProperty("access_token")
+    private String accessToken;
+
 }

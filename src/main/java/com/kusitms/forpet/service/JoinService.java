@@ -10,6 +10,7 @@ import com.kusitms.forpet.dto.UserDto;
 import com.kusitms.forpet.repository.TermsRecordRepository;
 import com.kusitms.forpet.repository.TermsRepository;
 import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.security.Role;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
@@ -97,6 +98,9 @@ public class JoinService {
             }
 
             newUser.signupUser(dto.getNickname(), dto.getPhoneNumber(), dto.getAddress());
+
+            //권한 변경 GUEST -> USER
+            newUser.updateRole(Role.USER);
 
             // 프로필 사진
             if(!profileImage.getOriginalFilename().equals("")) {
