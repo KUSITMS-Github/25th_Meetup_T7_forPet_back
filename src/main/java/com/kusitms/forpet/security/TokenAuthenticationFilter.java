@@ -1,5 +1,6 @@
 package com.kusitms.forpet.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+        } catch(ExpiredJwtException ex) {
+
         } catch (Exception ex) {
             log.error("Could not set user authentication in security context", ex);
         }
