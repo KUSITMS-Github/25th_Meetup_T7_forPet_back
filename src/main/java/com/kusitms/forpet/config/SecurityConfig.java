@@ -104,13 +104,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                     .authorizeRequests()
                     .antMatchers("/",
                         "/error",
-                        "/favicon.ico")
-                    .permitAll()
-                    .antMatchers("/auth/**", "/oauth2/**", "/logout")
-                    .permitAll()
-                    .antMatchers("/signup/**", "/signup").permitAll()
-                    .antMatchers("/offline-map/**")
-                    .permitAll()
+                        "/favicon.ico").permitAll()
+                    .antMatchers("/auth/**", "/oauth2/**").permitAll() //로그인
+                    .antMatchers("/offline-map/**", "online-map/**").permitAll() //핵심 기능
+                    .antMatchers("/signup/**").hasRole("GUEST") // 회원가입
+                    .antMatchers("/mypage/**").hasAnyRole("USER", "FORPET_USER") // 마이페이지
+                    .antMatchers("/community/**").hasRole("FORPET_USER")
                     .anyRequest().authenticated()
                 .and()
                     .oauth2Login()

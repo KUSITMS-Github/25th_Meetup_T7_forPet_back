@@ -18,7 +18,7 @@ public class PetCard {
     private Long cardId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", unique=true)
     private User userId;
 
     private String cardNumber;

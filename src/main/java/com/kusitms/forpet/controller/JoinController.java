@@ -1,11 +1,14 @@
 package com.kusitms.forpet.controller;
 
+import com.kusitms.forpet.config.AppProperties;
 import com.kusitms.forpet.domain.PetCard;
 import com.kusitms.forpet.domain.Terms;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.dto.*;
+import com.kusitms.forpet.service.JWTTokenService;
 import com.kusitms.forpet.service.JoinService;
 import com.kusitms.forpet.service.PetCardService;
+import com.kusitms.forpet.util.CookieUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+
+import static com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REFRESH_TOKEN;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +30,8 @@ import java.util.stream.Collectors;
 public class JoinController {
     private final JoinService joinService;
     private final PetCardService petCardService;
+    private final JWTTokenService jwtTokenService;
+    private final AppProperties appProperties;
 
     @GetMapping("/{id}/terms")
     public Result getTerms(@PathVariable String id) {
@@ -91,16 +100,26 @@ public class JoinController {
     public ApiResponse signup(@PathVariable Long id,
                               @RequestPart(value ="signup_dto") SignUpDto dto,
                               @RequestPart(value = "profile_image", required=false) MultipartFile profileImage,
-                              @RequestPart(value = "pet_card_image", required=false) MultipartFile petCardImage) {
+                              @RequestPart(value = "pet_card_image", required=false) MultipartFile petCardImage,
+                              HttpServletRequest request, HttpServletResponse response) {
 
         User user = joinService.createUser(id, dto, profileImage);
+        // token 발급
+        List<String> token = jwtTokenService.createJWTToken(user);
+
+        int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
+
+        CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtils.addCookie(response, REFRESH_TOKEN, token.get(1), cookieMaxAge);
+
         UserDto userDto = new UserDto(user.getUserId(), user.getName(), user.getEmail(), user.getImageUrl(), user.getNickname(), user.getPhone(), null,
-                new SignUpDto.Address(user.getAddress1(), user.getAddress2(), user.getAddress3()), null, user.getCustomImageUrl());
+                new SignUpDto.Address(user.getAddress1(), user.getAddress2(), user.getAddress3()), null, user.getCustomImageUrl(), token.get(0));
+
         if(!petCardImage.getOriginalFilename().equals("")) {
             PetCard petCard = petCardService.createPerCardByUserId(id, petCardImage, dto.getPetCardNumber());
             userDto.setPetCardNumber(petCard.getCardNumber());
             userDto.setPetCardImageUrl(petCard.getImageUrl());
         }
-        return ApiResponse.created("user", dto);
+        return ApiResponse.created("user", userDto);
     }
 }
