@@ -1,10 +1,8 @@
 package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.MapClickCount;
-import com.kusitms.forpet.domain.placeInfo;
 import com.kusitms.forpet.dto.ApiResponse;
 import com.kusitms.forpet.dto.ClickDto;
-import com.kusitms.forpet.dto.placeDto;
 import com.kusitms.forpet.service.OnlineMapService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +27,7 @@ public class OnlineMapController {
         return new Result(collect.size(), collect);
     }
 
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public ApiResponse updateClickCnt(@PathVariable Long id) {
         long clickCnt = onlineMapService.click(id);
         return ApiResponse.success("clickCnt", clickCnt);
