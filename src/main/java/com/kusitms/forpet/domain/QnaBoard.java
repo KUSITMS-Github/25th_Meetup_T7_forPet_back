@@ -28,10 +28,9 @@ public class QnaBoard {
     @Lob
     private String imageUrlList;
 
-    private String hashTag;  //해쉬태크 정보
+    private String hashTag;          //해시태그 정보
     private LocalDateTime createDate;
-
-    private int likes; //좋아요 개수
+    private int likes;               //좋아요 개수
 
 
     //연관관계
@@ -41,12 +40,12 @@ public class QnaBoard {
 
     //백과사전 북마크 연관관계
     @JsonIgnore
-    @OneToMany(mappedBy = "qnaBoard")
+    @OneToMany(mappedBy = "qnaBoard", cascade = CascadeType.ALL)
     private List<BookmarkQna> bookmarkQnaList = new ArrayList<>();
 
     //백과사전 댓글 연관관계
     @JsonIgnore
-    @OneToMany(mappedBy = "qnaBoard")
+    @OneToMany(mappedBy = "qnaBoard", cascade = CascadeType.ALL)
     private List<CommentQna> commentQnaList = new ArrayList<>();
 
 

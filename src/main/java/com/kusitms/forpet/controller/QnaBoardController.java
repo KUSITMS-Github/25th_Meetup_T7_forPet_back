@@ -1,8 +1,8 @@
 package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.QnaBoard;
-import com.kusitms.forpet.dto.QnaBoardRequestDto;
-import com.kusitms.forpet.dto.QnaBoardResponseDto;
+import com.kusitms.forpet.dto.QnaBoard.QnaBoardRequestDto;
+import com.kusitms.forpet.dto.QnaBoard.QnaBoardResponseDto;
 import com.kusitms.forpet.repository.QnaBoardRep;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.QnaBoardService;
@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -49,11 +50,11 @@ public class QnaBoardController {
     //백과사전 글 리스트 최신순 조회(페이징)
     @GetMapping("/qnaBoard/orderByLatest")
     public Result getQnaBoardByLatest(@PageableDefault(size = 3, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<QnaBoard> postList = qnaBoardRep.findAll(pageable);
 
+        Page<QnaBoard> list = qnaBoardRep.findAll(pageable);
 
         //entity -> dto 변환
-        List<QnaBoardResponseDto> collect = postList.stream().map(m -> new QnaBoardResponseDto(m.getId(),
+        List<QnaBoardResponseDto> collect = list.stream().map(m -> new QnaBoardResponseDto(m.getId(),
                         //m.getUser().getTag,
                         m.getUser().getNickname(),
                         m.getTitle(), m.getContent(), m.getCreateDate(),
@@ -61,19 +62,20 @@ public class QnaBoardController {
                         m.getImageUrlList().split("#")))
                 .collect(Collectors.toList());
 
-        return new Result(postList.getNumber(), postList.getNumberOfElements(), postList.getTotalPages(), postList.getTotalElements(), collect);
+        return new Result(list.getNumber(), list.getNumberOfElements(), list.getTotalPages(), list.getTotalElements(), collect);
 
     }
+
 
 
     //백과사전 글 리스트 추천순 조회(페이징)
     @GetMapping("/qnaBoard/orderByLikes")
     public Result getQnaBoardByLikes(@PageableDefault(size = 3, sort = "likes", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<QnaBoard> postList = qnaBoardRep.findAll(pageable);
 
+        Page<QnaBoard> list = qnaBoardRep.findAll(pageable);
 
         //entity -> dto 변환
-        List<QnaBoardResponseDto> collect = postList.stream().map(m -> new QnaBoardResponseDto(m.getId(),
+        List<QnaBoardResponseDto> collect = list.stream().map(m -> new QnaBoardResponseDto(m.getId(),
                         //m.getUser().getTag,
                         m.getUser().getNickname(),
                         m.getTitle(), m.getContent(), m.getCreateDate(),
@@ -81,9 +83,43 @@ public class QnaBoardController {
                         m.getImageUrlList().split("#")))
                 .collect(Collectors.toList());
 
-        return new Result(postList.getNumber(), postList.getNumberOfElements(), postList.getTotalPages(), postList.getTotalElements(), collect);
+        return new Result(list.getNumber(), list.getNumberOfElements(), list.getTotalPages(), list.getTotalElements(), collect);
 
     }
+
+
+
+    //백과사전 글 리스트 검색 조회(페이징)
+    @GetMapping("/qnaBoard/search")
+    public Result search(@RequestParam(value = "keyword") String keyword,
+                         @RequestParam(value = "orderBy") String orderBy,
+                         @RequestParam(value = "page") int page,
+                         Pageable pageable) {
+
+        Page<QnaBoard> list = null;
+
+        if(orderBy.equals("createDate")) {
+            pageable = PageRequest.of(page, 3, Sort.by("create_date").descending());
+            list = qnaBoardRep.findAllSearch(keyword, pageable);
+        }
+        else {
+            pageable = PageRequest.of(page, 3, Sort.by("likes").descending());
+            list = qnaBoardRep.findAllSearch(keyword, pageable);
+        }
+
+
+        //entity -> dto 변환
+        List<QnaBoardResponseDto> collect = list.stream().map(m -> new QnaBoardResponseDto(m.getId(),
+                        //m.getUser().getTag,
+                        m.getUser().getNickname(),
+                        m.getTitle(), m.getContent(), m.getCreateDate(),
+                        m.getLikes(), m.getBookmarkQnaList().size(), m.getCommentQnaList().size(),
+                        m.getImageUrlList().split("#")))
+                .collect(Collectors.toList());
+
+        return new Result(list.getNumber(), list.getNumberOfElements(), list.getTotalPages(), list.getTotalElements(), collect);
+    }
+
 
 
     //리턴값
@@ -96,7 +132,6 @@ public class QnaBoardController {
         private Long totalElements;     //잔체 요소 개수
         private T data;
     }
-
 
 
     //백과사전 좋아요
@@ -116,5 +151,6 @@ public class QnaBoardController {
 
         return qnaBoardService.createBookmark(userid, boardId);
     }
+
 
 }

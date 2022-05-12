@@ -3,7 +3,7 @@ package com.kusitms.forpet.service;
 import com.kusitms.forpet.domain.CommentQna;
 import com.kusitms.forpet.domain.QnaBoard;
 import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.dto.CommentQnaRespDto;
+import com.kusitms.forpet.dto.QnaBoard.CommentQnaRespDto;
 import com.kusitms.forpet.repository.CommentQnaRep;
 import com.kusitms.forpet.repository.QnaBoardRep;
 import com.kusitms.forpet.repository.UserRepository;
@@ -36,8 +36,8 @@ public class CommentQnaService {
 
         //댓글 생성
         CommentQna commentQna = CommentQna.createCommentQna(user, qnaBoard, comment);
-
         CommentQna save = commentQnaRep.save(commentQna);
+
         return save.getId();
     }
 

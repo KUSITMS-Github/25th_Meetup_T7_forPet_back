@@ -1,5 +1,6 @@
-package com.kusitms.forpet.dto;
+package com.kusitms.forpet.dto.QnaBoard;
 
+import com.kusitms.forpet.domain.CommentQna;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -19,7 +20,4 @@ public class QnaBoardResponseDto {
     private int comments;   //댓글 수
     private String[] imageUrlList;
 
-    //좋아요 개수
-    //스크랩 개수
-    //댓글 개수
 }

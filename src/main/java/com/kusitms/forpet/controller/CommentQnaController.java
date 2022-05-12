@@ -1,6 +1,6 @@
 package com.kusitms.forpet.controller;
 
-import com.kusitms.forpet.dto.CommentQnaRespDto;
+import com.kusitms.forpet.dto.QnaBoard.CommentQnaRespDto;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.CommentQnaService;
 import com.kusitms.forpet.util.HeaderUtil;
