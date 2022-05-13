@@ -5,7 +5,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,10 +42,28 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Review> reviewList = new ArrayList<>();
 
-    //북마크 참조관계
+    //북마크(offline-map) 참조관계
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Bookmark> bookmarkList = new ArrayList<>();
+
+    //북마크(QnaBoard) 참조관계
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<BookmarkQna> bookmarkQnaList = new ArrayList<>();
+
+
+    //백과사전 참조관계
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<QnaBoard> QnaBoardList = new ArrayList<>();
+
+
+    //백과사전 댓글 참조관계
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<CommentQna> commentQnaList = new ArrayList<>();
+
 
 
     @Builder(builderClassName= "social", builderMethodName = "socialBuilder")

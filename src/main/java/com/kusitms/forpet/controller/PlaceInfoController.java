@@ -3,7 +3,7 @@ package com.kusitms.forpet.controller;
 import com.kusitms.forpet.domain.placeInfo;
 import com.kusitms.forpet.dto.CategoryDto;
 import com.kusitms.forpet.dto.placeDto;
-import com.kusitms.forpet.repository.APIRepository;
+import com.kusitms.forpet.repository.APIRep;
 import com.kusitms.forpet.service.APIService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PlaceInfoController {
     private final APIService apiService;
-    private final APIRepository apiRepository;
+    private final APIRep apiRepository;
 
     @GetMapping("/offline-map")
     public Result getApi() {

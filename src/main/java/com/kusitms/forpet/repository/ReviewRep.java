@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface ReviewRepository extends JpaRepository<Review, Long> {
+public interface ReviewRep extends JpaRepository<Review, Long> {
 
     @Query(value = "select * from review r where r.place_id = :placeid", nativeQuery = true)
     List<Review> findByplaceInfo(Long placeid);

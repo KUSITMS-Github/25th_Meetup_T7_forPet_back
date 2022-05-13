@@ -1,7 +1,7 @@
 package com.kusitms.forpet.api;
 
 import com.kusitms.forpet.domain.placeInfo;
-import com.kusitms.forpet.repository.APIRepository;
+import com.kusitms.forpet.repository.APIRep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import java.util.Map;
 public class extraData {
 
     @Autowired
-    private APIRepository apiRepository;
+    private APIRep apiRepository;
 
     @Autowired
     private geocoding geocoding;

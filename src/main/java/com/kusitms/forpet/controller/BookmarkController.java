@@ -3,7 +3,7 @@ package com.kusitms.forpet.controller;
 import com.kusitms.forpet.domain.Bookmark;
 import com.kusitms.forpet.dto.BookmarkByCategoryDto;
 import com.kusitms.forpet.dto.BookmarkByUserIdDto;
-import com.kusitms.forpet.repository.BookmarkRepository;
+import com.kusitms.forpet.repository.BookmarkRep;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.BookmarkService;
 import com.kusitms.forpet.util.HeaderUtil;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class BookmarkController {
 
     private final BookmarkService bookmarkService;
-    private final BookmarkRepository bookmarkRepository;
+    private final BookmarkRep bookmarkRepository;
     private final TokenProvider tokenProvider;
 
     //북마크 생성
