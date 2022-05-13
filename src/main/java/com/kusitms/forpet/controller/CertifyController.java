@@ -38,7 +38,7 @@ public class CertifyController {
 
         Map<String, Boolean> result = new HashMap<>();
 
-        if(user.getAddress1() == null) {
+        if(user.getAddress() == null) {
             result.put("certifiedAddress", false);
         } else {
             result.put("certifiedAddress", true);
@@ -80,7 +80,7 @@ public class CertifyController {
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         User user = userService.findByUserId(userId);
-        user.updateAddress(address);
+        user.updateAddress(address.getAddressList());
         userService.save(user);
 
         return ApiResponse.created("result", address);
