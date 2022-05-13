@@ -2,6 +2,7 @@ package com.kusitms.forpet.config;
 
 import com.kusitms.forpet.security.CustomUserDetailsService;
 import com.kusitms.forpet.security.RestAuthenticationEntryPoint;
+import com.kusitms.forpet.security.RoleAccessDeniedHandler;
 import com.kusitms.forpet.security.TokenAuthenticationFilter;
 import com.kusitms.forpet.security.oauth2.CustomOAuth2UserService;
 import com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
@@ -97,18 +98,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .and()
                     .formLogin().disable()
                     .httpBasic().disable()
+                    .logout().disable()
                     .exceptionHandling()
                     .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                    .accessDeniedHandler(new RoleAccessDeniedHandler())
                 .and()
                     .authorizeRequests()
                     .antMatchers("/",
                         "/error",
-                        "/favicon.ico",
-                            "/member/join/**",
-                            "/test/**")
-                    .permitAll()
-                    .antMatchers("/auth/**", "/oauth2/**", "/offline-map/**")
-                    .permitAll()
+                        "/favicon.ico").permitAll()
+                    .antMatchers("/auth/**", "/oauth2/**").permitAll() //로그인
+                    .antMatchers("/offline-map/**", "online-map/**").permitAll() //핵심 기능
+                    .antMatchers("/signup/**").hasRole("GUEST") // 회원가입
+                    .antMatchers("/mypage/**").hasAnyRole("USER", "FORPET_USER") // 마이페이지
+                    .antMatchers("/community/**").hasRole("FORPET_USER")
                     .anyRequest().authenticated()
                 .and()
                     .oauth2Login()

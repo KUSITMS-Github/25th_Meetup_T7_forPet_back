@@ -40,7 +40,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String targetUrl = determineTargetUrl(request, response, authentication);
-        logger.debug("토큰 발행 완료");
+
         if (response.isCommitted()) {
             logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
@@ -90,11 +90,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
 
         String accessToken = tokenProvider.createAccessToken(authentication);
-
-        logger.debug("refresh token : " + refreshToken);
-        System.out.println("access_token : " + UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", accessToken)
-                .build().toUriString());
 
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", accessToken)

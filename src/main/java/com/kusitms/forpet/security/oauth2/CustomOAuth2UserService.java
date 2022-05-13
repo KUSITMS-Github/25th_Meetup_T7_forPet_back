@@ -3,6 +3,7 @@ package com.kusitms.forpet.security.oauth2;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.exception.OAuth2AuthenticationProcessingException;
 import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.security.Role;
 import com.kusitms.forpet.security.UserPrincipal;
 import com.kusitms.forpet.security.oauth2.user.OAuth2UserInfo;
 import com.kusitms.forpet.security.oauth2.user.OAuth2UserInfoFactory;
@@ -56,6 +57,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .name(oAuth2UserInfo.getName())
                 .email(oAuth2UserInfo.getEmail())
                 .imageUrl(oAuth2UserInfo.getImageUrl())
+                .role(Role.GUEST)
                 .build();
 
         return userRepository.save(user);
