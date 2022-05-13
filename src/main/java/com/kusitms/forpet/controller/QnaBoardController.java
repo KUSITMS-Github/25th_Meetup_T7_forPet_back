@@ -4,6 +4,7 @@ import com.kusitms.forpet.domain.QnaBoard;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardRequestDto;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardResponseDto;
 import com.kusitms.forpet.repository.QnaBoardRep;
+import com.kusitms.forpet.security.Role;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.QnaBoardService;
 import com.kusitms.forpet.util.HeaderUtil;
@@ -19,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -53,14 +54,26 @@ public class QnaBoardController {
 
         Page<QnaBoard> list = qnaBoardRep.findAll(pageable);
 
-        //entity -> dto 변환
-        List<QnaBoardResponseDto> collect = list.stream().map(m -> new QnaBoardResponseDto(m.getId(),
-                        //m.getUser().getTag,
-                        m.getUser().getNickname(),
-                        m.getTitle(), m.getContent(), m.getCreateDate(),
-                        m.getLikes(), m.getBookmarkQnaList().size(), m.getCommentQnaList().size(),
-                        m.getImageUrlList().split("#")))
-                .collect(Collectors.toList());
+        List<QnaBoardResponseDto> collect = new ArrayList<>();
+
+        for(QnaBoard q : list) {
+            if(q.getUser().getRole().equals(Role.FORPET_USER)) {
+                collect.add(new QnaBoardResponseDto(q.getId(),
+                        "반려인",
+                        q.getUser().getNickname(),
+                        q.getTitle(), q.getContent(), q.getCreateDate(),
+                        q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                        q.getImageUrlList().split("#")));
+            }
+            if(q.getUser().getRole().equals(Role.USER)) {
+                collect.add(new QnaBoardResponseDto(q.getId(),
+                        "예비반려인",
+                        q.getUser().getNickname(),
+                        q.getTitle(), q.getContent(), q.getCreateDate(),
+                        q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                        q.getImageUrlList().split("#")));
+            }
+        }
 
         return new Result(list.getNumber(), list.getNumberOfElements(), list.getTotalPages(), list.getTotalElements(), collect);
 
@@ -74,14 +87,26 @@ public class QnaBoardController {
 
         Page<QnaBoard> list = qnaBoardRep.findAll(pageable);
 
-        //entity -> dto 변환
-        List<QnaBoardResponseDto> collect = list.stream().map(m -> new QnaBoardResponseDto(m.getId(),
-                        //m.getUser().getTag,
-                        m.getUser().getNickname(),
-                        m.getTitle(), m.getContent(), m.getCreateDate(),
-                        m.getLikes(), m.getBookmarkQnaList().size(), m.getCommentQnaList().size(),
-                        m.getImageUrlList().split("#")))
-                .collect(Collectors.toList());
+        List<QnaBoardResponseDto> collect = new ArrayList<>();
+
+        for(QnaBoard q : list) {
+            if(q.getUser().getRole().equals(Role.FORPET_USER)) {
+                collect.add(new QnaBoardResponseDto(q.getId(),
+                        "반려인",
+                        q.getUser().getNickname(),
+                        q.getTitle(), q.getContent(), q.getCreateDate(),
+                        q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                        q.getImageUrlList().split("#")));
+            }
+            if(q.getUser().getRole().equals(Role.USER)) {
+                collect.add(new QnaBoardResponseDto(q.getId(),
+                        "예비반려인",
+                        q.getUser().getNickname(),
+                        q.getTitle(), q.getContent(), q.getCreateDate(),
+                        q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                        q.getImageUrlList().split("#")));
+            }
+        }
 
         return new Result(list.getNumber(), list.getNumberOfElements(), list.getTotalPages(), list.getTotalElements(), collect);
 
@@ -108,14 +133,26 @@ public class QnaBoardController {
         }
 
 
-        //entity -> dto 변환
-        List<QnaBoardResponseDto> collect = list.stream().map(m -> new QnaBoardResponseDto(m.getId(),
-                        //m.getUser().getTag,
-                        m.getUser().getNickname(),
-                        m.getTitle(), m.getContent(), m.getCreateDate(),
-                        m.getLikes(), m.getBookmarkQnaList().size(), m.getCommentQnaList().size(),
-                        m.getImageUrlList().split("#")))
-                .collect(Collectors.toList());
+        List<QnaBoardResponseDto> collect = new ArrayList<>();
+
+        for(QnaBoard q : list) {
+            if(q.getUser().getRole().equals(Role.FORPET_USER)) {
+                collect.add(new QnaBoardResponseDto(q.getId(),
+                        "반려인",
+                        q.getUser().getNickname(),
+                        q.getTitle(), q.getContent(), q.getCreateDate(),
+                        q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                        q.getImageUrlList().split("#")));
+            }
+            if(q.getUser().getRole().equals(Role.USER)) {
+                collect.add(new QnaBoardResponseDto(q.getId(),
+                        "예비반려인",
+                        q.getUser().getNickname(),
+                        q.getTitle(), q.getContent(), q.getCreateDate(),
+                        q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                        q.getImageUrlList().split("#")));
+            }
+        }
 
         return new Result(list.getNumber(), list.getNumberOfElements(), list.getTotalPages(), list.getTotalElements(), collect);
     }
