@@ -27,10 +27,8 @@ public class PetCardService {
         // 동물 등록 카드 등록 -> 권한 변경
         Optional<User> temp = userRepository.findById(userId);
         User user = temp.get();
-        if(user.getAddress1() != null) {
-            // 주소도 등록되어 있다면
-            user.updateRole(Role.FORPET_USER);
-        }
+        user.updateRole(Role.FORPET_USER);
+
         userRepository.save(user);
 
         PetCard petCard = PetCard.builder()

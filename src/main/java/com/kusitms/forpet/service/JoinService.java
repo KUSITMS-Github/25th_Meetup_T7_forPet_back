@@ -97,7 +97,7 @@ public class JoinService {
                 dto.setAddress(new SignUpDto.Address());
             }
 
-            newUser.signupUser(dto.getNickname(), dto.getPhoneNumber(), dto.getAddress());
+            newUser.signupUser(dto.getNickname(), dto.getPhoneNumber(), dto.getAddress().getAddressList());
 
             //권한 변경 GUEST -> USER
             newUser.updateRole(Role.USER);
