@@ -7,12 +7,13 @@ import com.kusitms.forpet.dto.QnaBoard.CommentQnaRespDto;
 import com.kusitms.forpet.repository.CommentQnaRep;
 import com.kusitms.forpet.repository.QnaBoardRep;
 import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.security.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,12 +50,23 @@ public class CommentQnaService {
     public List<CommentQnaRespDto> getCommentList(Long boardId) {
         List<CommentQna> list = commentQnaRep.findAllByqnaBoard(boardId);
 
-        //entity -> dto 변환
-        List<CommentQnaRespDto> collect = list.stream().map(m -> new CommentQnaRespDto(m.getId(),
-                        m.getUser().getImageUrl(), m.getUser().getNickname(),
-                        //m.getUser().getTag(),
-                        m.getComment(), m.getCreateDate(), m.getLikes()))
-                .collect(Collectors.toList());
+        List<CommentQnaRespDto> collect = new ArrayList<>();
+
+        for(CommentQna c : list) {
+            if(c.getUser().getRole().equals(Role.FORPET_USER)) {
+                collect.add(new CommentQnaRespDto(c.getId(),
+                        c.getUser().getImageUrl(), c.getUser().getNickname(),
+                        "반려인",
+                        c.getComment(), c.getCreateDate(), c.getLikes()));
+            }
+
+            if(c.getUser().getRole().equals(Role.USER)) {
+                collect.add(new CommentQnaRespDto(c.getId(),
+                        c.getUser().getImageUrl(), c.getUser().getNickname(),
+                        "예비반려인",
+                        c.getComment(), c.getCreateDate(), c.getLikes()));
+            }
+        }
 
         return collect;
 

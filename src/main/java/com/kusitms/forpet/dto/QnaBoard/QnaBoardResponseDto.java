@@ -1,6 +1,7 @@
 package com.kusitms.forpet.dto.QnaBoard;
 
-import com.kusitms.forpet.domain.CommentQna;
+
+import com.kusitms.forpet.security.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class QnaBoardResponseDto {
     private Long qnaBoardId;
-    //private String tag;
+    private String tag;
     private String nickName;
     private String title;
     private String content;
