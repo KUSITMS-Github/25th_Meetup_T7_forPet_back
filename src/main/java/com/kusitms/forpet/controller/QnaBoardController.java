@@ -98,7 +98,7 @@ public class QnaBoardController {
 
         Page<QnaBoard> list = null;
 
-        if(orderBy.equals("createDate")) {
+        if(orderBy.equals("latest")) {
             pageable = PageRequest.of(page, 3, Sort.by("create_date").descending());
             list = qnaBoardRep.findAllSearch(keyword, pageable);
         }
