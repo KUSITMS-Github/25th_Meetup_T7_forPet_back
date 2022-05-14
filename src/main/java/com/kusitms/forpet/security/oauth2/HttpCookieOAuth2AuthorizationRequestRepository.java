@@ -13,6 +13,7 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
     public static final String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
     public static final String REFRESH_TOKEN = "refresh_token";
+    public static final String SIGNUP_ID = "signup_id";
     private static final int cookieExpireSeconds = 180;
 
     @Override

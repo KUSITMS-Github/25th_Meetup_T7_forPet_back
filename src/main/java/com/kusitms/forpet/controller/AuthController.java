@@ -4,12 +4,14 @@ import com.kusitms.forpet.config.AppProperties;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.UserRefreshToken;
 import com.kusitms.forpet.dto.ApiResponse;
+import com.kusitms.forpet.dto.LoginDto;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.UserService;
 import com.kusitms.forpet.util.CookieUtils;
 import com.kusitms.forpet.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
@@ -26,6 +28,23 @@ public class AuthController {
 
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
+
+    /*
+    oauth2에서 redirect 되는 uri에 token이 함께 온다.
+     */
+    @GetMapping("/oauth2/redirect")
+    public ApiResponse login(@RequestParam(value="token") String token) {
+        Long userId = tokenProvider.getUserIdFromToken(token);
+        User user = userService.findByUserId(userId);
+
+        boolean isSignup = true;
+        // 회원 가입이 필요한 경우
+        if(user.getName() == null) {
+            isSignup = false;
+        }
+
+        return ApiResponse.success("data", new LoginDto(token, isSignup));
+    }
 
     // access token 재발급
     @GetMapping("/auth/refresh")
