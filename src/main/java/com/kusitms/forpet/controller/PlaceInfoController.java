@@ -1,6 +1,7 @@
 package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.placeInfo;
+import com.kusitms.forpet.dto.ApiResponse;
 import com.kusitms.forpet.dto.CategoryDto;
 import com.kusitms.forpet.dto.placeDto;
 import com.kusitms.forpet.repository.APIRep;
@@ -20,45 +21,50 @@ public class PlaceInfoController {
     private final APIRep apiRepository;
 
     @GetMapping("/offline-map")
-    public Result getApi() {
+    public ApiResponse getApi() {
+
         List<placeInfo> list = apiService.findAll();
         //entity -> dto 변환
         List<placeDto> collect = list.stream().map(m -> new placeDto(m.getId(), m.getCategory(), m.getName(), m.getAddress(), m.getLongitude(), m.getLatitude()))
                 .collect(Collectors.toList());
-        return new Result(collect.size(), collect);
+
+        return ApiResponse.success("data", new Result(collect.size(), collect));
 
     }
+
 
     //리턴값
     @Data
     @AllArgsConstructor
     static class Result<T> {
         private int count;
-        private T data;
+        private T placeInfo;
     }
+
 
     //카테고리 선택
     @GetMapping("/offline-map/category")
-    public List<CategoryDto> getPlaceInfoByCategory(@RequestParam(value = "category")String category) {
+    public ApiResponse getPlaceInfoByCategory(@RequestParam(value = "category")String category) {
         List<placeInfo> list = apiRepository.findAllByCategory(category);
 
         //entity -> dto 변환
         List<CategoryDto> collect = list.stream().map(m -> new CategoryDto(m.getId(), m.getName(), m.getCategory(), m.getAddress(), m.getStarAvg(), m.getReviewCnt()))
                 .collect(Collectors.toList());
 
-        return collect;
+        //return collect;
 
+        return ApiResponse.success("data", collect);
     }
 
 
     //마커 선택(가게 정보)
     @GetMapping("/offline-map/{placeid}/marker")
-    public CategoryDto getPlaceInfoByMarker(@PathVariable("placeid") Long placeid) {
+    public ApiResponse getPlaceInfoByMarker(@PathVariable("placeid") Long placeid) {
         placeInfo placeInfo = apiRepository.findById(placeid).get();
         CategoryDto categoryDto = new CategoryDto(placeInfo.getId(), placeInfo.getName(), placeInfo.getCategory(),
                 placeInfo.getAddress(), placeInfo.getStarAvg(), placeInfo.getReviewCnt());
 
-        return categoryDto;
+        return ApiResponse.success("data", categoryDto);
     }
 
 
@@ -67,8 +73,9 @@ public class PlaceInfoController {
      * 검색 API
      */
     @GetMapping("/offline-map/search")
-    public List<placeInfo> search(@RequestParam(value = "keyword") String keyword) {
-        return apiRepository.findByKeyword(keyword);
+    public ApiResponse search(@RequestParam(value = "keyword") String keyword) {
+        List<placeInfo> list = apiRepository.findByKeyword(keyword);
+        return ApiResponse.success("data", list);
     }
 
 }

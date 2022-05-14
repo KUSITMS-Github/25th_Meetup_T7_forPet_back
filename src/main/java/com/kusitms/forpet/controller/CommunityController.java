@@ -147,6 +147,7 @@ public class CommunityController {
         return ApiResponse.success("data", communityResponse);
     }
 
+
     /**
      * 게시글 수정
      */
