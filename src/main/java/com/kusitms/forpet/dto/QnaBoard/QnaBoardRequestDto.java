@@ -12,6 +12,5 @@ public class QnaBoardRequestDto {
 
     public String title;
     public String content;
-    private List<String> hashTag = new ArrayList<>();   //해쉬태그 정보
 }
 

@@ -37,16 +37,15 @@ public class QnaBoardController {
 
     //백과사전 글 생성
     @PostMapping("/qnaBoard")
-    public ApiResponse createQnaBoard(//HttpServletRequest request,
+    public ApiResponse createQnaBoard(HttpServletRequest request,
                                       @RequestPart(value = "qnaBoardRequestDto")QnaBoardRequestDto qnaBoardRequestDto,
-                                      @RequestPart(value = "imageList") List<MultipartFile> multipartFiles) {
+                                      @RequestPart(value = "imageList", required = false) List<MultipartFile> multipartFiles) {
 
         //userid 값 가져오기
-        //String accessToken = HeaderUtil.getAccessToken(request);
-        //Long userid = tokenProvider.getUserIdFromToken(accessToken);
+        String accessToken = HeaderUtil.getAccessToken(request);
+        Long userid = tokenProvider.getUserIdFromToken(accessToken);
 
-        Long id = qnaBoardService.createQnaBoard(1L, qnaBoardRequestDto.getTitle(), qnaBoardRequestDto.getContent(),
-                qnaBoardRequestDto.getHashTag(), multipartFiles);
+        Long id = qnaBoardService.createQnaBoard(userid, qnaBoardRequestDto.getTitle(), qnaBoardRequestDto.getContent(), multipartFiles);
 
         return ApiResponse.success("data", id);
     }
@@ -71,20 +70,42 @@ public class QnaBoardController {
 
         for(QnaBoard q : list) {
             if(q.getUser().getRole().equals(Role.FORPET_USER)) {
-                collect.add(new QnaBoardResponseDto(q.getId(),
-                        "반려인",
-                        q.getUser().getNickname(),
-                        q.getTitle(), q.getContent(), q.getCreateDate(),
-                        q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
-                        q.getImageUrlList().split("#")));
+                if(q.getImageUrlList() != null) {
+                    collect.add(new QnaBoardResponseDto(q.getId(),
+                            "반려인",
+                            q.getUser().getNickname(),
+                            q.getTitle(), q.getContent(), q.getCreateDate(),
+                            q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                            q.getImageUrlList().split("#")));
+                }
+                else {
+                    collect.add(new QnaBoardResponseDto(q.getId(),
+                            "반려인",
+                            q.getUser().getNickname(),
+                            q.getTitle(), q.getContent(), q.getCreateDate(),
+                            q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                            null));
+                }
+
             }
+
             if(q.getUser().getRole().equals(Role.USER)) {
-                collect.add(new QnaBoardResponseDto(q.getId(),
-                        "예비반려인",
-                        q.getUser().getNickname(),
-                        q.getTitle(), q.getContent(), q.getCreateDate(),
-                        q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
-                        q.getImageUrlList().split("#")));
+                if(q.getImageUrlList() != null) {
+                    collect.add(new QnaBoardResponseDto(q.getId(),
+                            "예비반려인",
+                            q.getUser().getNickname(),
+                            q.getTitle(), q.getContent(), q.getCreateDate(),
+                            q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                            q.getImageUrlList().split("#")));
+                } else {
+                    collect.add(new QnaBoardResponseDto(q.getId(),
+                            "예비반려인",
+                            q.getUser().getNickname(),
+                            q.getTitle(), q.getContent(), q.getCreateDate(),
+                            q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                            null));
+                }
+
             }
         }
 
@@ -105,20 +126,42 @@ public class QnaBoardController {
 
         for(QnaBoard q : list) {
             if(q.getUser().getRole().equals(Role.FORPET_USER)) {
-                collect.add(new QnaBoardResponseDto(q.getId(),
-                        "반려인",
-                        q.getUser().getNickname(),
-                        q.getTitle(), q.getContent(), q.getCreateDate(),
-                        q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
-                        q.getImageUrlList().split("#")));
+                if(q.getImageUrlList() != null) {
+                    collect.add(new QnaBoardResponseDto(q.getId(),
+                            "반려인",
+                            q.getUser().getNickname(),
+                            q.getTitle(), q.getContent(), q.getCreateDate(),
+                            q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                            q.getImageUrlList().split("#")));
+                }
+                else {
+                    collect.add(new QnaBoardResponseDto(q.getId(),
+                            "반려인",
+                            q.getUser().getNickname(),
+                            q.getTitle(), q.getContent(), q.getCreateDate(),
+                            q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                            null));
+                }
+
             }
+
             if(q.getUser().getRole().equals(Role.USER)) {
-                collect.add(new QnaBoardResponseDto(q.getId(),
-                        "예비반려인",
-                        q.getUser().getNickname(),
-                        q.getTitle(), q.getContent(), q.getCreateDate(),
-                        q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
-                        q.getImageUrlList().split("#")));
+                if(q.getImageUrlList() != null) {
+                    collect.add(new QnaBoardResponseDto(q.getId(),
+                            "예비반려인",
+                            q.getUser().getNickname(),
+                            q.getTitle(), q.getContent(), q.getCreateDate(),
+                            q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                            q.getImageUrlList().split("#")));
+                } else {
+                    collect.add(new QnaBoardResponseDto(q.getId(),
+                            "예비반려인",
+                            q.getUser().getNickname(),
+                            q.getTitle(), q.getContent(), q.getCreateDate(),
+                            q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                            null));
+                }
+
             }
         }
         
@@ -151,20 +194,42 @@ public class QnaBoardController {
 
         for(QnaBoard q : list) {
             if(q.getUser().getRole().equals(Role.FORPET_USER)) {
-                collect.add(new QnaBoardResponseDto(q.getId(),
-                        "반려인",
-                        q.getUser().getNickname(),
-                        q.getTitle(), q.getContent(), q.getCreateDate(),
-                        q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
-                        q.getImageUrlList().split("#")));
+                if(q.getImageUrlList() != null) {
+                    collect.add(new QnaBoardResponseDto(q.getId(),
+                            "반려인",
+                            q.getUser().getNickname(),
+                            q.getTitle(), q.getContent(), q.getCreateDate(),
+                            q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                            q.getImageUrlList().split("#")));
+                }
+                else {
+                    collect.add(new QnaBoardResponseDto(q.getId(),
+                            "반려인",
+                            q.getUser().getNickname(),
+                            q.getTitle(), q.getContent(), q.getCreateDate(),
+                            q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                            null));
+                }
+
             }
+
             if(q.getUser().getRole().equals(Role.USER)) {
-                collect.add(new QnaBoardResponseDto(q.getId(),
-                        "예비반려인",
-                        q.getUser().getNickname(),
-                        q.getTitle(), q.getContent(), q.getCreateDate(),
-                        q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
-                        q.getImageUrlList().split("#")));
+                if(q.getImageUrlList() != null) {
+                    collect.add(new QnaBoardResponseDto(q.getId(),
+                            "예비반려인",
+                            q.getUser().getNickname(),
+                            q.getTitle(), q.getContent(), q.getCreateDate(),
+                            q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                            q.getImageUrlList().split("#")));
+                } else {
+                    collect.add(new QnaBoardResponseDto(q.getId(),
+                            "예비반려인",
+                            q.getUser().getNickname(),
+                            q.getTitle(), q.getContent(), q.getCreateDate(),
+                            q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
+                            null));
+                }
+
             }
         }
         

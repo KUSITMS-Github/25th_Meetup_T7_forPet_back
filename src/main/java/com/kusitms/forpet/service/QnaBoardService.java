@@ -15,6 +15,7 @@ import com.kusitms.forpet.security.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,31 +41,28 @@ public class QnaBoardService {
      */
     @Transactional
     public Long createQnaBoard(Long userid,
-                               String title, String content, List<String> hashTagList,
+                               String title, String content,
                                List<MultipartFile> multipartFiles) {
         //userid로 User 찾기
         User user = userRepository.findById(userid).get();
 
+        QnaBoard qnaBoard = null;
         //리뷰 이미지 s3 저장
-        List<String> imageNameList = s3Uploader.uploadImage(multipartFiles);
-        //리뷰 이미지 url로 변경
-        StringBuilder imageUrlList = new StringBuilder();
-        for (String imageName : imageNameList) {
-            imageUrlList.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
-            imageUrlList.append(imageName);
-            imageUrlList.append("#");
+        if(multipartFiles != null) {
+            List<String> imageNameList = s3Uploader.uploadImage(multipartFiles);
+            //리뷰 이미지 url로 변경
+            StringBuilder imageUrlList = new StringBuilder();
+            for (String imageName : imageNameList) {
+                imageUrlList.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
+                imageUrlList.append(imageName);
+                imageUrlList.append("#");
+            }
+            //qnaBoard 생성
+            qnaBoard= QnaBoard.createQnaBoard(user, title, content, imageUrlList.toString(), null);
+        } else {
+            qnaBoard = QnaBoard.createQnaBoard(user, title, content, null, null);
         }
 
-        //해쉬태그 list -> string 변경
-        StringBuilder hashTagList2 = new StringBuilder();
-        for(String hashTag : hashTagList) {
-            hashTagList2.append(hashTag);
-            hashTagList2.append("/");
-        }
-
-
-        //qnaBoard 생성
-        QnaBoard qnaBoard = QnaBoard.createQnaBoard(user, title, content, imageUrlList.toString(), hashTagList2.toString());
         QnaBoard save = qnaBoardRepository.save(qnaBoard);
 
         return save.getId();
@@ -81,16 +79,32 @@ public class QnaBoardService {
         QnaBoardResponseDto dto = null;
 
         if(qnaBoard.getUser().getRole().equals(Role.USER)){
-            dto = new QnaBoardResponseDto(qnaBoard.getId(), "예비반려인", qnaBoard.getUser().getNickname(),
-                    qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
-                    qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
-                    qnaBoard.getImageUrlList().split("#"));
+            if(qnaBoard.getImageUrlList() != null) {
+                dto = new QnaBoardResponseDto(qnaBoard.getId(), "예비반려인", qnaBoard.getUser().getNickname(),
+                        qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
+                        qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
+                        qnaBoard.getImageUrlList().split("#"));
+            } else {
+                dto = new QnaBoardResponseDto(qnaBoard.getId(), "예비반려인", qnaBoard.getUser().getNickname(),
+                        qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
+                        qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
+                        null);
+            }
+
         }
         if(qnaBoard.getUser().getRole().equals(Role.FORPET_USER)){
-            dto = new QnaBoardResponseDto(qnaBoard.getId(), "반려인", qnaBoard.getUser().getNickname(),
-                    qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
-                    qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
-                    qnaBoard.getImageUrlList().split("#"));
+            if(qnaBoard.getImageUrlList() != null) {
+                dto = new QnaBoardResponseDto(qnaBoard.getId(), "반려인", qnaBoard.getUser().getNickname(),
+                        qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
+                        qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
+                        qnaBoard.getImageUrlList().split("#"));
+            } else {
+                dto = new QnaBoardResponseDto(qnaBoard.getId(), "반려인", qnaBoard.getUser().getNickname(),
+                        qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
+                        qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
+                        null);
+            }
+
         }
 
         return dto;
