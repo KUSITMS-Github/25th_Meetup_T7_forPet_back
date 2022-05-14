@@ -37,19 +37,28 @@ public class QnaBoardController {
 
     //백과사전 글 생성
     @PostMapping("/qnaBoard")
-    public ApiResponse createQnaBoard(HttpServletRequest request,
+    public ApiResponse createQnaBoard(//HttpServletRequest request,
                                       @RequestPart(value = "qnaBoardRequestDto")QnaBoardRequestDto qnaBoardRequestDto,
                                       @RequestPart(value = "imageList") List<MultipartFile> multipartFiles) {
-        //userid 값 가져오기
-        String accessToken = HeaderUtil.getAccessToken(request);
-        Long userid = tokenProvider.getUserIdFromToken(accessToken);
 
-        Long id = qnaBoardService.createQnaBoard(userid, qnaBoardRequestDto.getTitle(), qnaBoardRequestDto.getContent(),
+        //userid 값 가져오기
+        //String accessToken = HeaderUtil.getAccessToken(request);
+        //Long userid = tokenProvider.getUserIdFromToken(accessToken);
+
+        Long id = qnaBoardService.createQnaBoard(1L, qnaBoardRequestDto.getTitle(), qnaBoardRequestDto.getContent(),
                 qnaBoardRequestDto.getHashTag(), multipartFiles);
 
         return ApiResponse.success("data", id);
     }
 
+
+    //백과사전 게시글
+    @GetMapping("/qnaBoard/{boardId}")
+    public ApiResponse getBoardWithComment(@PathVariable(value = "boardId") Long boardId) {
+        QnaBoardResponseDto dto = qnaBoardService.getBoardById(boardId);
+
+        return ApiResponse.success("data", dto);
+    }
 
 
     //백과사전 글 리스트 최신순 조회(페이징)

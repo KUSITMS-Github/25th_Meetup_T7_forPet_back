@@ -13,4 +13,5 @@ public interface CommentQnaRep extends JpaRepository<CommentQna, Long> {
 
     @Query(value = "select distinct c.qna_id from comment_qna c where c.user_id = :userid", nativeQuery = true)
     List<Long> find(Long userid);
+
 }

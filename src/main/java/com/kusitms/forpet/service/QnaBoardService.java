@@ -1,12 +1,19 @@
 package com.kusitms.forpet.service;
 
 import com.kusitms.forpet.domain.BookmarkQna;
+import com.kusitms.forpet.domain.CommentQna;
 import com.kusitms.forpet.domain.QnaBoard;
 import com.kusitms.forpet.domain.User;
+import com.kusitms.forpet.dto.ClickDto;
+import com.kusitms.forpet.dto.QnaBoard.CommentQnaRespDto;
+import com.kusitms.forpet.dto.QnaBoard.QnaBoardResponseDto;
 import com.kusitms.forpet.repository.BookmarkQnaRep;
 import com.kusitms.forpet.repository.CommentQnaRep;
 import com.kusitms.forpet.repository.QnaBoardRep;
 import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.security.Role;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +70,40 @@ public class QnaBoardService {
         return save.getId();
     }
 
+
+    /**
+     * 게시글 조회
+     * @param boardId
+     */
+    public QnaBoardResponseDto getBoardById(Long boardId) {
+        QnaBoard qnaBoard = qnaBoardRepository.findById(boardId).get();
+
+        QnaBoardResponseDto dto = null;
+
+        if(qnaBoard.getUser().getRole().equals(Role.USER)){
+            dto = new QnaBoardResponseDto(qnaBoard.getId(), "예비반려인", qnaBoard.getUser().getNickname(),
+                    qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
+                    qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
+                    qnaBoard.getImageUrlList().split("#"));
+        }
+        if(qnaBoard.getUser().getRole().equals(Role.FORPET_USER)){
+            dto = new QnaBoardResponseDto(qnaBoard.getId(), "반려인", qnaBoard.getUser().getNickname(),
+                    qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
+                    qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
+                    qnaBoard.getImageUrlList().split("#"));
+        }
+
+        return dto;
+
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    public static class Result<T> {
+        private T qnaBoard;
+        private T comment;
+    }
 
 
     /**
@@ -144,5 +186,6 @@ public class QnaBoardService {
         }
         return bookmarkQna.getQnaBoard().getBookmarkQnaList().size();
     }
+
 
 }
