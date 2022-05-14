@@ -38,7 +38,7 @@ public class JoinController {
         User kakaoUser = joinService.findByUserId(userId);
 
         KakaoUserDto userDto = new KakaoUserDto(kakaoUser.getUserId(), kakaoUser.getName(), kakaoUser.getEmail(), kakaoUser.getImageUrl());
-        return ApiResponse.success("user", userDto);
+        return ApiResponse.success("data", userDto);
     }
 
     /*
@@ -98,6 +98,6 @@ public class JoinController {
             userDto.setPetCardNumber(petCard.getCardNumber());
             userDto.setPetCardImageUrl(petCard.getImageUrl());
         }
-        return ApiResponse.created("user", userDto);
+        return ApiResponse.created("data", userDto);
     }
 }
