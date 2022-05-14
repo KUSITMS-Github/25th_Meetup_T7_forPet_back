@@ -2,6 +2,7 @@ package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.BookmarkQna;
 import com.kusitms.forpet.domain.QnaBoard;
+import com.kusitms.forpet.dto.ApiResponse;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardRequestDto;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardResponseDto;
 import com.kusitms.forpet.repository.QnaBoardRep;
@@ -36,23 +37,24 @@ public class QnaBoardController {
 
     //백과사전 글 생성
     @PostMapping("/qnaBoard")
-    public Long createQnaBoard(HttpServletRequest request,
-                               @RequestPart(value = "qnaBoardRequestDto")QnaBoardRequestDto qnaBoardRequestDto,
-                               @RequestPart(value = "imageList") List<MultipartFile> multipartFiles) {
+    public ApiResponse createQnaBoard(HttpServletRequest request,
+                                      @RequestPart(value = "qnaBoardRequestDto")QnaBoardRequestDto qnaBoardRequestDto,
+                                      @RequestPart(value = "imageList") List<MultipartFile> multipartFiles) {
         //userid 값 가져오기
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userid = tokenProvider.getUserIdFromToken(accessToken);
 
-        return qnaBoardService.createQnaBoard(userid, qnaBoardRequestDto.getTitle(), qnaBoardRequestDto.getContent(),
+        Long id = qnaBoardService.createQnaBoard(userid, qnaBoardRequestDto.getTitle(), qnaBoardRequestDto.getContent(),
                 qnaBoardRequestDto.getHashTag(), multipartFiles);
 
+        return ApiResponse.success("data", id);
     }
 
 
 
     //백과사전 글 리스트 최신순 조회(페이징)
     @GetMapping("/qnaBoard/orderByLatest")
-    public Result getQnaBoardByLatest(@PageableDefault(size = 3, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ApiResponse getQnaBoardByLatest(@PageableDefault(size = 3, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<QnaBoard> list = qnaBoardRep.findAll(pageable);
 
@@ -77,7 +79,8 @@ public class QnaBoardController {
             }
         }
 
-        return new Result(list.getNumber(), list.getNumberOfElements(), list.getTotalPages(), list.getTotalElements(), collect);
+        
+        return ApiResponse.success("data", new Result(list.getNumber(), list.getNumberOfElements(), list.getTotalPages(), list.getTotalElements(), collect));
 
     }
 
@@ -85,7 +88,7 @@ public class QnaBoardController {
 
     //백과사전 글 리스트 추천순 조회(페이징)
     @GetMapping("/qnaBoard/orderByLikes")
-    public Result getQnaBoardByLikes(@PageableDefault(size = 3, sort = "likes", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ApiResponse getQnaBoardByLikes(@PageableDefault(size = 3, sort = "likes", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<QnaBoard> list = qnaBoardRep.findAll(pageable);
 
@@ -109,8 +112,8 @@ public class QnaBoardController {
                         q.getImageUrlList().split("#")));
             }
         }
-
-        return new Result(list.getNumber(), list.getNumberOfElements(), list.getTotalPages(), list.getTotalElements(), collect);
+        
+        return ApiResponse.success("data", new Result(list.getNumber(), list.getNumberOfElements(), list.getTotalPages(), list.getTotalElements(), collect));
 
     }
 
@@ -118,7 +121,7 @@ public class QnaBoardController {
 
     //백과사전 글 리스트 검색 조회(페이징)
     @GetMapping("/qnaBoard/search")
-    public Result search(@RequestParam(value = "keyword") String keyword,
+    public ApiResponse search(@RequestParam(value = "keyword") String keyword,
                          @RequestParam(value = "orderBy") String orderBy,
                          @RequestParam(value = "page") int page,
                          Pageable pageable) {
@@ -155,8 +158,8 @@ public class QnaBoardController {
                         q.getImageUrlList().split("#")));
             }
         }
-
-        return new Result(list.getNumber(), list.getNumberOfElements(), list.getTotalPages(), list.getTotalElements(), collect);
+        
+        return ApiResponse.success("data", new Result(list.getNumber(), list.getNumberOfElements(), list.getTotalPages(), list.getTotalElements(), collect));
     }
 
 
@@ -175,34 +178,40 @@ public class QnaBoardController {
 
     //백과사전 좋아요
     @PostMapping("/qnaBoard/{boardId}/like")
-    public int QnaBoardLikes(@PathVariable(value = "boardId") Long boardId) {
-        return qnaBoardService.saveLikes(boardId);
+    public ApiResponse QnaBoardLikes(@PathVariable(value = "boardId") Long boardId) {
+        int cnt = qnaBoardService.saveLikes(boardId);
+        return ApiResponse.success("data", cnt);
     }
 
 
     //백과사전 좋아요 취소
     @PutMapping("/qnaBoard/{boardId}/like")
-    public int deleteQnaBoardLikes(@PathVariable(value = "boardId") Long boardId) {
-        return qnaBoardService.deleteLikes(boardId);
+    public ApiResponse deleteQnaBoardLikes(@PathVariable(value = "boardId") Long boardId) {
+        int cnt = qnaBoardService.deleteLikes(boardId);
+        return ApiResponse.success("data", cnt);
     }
 
 
     //백과사전 북마크 생성
     @PostMapping("/qnaBoard/{boardId}/bookmark")
-    public Map<String, Integer> QnaBoardBookmark(HttpServletRequest request,
+    public ApiResponse QnaBoardBookmark(HttpServletRequest request,
                                                @PathVariable(value = "boardId") Long boardId) {
         //userid 값 가져오기
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userid = tokenProvider.getUserIdFromToken(accessToken);
 
-        return qnaBoardService.createBookmark(userid, boardId);
+        Map<String, Integer> map = qnaBoardService.createBookmark(userid, boardId);
+
+        return ApiResponse.success("data", map);
     }
 
 
     //백과사전 북마크 취소
     @DeleteMapping("/qnaBoard/{bookmarkId}/bookmark")
-    public int deleteBookmark(@PathVariable(value = "bookmarkId") Long bookmarkId) {
-        return qnaBoardService.deleteBookmark(bookmarkId);
+    public ApiResponse deleteBookmark(@PathVariable(value = "bookmarkId") Long bookmarkId) {
+        int cnt = qnaBoardService.deleteBookmark(bookmarkId);
+
+        return ApiResponse.success("data", cnt);
     }
 
 
