@@ -1,17 +1,28 @@
 package com.kusitms.forpet.service;
 
 import com.kusitms.forpet.domain.BookmarkQna;
+import com.kusitms.forpet.domain.CommentQna;
 import com.kusitms.forpet.domain.QnaBoard;
 import com.kusitms.forpet.domain.User;
+import com.kusitms.forpet.dto.ClickDto;
+import com.kusitms.forpet.dto.QnaBoard.CommentQnaRespDto;
+import com.kusitms.forpet.dto.QnaBoard.QnaBoardResponseDto;
 import com.kusitms.forpet.repository.BookmarkQnaRep;
 import com.kusitms.forpet.repository.CommentQnaRep;
 import com.kusitms.forpet.repository.QnaBoardRep;
 import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.security.Role;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +71,40 @@ public class QnaBoardService {
     }
 
 
+    /**
+     * 게시글 조회
+     * @param boardId
+     */
+    public QnaBoardResponseDto getBoardById(Long boardId) {
+        QnaBoard qnaBoard = qnaBoardRepository.findById(boardId).get();
+
+        QnaBoardResponseDto dto = null;
+
+        if(qnaBoard.getUser().getRole().equals(Role.USER)){
+            dto = new QnaBoardResponseDto(qnaBoard.getId(), "예비반려인", qnaBoard.getUser().getNickname(),
+                    qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
+                    qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
+                    qnaBoard.getImageUrlList().split("#"));
+        }
+        if(qnaBoard.getUser().getRole().equals(Role.FORPET_USER)){
+            dto = new QnaBoardResponseDto(qnaBoard.getId(), "반려인", qnaBoard.getUser().getNickname(),
+                    qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
+                    qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
+                    qnaBoard.getImageUrlList().split("#"));
+        }
+
+        return dto;
+
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    public static class Result<T> {
+        private T qnaBoard;
+        private T comment;
+    }
+
 
     /**
      * qnaBoard 좋아요
@@ -77,87 +122,70 @@ public class QnaBoardService {
 
 
     /**
+     * qnaBoard 좋아요 취소
+     * @param boardId
+     */
+    public int deleteLikes(Long boardId) {
+        QnaBoard qnaBoard = qnaBoardRepository.findById(boardId).get();
+        qnaBoard.setLikes(qnaBoard.getLikes()-1);
+        QnaBoard save = qnaBoardRepository.save(qnaBoard);
+
+        return save.getLikes();
+    }
+
+
+
+    /**
      * qnaBoard 북마크
      * @param userid
      * @param boardId
      */
     @Transactional
-    public int createBookmark(Long userid, Long boardId) {
+    public Map<String, Integer> createBookmark(Long userid, Long boardId) {
         User user = userRepository.findById(userid).get();
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId).get();
 
         BookmarkQna bookmarkQna = new BookmarkQna();
         bookmarkQna.setUser(user);
         bookmarkQna.setQnaBoard(qnaBoard);
+
         BookmarkQna save = bookmarkQnaRepository.save(bookmarkQna);
 
-        return save.getQnaBoard().getBookmarkQnaList().size();
-    }
-
-
-    /*
-    @Transactional
-    public Result getQnaBoardByLatest(Pageable pageable) {
-
-        Page<QnaBoard> list = qnaBoardRepository.findAll(pageable);
-
-        int max = 0;
-        Long commentId = 0L;
-        List<QnaBoardResponseDto> collect = new ArrayList<>();
-
-        for(QnaBoard m : list) {
-            System.out.println("QnaBoard:>>>>>>>>>>>>>>>>>>>>>>>>");
-            System.out.println(m.getId());
-            //댓글 중 좋아요 수 최대 찾기
-            List<CommentQna> commentQnaList = m.getCommentQnaList();
-            System.out.println("commentQnaList:>>>>>>>>>>>>>>>>>>>>>>>>");
-            System.out.println(commentQnaList.size());
-            if(commentQnaList.size() != null) {
-            for(CommentQna commentQna : commentQnaList) {
-                if(max <= commentQna.getLikes()) {
-                    max = commentQna.getLikes();
-                    System.out.println("max:>>>>>>>>>>>>>>>>>>>>>>>>");
-                    System.out.println(max);
-                    commentId = commentQna.getId();
-                    System.out.println("commentid:>>>>>>>>>>>>>>>>>>>>>>>>");
-                    System.out.println(commentId);
-                }
-            }
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>");
-            System.out.println(commentId);
-
-            CommentQna c = commentQnaRep.findById(commentId).get();
-
-            collect.add(new QnaBoardResponseDto(m.getId(),
-                            //m.getUser().getTag,
-                            m.getUser().getNickname(),
-                            m.getTitle(), m.getContent(), m.getCreateDate(),
-                            m.getLikes(), m.getBookmarkQnaList().size(), m.getCommentQnaList().size(),
-                            m.getImageUrlList().split("#"),
-                            new CommentQnaRespDto(c.getId(), c.getUser().getImageUrl(), c.getUser().getNickname(),
-                            //c.getUser.getTag,
-                            c.getComment(), c.getCreateDate(), c.getLikes())));
-
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        System.out.println(save.getQnaBoard().getBookmarkQnaList().size());
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        List<BookmarkQna> b = save.getQnaBoard().getBookmarkQnaList();
+        for (BookmarkQna b1 : b) {
+            System.out.println();
         }
 
 
-        return new Result(list.getNumber(), list.getNumberOfElements(), list.getTotalPages(), list.getTotalElements(), collect);
+        Map<String, Integer> map = new HashMap<>();
 
+        map.put("id" , save.getId().intValue());
+        map.put("cnt", save.getQnaBoard().getBookmarkQnaList().size()-1);
+
+
+        return map;
     }
 
 
-    //리턴값
-    @Data
-    @AllArgsConstructor
-    public static class Result<T> {
-        private int number;             //페이지 번호
-        private int numberOfElement;    //페이지 요소 개수
-        private int totalPages;         //전체 페이지 개수
-        private Long totalElements;     //잔체 요소 개수
-        private T data;
-    }
-
+    /**
+     * qnaBoard 북마크 취소
+     * @param bookmarkId
      */
+    public int deleteBookmark(Long bookmarkId) {
+        BookmarkQna bookmarkQna = bookmarkQnaRepository.findById(bookmarkId).get();
+        bookmarkQnaRepository.delete(bookmarkQna);
+
+        List<BookmarkQna> b = bookmarkQna.getQnaBoard().getBookmarkQnaList();
+        for (BookmarkQna b1 : b) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            System.out.println(b1.getId());
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        }
+        return bookmarkQna.getQnaBoard().getBookmarkQnaList().size();
+    }
 
 
 }

@@ -106,7 +106,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                     .authorizeRequests()
                     .antMatchers("/",
                         "/error",
-                        "/favicon.ico").permitAll()
+                        "/favicon.ico", "/qnaBoard/**").permitAll()
                     .antMatchers("/auth/**", "/oauth2/**").permitAll() //로그인
                     .antMatchers("/offline-map/**", "online-map/**").permitAll() //핵심 기능
                     .antMatchers("/signup/**").hasRole("GUEST") // 회원가입

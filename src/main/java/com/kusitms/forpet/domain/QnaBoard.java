@@ -40,12 +40,12 @@ public class QnaBoard {
 
     //백과사전 북마크 연관관계
     @JsonIgnore
-    @OneToMany(mappedBy = "qnaBoard", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "qnaBoard")
     private List<BookmarkQna> bookmarkQnaList = new ArrayList<>();
 
     //백과사전 댓글 연관관계
     @JsonIgnore
-    @OneToMany(mappedBy = "qnaBoard", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "qnaBoard")
     private List<CommentQna> commentQnaList = new ArrayList<>();
 
 

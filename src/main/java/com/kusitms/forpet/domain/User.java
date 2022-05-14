@@ -116,4 +116,5 @@ public class User {
         // 회원
         this.role = Role.USER;
     }
+
 }

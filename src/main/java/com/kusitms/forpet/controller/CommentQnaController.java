@@ -22,14 +22,14 @@ public class CommentQnaController {
 
     //댓글 생성
     @PostMapping("/qnaBoard/{boardId}/comment")
-    public Long commentSave(HttpServletRequest request,
+    public Long commentSave(//HttpServletRequest request,
                             @PathVariable("boardId") Long boardId,
                             @RequestParam String comment) {
 
-        String accessToken = HeaderUtil.getAccessToken(request);
-        Long userid = tokenProvider.getUserIdFromToken(accessToken);
+        //String accessToken = HeaderUtil.getAccessToken(request);
+        //Long userid = tokenProvider.getUserIdFromToken(accessToken);
 
-        return commentQnaService.commentSave(userid, boardId, comment);
+        return commentQnaService.commentSave(1L, boardId, comment);
     }
 
 
@@ -52,5 +52,11 @@ public class CommentQnaController {
     @PostMapping("/qnaBoard/comment/{commentId}/like")
     public int CommentQnaLikes(@PathVariable(value = "commentId") Long commentId) {
         return commentQnaService.saveLikes(commentId);
+    }
+
+    //백과사전 댓글 좋아요 취소
+    @PutMapping("/qnaBoard/comment/{commentId}/like")
+    public int deleteLieks(@PathVariable(value = "commentId") Long commentId) {
+        return commentQnaService.deleteLikes(commentId);
     }
 }
