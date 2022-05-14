@@ -30,25 +30,31 @@ public class ReviewService {
         placeInfo placeInfo = apiRepository.findById(placeid).get();
         User user = userRepository.findById(userid).get();
 
-        //리뷰 이미지 s3 저장
-        List<String> imageNameList = s3Uploader.uploadImage(multipartFiles);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
-        System.out.println(imageNameList);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
-        //리뷰 이미지 url로 변경
-        StringBuilder imageUrlList = new StringBuilder();
-        for (String imageName : imageNameList) {
-            imageUrlList.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
-            imageUrlList.append(imageName);
-            imageUrlList.append("#");
-        }
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
-        System.out.println(imageUrlList);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
+        Review review = null;
 
-        //리뷰 생성
-        Review review = Review.createReview(user,
-                star, content,placeInfo, imageUrlList.toString());
+        if(multipartFiles != null) {
+            //리뷰 이미지 s3 저장
+            List<String> imageNameList = s3Uploader.uploadImage(multipartFiles);
+            System.out.println(">>>>>>>>>>>>>>>>>>>>");
+            System.out.println(imageNameList);
+            System.out.println(">>>>>>>>>>>>>>>>>>>>");
+            //리뷰 이미지 url로 변경
+            StringBuilder imageUrlList = new StringBuilder();
+            for (String imageName : imageNameList) {
+                imageUrlList.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
+                imageUrlList.append(imageName);
+                imageUrlList.append("#");
+            }
+            System.out.println(">>>>>>>>>>>>>>>>>>>>");
+            System.out.println(imageUrlList);
+            System.out.println(">>>>>>>>>>>>>>>>>>>>");
+
+            //리뷰 생성
+            review = Review.createReview(user,star, content,placeInfo, imageUrlList.toString());
+        } else {
+            review = Review.createReview(user,star, content,placeInfo, null);
+        }
+
         // 별점수, 리뷰수 업데이트
         placeInfo = placeInfo.setStarAvgAndReviewCnt(placeInfo);
 
@@ -60,8 +66,13 @@ public class ReviewService {
     }
 
 
+    /*
     public List<Review> findReviewByPlaceId(Long placeid) {
-        return reviewRepository.findByplaceInfo(placeid);
+        List<Review> list = reviewRepository.findByplaceInfo(placeid);
+
+
     }
+
+     */
 }
 

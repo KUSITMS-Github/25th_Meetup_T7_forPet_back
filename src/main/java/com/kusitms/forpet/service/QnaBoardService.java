@@ -1,11 +1,8 @@
 package com.kusitms.forpet.service;
 
 import com.kusitms.forpet.domain.BookmarkQna;
-import com.kusitms.forpet.domain.CommentQna;
 import com.kusitms.forpet.domain.QnaBoard;
 import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.dto.ClickDto;
-import com.kusitms.forpet.dto.QnaBoard.CommentQnaRespDto;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardResponseDto;
 import com.kusitms.forpet.repository.BookmarkQnaRep;
 import com.kusitms.forpet.repository.CommentQnaRep;
@@ -15,7 +12,6 @@ import com.kusitms.forpet.security.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
