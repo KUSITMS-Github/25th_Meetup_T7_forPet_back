@@ -88,6 +88,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             Long userId = tokenProvider.getUserIdFromExpiredToken(expiredToken);
             User user = User.builder()
                     .userId(userId).build();
+            System.out.println("userID : " + userId + ", refresh token : " + refreshToken);
             UserRefreshToken userRefreshToken = userService.findByUserIdAndRefreshToken(user, refreshToken);
             if(userRefreshToken == null) {
                 return "denied";

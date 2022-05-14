@@ -19,18 +19,18 @@ public class OnlineMapController {
     private final OnlineMapService onlineMapService;
 
     @GetMapping("")
-    public Result getAllClick() {
+    public ApiResponse getAllClick() {
         List<MapClickCount> list = onlineMapService.getAllClickCnt();
         //entity -> dto 변환
         List<ClickDto> collect = list.stream().map(m -> new ClickDto(m.getId(), m.getClickCnt()))
                 .collect(Collectors.toList());
-        return new Result(collect.size(), collect);
+        return ApiResponse.success("data", new Result(collect.size(), collect));
     }
 
     @PutMapping("/{id}")
     public ApiResponse updateClickCnt(@PathVariable Long id) {
         long clickCnt = onlineMapService.click(id);
-        return ApiResponse.success("clickCnt", clickCnt);
+        return ApiResponse.success("data", clickCnt);
     }
 
     //리턴값
