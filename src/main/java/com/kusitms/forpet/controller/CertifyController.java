@@ -51,7 +51,7 @@ public class CertifyController {
             result.put("certifiedPetCard", true);
         }
 
-        return ApiResponse.success("result", result);
+        return ApiResponse.success("data", result);
     }
 
     /**
@@ -67,7 +67,7 @@ public class CertifyController {
 
         PetCard petCard = petCardService.createPetCardByUserId(userId, petCardImage, petCardNumber);
 
-        return ApiResponse.success("result", petCard);
+        return ApiResponse.success("data", petCard);
     }
 
     /**
@@ -83,7 +83,7 @@ public class CertifyController {
         user.updateAddress(address.getAddressList());
         userService.save(user);
 
-        return ApiResponse.created("result", address);
+        return ApiResponse.created("data", address);
     }
 
 }
