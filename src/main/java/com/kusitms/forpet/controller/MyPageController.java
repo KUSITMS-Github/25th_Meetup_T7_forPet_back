@@ -66,7 +66,7 @@ public class MyPageController {
 
 
     @GetMapping("/mypage/bookmark/board")
-    public MyPageService.Result getBookmarkBoard(HttpServletRequest request) {
+    public List<HistoryBoardDTO> getBookmarkBoard(HttpServletRequest request) {
 
         //userid 값 가져오기
         String accessToken = HeaderUtil.getAccessToken(request);

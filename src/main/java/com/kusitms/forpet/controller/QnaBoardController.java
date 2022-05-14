@@ -1,5 +1,6 @@
 package com.kusitms.forpet.controller;
 
+import com.kusitms.forpet.domain.BookmarkQna;
 import com.kusitms.forpet.domain.QnaBoard;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardRequestDto;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardResponseDto;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -178,15 +180,29 @@ public class QnaBoardController {
     }
 
 
+    //백과사전 좋아요 취소
+    @PutMapping("/qnaBoard/{boardId}/like")
+    public int deleteQnaBoardLikes(@PathVariable(value = "boardId") Long boardId) {
+        return qnaBoardService.deleteLikes(boardId);
+    }
+
+
     //백과사전 북마크 생성
     @PostMapping("/qnaBoard/{boardId}/bookmark")
-    public int QnaBoardBookmark(HttpServletRequest request,
-                                @PathVariable(value = "boardId") Long boardId) {
+    public Map<String, Integer> QnaBoardBookmark(HttpServletRequest request,
+                                               @PathVariable(value = "boardId") Long boardId) {
         //userid 값 가져오기
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userid = tokenProvider.getUserIdFromToken(accessToken);
 
         return qnaBoardService.createBookmark(userid, boardId);
+    }
+
+
+    //백과사전 북마크 취소
+    @DeleteMapping("/qnaBoard/{bookmarkId}/bookmark")
+    public int deleteBookmark(@PathVariable(value = "bookmarkId") Long bookmarkId) {
+        return qnaBoardService.deleteBookmark(bookmarkId);
     }
 
 

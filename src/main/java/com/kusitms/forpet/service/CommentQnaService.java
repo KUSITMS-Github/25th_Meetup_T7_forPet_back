@@ -47,6 +47,7 @@ public class CommentQnaService {
      * 백과사전 게시글별 전체 댓글 조회
      * @param boardId
      */
+    @Transactional
     public List<CommentQnaRespDto> getCommentList(Long boardId) {
         List<CommentQna> list = commentQnaRep.findAllByqnaBoard(boardId);
 
@@ -82,6 +83,20 @@ public class CommentQnaService {
     public int saveLikes(Long commentId) {
         CommentQna commentQna = commentQnaRep.findById(commentId).get();
         commentQna.setLikes(commentQna.getLikes()+1);
+        CommentQna save = commentQnaRep.save(commentQna);
+
+        return save.getLikes();
+    }
+
+    /**
+     * 댓글 좋아요 취소
+     * @param commentId
+     * @return
+     */
+    @Transactional
+    public int deleteLikes(Long commentId) {
+        CommentQna commentQna = commentQnaRep.findById(commentId).get();
+        commentQna.setLikes(commentQna.getLikes()-1);
         CommentQna save = commentQnaRep.save(commentQna);
 
         return save.getLikes();

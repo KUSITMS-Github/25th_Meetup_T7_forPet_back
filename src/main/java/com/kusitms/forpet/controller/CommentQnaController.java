@@ -53,4 +53,10 @@ public class CommentQnaController {
     public int CommentQnaLikes(@PathVariable(value = "commentId") Long commentId) {
         return commentQnaService.saveLikes(commentId);
     }
+
+    //백과사전 댓글 좋아요 취소
+    @PutMapping("/qnaBoard/comment/{commentId}/like")
+    public int deleteLieks(@PathVariable(value = "commentId") Long commentId) {
+        return commentQnaService.deleteLikes(commentId);
+    }
 }

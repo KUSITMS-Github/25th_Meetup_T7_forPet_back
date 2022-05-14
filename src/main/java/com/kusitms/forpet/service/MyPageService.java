@@ -92,7 +92,7 @@ public class MyPageService {
      * 마이페이지 북마크(커뮤니티, 백과사전)
      * @param userid
      */
-    public Result getBookmarkBoard(Long userid) {
+    public List<HistoryBoardDTO> getBookmarkBoard(Long userid) {
 
         User user = userRepository.findById(userid).get();
 
@@ -109,7 +109,9 @@ public class MyPageService {
                 .collect(Collectors.toList());
 
         //return new Result<, QnaCollect>();
-        return new Result(1,1);
+        //return new Result(1,1);
+
+        return QnaCollect;
     }
 
 
