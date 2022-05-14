@@ -34,9 +34,7 @@ public class User {
     // 회원가입으로 받게 되는 추가 정보
     private String nickname;
     private String phone;
-    private String address1;
-    private String address2;
-    private String address3;
+    private String address;
     private String customImageUrl;
 
     @Enumerated(EnumType.STRING)
@@ -105,13 +103,16 @@ public class User {
         this.customImageUrl = customImageUrl;
     }
 
+    // 동네 등록
+    public void updateAddress(String address) {
+        this.address = address;
+    }
+
     // 회원가입
-    public void signupUser(String nickname, String phone, SignUpDto.Address address) {
+    public void signupUser(String nickname, String phone, String address) {
         this.nickname = nickname;
         this.phone = phone;
-        this.address1 = address.getAddr1();
-        this.address2 = address.getAddr2();
-        this.address3 = address.getAddr3();
+        this.address = address;
         // 회원
         this.role = Role.USER;
     }

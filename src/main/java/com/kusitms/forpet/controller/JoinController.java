@@ -112,11 +112,15 @@ public class JoinController {
         CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
         CookieUtils.addCookie(response, REFRESH_TOKEN, token.get(1), cookieMaxAge);
 
+        // 주소
+        SignUpDto.Address address = new SignUpDto.Address();
+        address.setAddress(user.getAddress());
+
         UserDto userDto = new UserDto(user.getUserId(), user.getName(), user.getEmail(), user.getImageUrl(), user.getNickname(), user.getPhone(), null,
-                new SignUpDto.Address(user.getAddress1(), user.getAddress2(), user.getAddress3()), null, user.getCustomImageUrl(), token.get(0));
+                address, null, user.getCustomImageUrl(), token.get(0));
 
         if(!petCardImage.getOriginalFilename().equals("")) {
-            PetCard petCard = petCardService.createPerCardByUserId(id, petCardImage, dto.getPetCardNumber());
+            PetCard petCard = petCardService.createPetCardByUserId(id, petCardImage, dto.getPetCardNumber());
             userDto.setPetCardNumber(petCard.getCardNumber());
             userDto.setPetCardImageUrl(petCard.getImageUrl());
         }
