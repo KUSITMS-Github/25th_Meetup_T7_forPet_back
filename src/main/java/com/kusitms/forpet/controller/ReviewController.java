@@ -40,22 +40,16 @@ public class ReviewController {
     }
 
 
-    /*
+
     //마커 선택(리뷰 정보)
     @GetMapping("/offline-map/{placeid}/marker/review")
     public ApiResponse getReviewByMarker(@PathVariable("placeid") Long placeid) {
-        List<Review> list = reviewService.findReviewByPlaceId(placeid);
 
-
-        //entity -> dto 변환
-        List<ReviewDto> collect = list.stream().map(m -> new ReviewDto(m.getId(), m.getUser().getNickname(), m.getUser().getImageUrl(), m.getStar(), m.getContent(),
-                        m.getCreateDate(), m.getImageUrlList().split("#")))
-                .collect(Collectors.toList());
-
-        return ApiResponse.success("data", collect);
+        List<ReviewDto> list = reviewService.findReviewByPlaceId(placeid);
+        return ApiResponse.success("data", list);
     }
 
-     */
+
 
 }
 
