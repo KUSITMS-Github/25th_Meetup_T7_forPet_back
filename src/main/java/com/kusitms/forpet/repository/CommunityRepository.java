@@ -26,7 +26,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
                                              @Param("addr3")String addr3);
 
     @Query(value= "SELECT * FROM community c " +
-            "WHERE c.category = :category " +
+            "WHERE c.category LIKE %:category% " +
             "AND (c.address LIKE %:addr1% OR c.address LIKE %:addr2% OR c.address LIKE %:addr3%) " +
             "ORDER BY c.date DESC", nativeQuery = true)
     List<Community> findByCategoryAndAddress(@Param("category") String category,

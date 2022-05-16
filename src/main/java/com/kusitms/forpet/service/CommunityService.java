@@ -1,10 +1,10 @@
 package com.kusitms.forpet.service;
 
-import com.kusitms.forpet.domain.Category;
-import com.kusitms.forpet.domain.Community;
-import com.kusitms.forpet.domain.User;
+import com.kusitms.forpet.domain.*;
 import com.kusitms.forpet.dto.CommunityDto;
+import com.kusitms.forpet.repository.BookmarkCommRepository;
 import com.kusitms.forpet.repository.CommunityRepository;
+import com.kusitms.forpet.repository.LikesCommRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +20,8 @@ import java.util.Optional;
 public class CommunityService {
     private final S3Uploader s3Uploader;
     private final CommunityRepository communityRepository;
+    private final LikesCommRepository likesCommRepository;
+    private final BookmarkCommRepository bookmarkCommRepository;
     private final static String NO_ADDRESS = "x";
 
     /**
@@ -42,15 +44,15 @@ public class CommunityService {
     /**
      * 카테고리 포스트 - 페이지네이션 필요 없음.
      */
-    public List<Community> findByCategoryAndAddress(Category category, String[] addressList) {
+    public List<Community> findByCategoryAndAddress(String category, String[] addressList) {
         if(addressList.length == 1) {
-            return communityRepository.findByCategoryAndAddress(category.getValue(),
+            return communityRepository.findByCategoryAndAddress(category,
                     addressList[0], NO_ADDRESS, NO_ADDRESS);
         } else if(addressList.length == 2) {
-            return communityRepository.findByCategoryAndAddress(category.getValue(),
+            return communityRepository.findByCategoryAndAddress(category,
                     addressList[0], addressList[1], NO_ADDRESS);
         } else {
-            return communityRepository.findByCategoryAndAddress(category.getValue(),
+            return communityRepository.findByCategoryAndAddress(category,
                     addressList[0], addressList[1], addressList[2]);
         }
     }
@@ -58,16 +60,16 @@ public class CommunityService {
     /**
      * 카테고리 포스트 - 페이지네이션
      */
-    public List<Community> findByCategoryAndAddress(Category category, String[] addressList, int page, int size) {
+    public List<Community> findByCategoryAndAddress(String category, String[] addressList, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if(addressList.length == 1) {
-            return communityRepository.findByCategoryAndAddress(category.getValue(),
+            return communityRepository.findByCategoryAndAddress(category,
                     addressList[0], NO_ADDRESS, NO_ADDRESS, pageable);
         } else if(addressList.length == 2) {
-            return communityRepository.findByCategoryAndAddress(category.getValue(),
+            return communityRepository.findByCategoryAndAddress(category,
                     addressList[0], addressList[1], NO_ADDRESS, pageable);
         } else {
-            return communityRepository.findByCategoryAndAddress(category.getValue(),
+            return communityRepository.findByCategoryAndAddress(category,
                     addressList[0], addressList[1], addressList[2], pageable);
         }
     }
@@ -133,11 +135,11 @@ public class CommunityService {
 
         // 포스트 저장
         Community newComm = Community.builder()
-                .userId(user)
+                .user(user)
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .imageUrlList(imageUrlList.toString())
-                .category(Category.valueOf(requestDto.getCategory()))
+                .category(requestDto.getCategory())
                 .address(user.getAddress())
                 .build();
 
@@ -168,10 +170,11 @@ public class CommunityService {
         System.out.println(imageUrlList);
         System.out.println(">>>>>>>>>>>>>>>>>>>>");
 
+
         // 포스트 수정
         Optional<Community> community = communityRepository.findById(postId);
         if(community.isPresent()) {
-            community.get().update(requestDto.getTitle(), requestDto.getContent(), imageUrlList.toString(), Category.valueOf(requestDto.getCategory()), user.getAddress());
+            community.get().update(requestDto.getTitle(), requestDto.getContent(), imageUrlList.toString(), requestDto.getCategory(), user.getAddress());
             communityRepository.saveAndFlush(community.get());
         }
         return community.get().getPostId();
@@ -180,5 +183,113 @@ public class CommunityService {
     public Long deletePost(Long postId) {
         communityRepository.deleteById(postId);
         return postId;
+    }
+
+    /**
+     * 게시글 좋아요
+     */
+    @Transactional
+    public int saveLikes(User user, Long postId) {
+        Optional<Community> comm = communityRepository.findById(postId);
+        Community community = null;
+        LikesComm likesComm = null;
+        if(comm.isPresent()) {
+            community = comm.get();
+
+            likesComm = new LikesComm();
+            likesComm.setUser(user);
+            likesComm.setCommunity(community);
+
+            likesCommRepository.save(likesComm);
+        }
+
+        return likesComm.getCommunity().getLikesCommList().size()-1;
+    }
+
+    /**
+     * 게시글 좋아요 취소
+     */
+    @Transactional
+    public int deleteLikes(User user, Long postId) {
+        Optional<Community> comm = communityRepository.findById(postId);
+        Community community = null;
+        LikesComm likesComm = null;
+        if(comm.isPresent()) {
+            community = comm.get();
+
+            likesComm = likesCommRepository.findByCommunityAndUser(community, user).get();
+            likesComm.getCommunity().getLikesCommList().remove(likesComm);
+
+            communityRepository.save(community);
+            likesCommRepository.delete(likesComm);
+        }
+
+        return likesComm.getCommunity().getLikesCommList().size();
+    }
+
+    /**
+     * 좋아요 여부 확인( 좋아요 했다면 true)
+     */
+    @Transactional
+    public boolean getLikes(User user, Community community) {
+        Optional<LikesComm> likesComm = likesCommRepository.findByCommunityAndUser(community, user);
+            if(likesComm.isPresent()) {
+                return true;
+            }
+        return false;
+    }
+
+    /**
+     * 게시글 북마크
+     */
+    @Transactional
+    public int saveBookMark(User user, Long postId) {
+        Optional<Community> comm = communityRepository.findById(postId);
+        Community community = null;
+        BookmarkComm bookmarkComm = null;
+        if(comm.isPresent()) {
+            community = comm.get();
+
+            bookmarkComm = new BookmarkComm();
+            bookmarkComm.setUser(user);
+            bookmarkComm.setCommunity(community);
+
+            bookmarkCommRepository.save(bookmarkComm);
+        }
+
+        return bookmarkComm.getCommunity().getBookmarkCommList().size()-1;
+    }
+
+    /**
+     * 게시글 좋아요 취소
+     */
+    @Transactional
+    public int deleteBookMark(User user, Long postId) {
+        Optional<Community> comm = communityRepository.findById(postId);
+        Community community = null;
+        BookmarkComm bookmarkComm = null;
+        if(comm.isPresent()) {
+            community = comm.get();
+
+            bookmarkComm = bookmarkCommRepository.findByCommunityAndUser(community, user).get();
+            bookmarkComm.getCommunity().getBookmarkCommList().remove(bookmarkComm);
+
+            communityRepository.save(community);
+            bookmarkCommRepository.delete(bookmarkComm);
+        }
+
+        return bookmarkComm.getCommunity().getBookmarkCommList().size();
+    }
+
+    /**
+     * 좋아요 여부 확인( 좋아요 했다면 true)
+     */
+    @Transactional
+    public boolean getBookMark(User user, Community community) {
+        Optional<BookmarkComm> bookmarkComm = bookmarkCommRepository.findByCommunityAndUser(community, user);
+        if(bookmarkComm.isPresent()) {
+            return true;
+        }
+        return false;
     }
 }

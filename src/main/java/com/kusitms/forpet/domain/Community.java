@@ -1,5 +1,6 @@
 package com.kusitms.forpet.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,8 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "community")
@@ -24,28 +27,23 @@ public class Community {
      */
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
     private String title;
     private String content;
 
     private LocalDateTime date;
 
-    @ColumnDefault("0")
-    private Long thumbsUpCnt;
-
     @Lob
     private String imageUrlList;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Category category;
+    private String category;
 
     private String address;
 
     @Builder
-    private Community(User userId, String title, String content, String imageUrlList, Category category, String address) {
-        this.userId = userId;
+    private Community(User user, String title, String content, String imageUrlList, String category, String address) {
+        this.user = user;
         this.title = title;
         this.content = content;
         this.date = LocalDateTime.now();
@@ -55,20 +53,23 @@ public class Community {
     }
 
     /**
-    * 추천수 증가
-     */
-    public void updateThumbsUpCnt() {
-        this.thumbsUpCnt++;
-    }
-
-    /**
      * 포스트 수정
      */
-    public void update(String title, String content, String imageUrlList, Category category, String address) {
+    public void update(String title, String content, String imageUrlList, String category, String address) {
         this.title = title;
         this.content = content;
         this.imageUrlList = imageUrlList;
         this.category = category;
         this.address = address;
     }
+
+    // 북마크(Community) 참조 관계
+    @JsonIgnore
+    @OneToMany(mappedBy = "community")
+    private List<BookmarkComm> bookmarkCommList = new ArrayList<>();
+
+    // 좋아요(Community 참조 관계)
+    @JsonIgnore
+    @OneToMany(mappedBy = "community")
+    private List<LikesComm> likesCommList = new ArrayList<>();
 }

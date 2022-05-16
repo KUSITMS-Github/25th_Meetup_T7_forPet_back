@@ -68,7 +68,20 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<CommentQna> commentQnaList = new ArrayList<>();
 
+    // Community 참조관계
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Community> communityList = new ArrayList<>();
 
+    // 북마크(Community) 참조 관계
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<BookmarkComm> bookmarkCommList = new ArrayList<>();
+
+    // 좋아요(Community 참조 관계)
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<LikesComm> likesCommList = new ArrayList<>();
 
     @Builder(builderClassName= "social", builderMethodName = "socialBuilder")
     private User(String name, @Email String email, String imageUrl, Role role) {
