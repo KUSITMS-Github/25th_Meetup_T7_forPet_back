@@ -63,33 +63,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
-        //refresh 토큰 설정
-        String refreshToken = tokenProvider.createRefreshToken(authentication);
-        // refresh 토큰 DB 저장
-        // userId로 DB 확인
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(user);
-        if(userRefreshToken != null) {
-            // DB에 refresh token 업데이트
-            userRefreshToken.setRefreshToken(refreshToken);
-        } else {
-            // 없는 경우 새로 등록
-            userRefreshToken = new UserRefreshToken();
-            userRefreshToken.setUserId(user);
-            userRefreshToken.setRefreshToken(refreshToken);
-            userRefreshTokenRepository.saveAndFlush(userRefreshToken);
-        }
-
-        int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
-
-        CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
-
-        String accessToken = tokenProvider.createAccessToken(authentication);
-
-        System.out.println(accessToken);
-
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", accessToken)
+                .queryParam("id", user.getUserId())
                 .build().toUriString();
     }
 

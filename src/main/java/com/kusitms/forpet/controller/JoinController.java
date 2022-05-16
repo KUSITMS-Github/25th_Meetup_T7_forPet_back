@@ -4,10 +4,12 @@ import com.kusitms.forpet.config.AppProperties;
 import com.kusitms.forpet.domain.PetCard;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.dto.*;
+import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.JWTTokenService;
 import com.kusitms.forpet.service.JoinService;
 import com.kusitms.forpet.service.PetCardService;
 import com.kusitms.forpet.util.CookieUtils;
+import com.kusitms.forpet.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,18 +28,27 @@ import static com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRe
 public class JoinController {
     private final JoinService joinService;
     private final PetCardService petCardService;
+    private final TokenProvider tokenProvider;
     private final JWTTokenService jwtTokenService;
-    private final AppProperties appProperties;
 
     /*
         카카오 회원 정보 반환
      */
-    @GetMapping("/{id}")
-    public ApiResponse getUserInfo(@PathVariable String id) {
-        Long userId = Long.valueOf(id);
+    @GetMapping("")
+    public ApiResponse getUserInfo(HttpServletRequest request) {
+        String accessToken = HeaderUtil.getAccessToken(request);
+
+        // 회원가입 시 가져오는 token은 유효하지 않을 수 있음.
+        Long userId;
+        if(!tokenProvider.isExpiredToken(accessToken)) {
+            userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
+        } else {
+            userId = tokenProvider.getUserIdFromToken(accessToken);
+        }
         User kakaoUser = joinService.findByUserId(userId);
 
         KakaoUserDto userDto = new KakaoUserDto(kakaoUser.getUserId(), kakaoUser.getName(), kakaoUser.getEmail(), kakaoUser.getImageUrl());
+
         return ApiResponse.success("data", userDto);
     }
 
@@ -45,9 +56,9 @@ public class JoinController {
     닉네임 중복 체크
      */
     @GetMapping("/check/nickname")
-    public ResponseEntity<Boolean> checkNickname(@RequestParam String nickname) {
+    public ApiResponse checkNickname(@RequestParam String nickname) {
         boolean isDuplicate = joinService.findByNickname(nickname);
-        return ResponseEntity.ok(isDuplicate);
+        return ApiResponse.success("isDuplicate", isDuplicate);
     }
 
     /*
@@ -70,31 +81,30 @@ public class JoinController {
     /*
     회원가입
     */
-    @PostMapping("/{id}")
-    public ApiResponse signup(@PathVariable Long id,
-                              @RequestPart(value ="signup_dto") SignUpDto dto,
+    @PostMapping("")
+    public ApiResponse signup(@RequestPart(value ="signup_dto") SignUpDto dto,
                               @RequestPart(value = "profile_image", required=false) MultipartFile profileImage,
                               @RequestPart(value = "pet_card_image", required=false) MultipartFile petCardImage,
                               HttpServletRequest request, HttpServletResponse response) {
 
-        User user = joinService.createUser(id, dto, profileImage);
-        // token 발급
-        List<String> token = jwtTokenService.createJWTToken(user);
+        String accessToken = HeaderUtil.getAccessToken(request);
 
-        int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
+        // 회원가입을 진행하며 token이 만료되었을 수 있다.
+        Long userId;
+        if(!tokenProvider.isExpiredToken(accessToken)) {
+            userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
+        } else {
+            userId = tokenProvider.getUserIdFromToken(accessToken);
+        }
 
-        CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtils.addCookie(response, REFRESH_TOKEN, token.get(1), cookieMaxAge);
-
-        // 주소
-        SignUpDto.Address address = new SignUpDto.Address();
-        address.setAddress(user.getAddress());
+        User user = joinService.createUser(userId, dto, profileImage);
+        accessToken = jwtTokenService.createJWTToken(user, request, response);
 
         UserDto userDto = new UserDto(user.getUserId(), user.getName(), user.getEmail(), user.getImageUrl(), user.getNickname(), user.getPhone(), null,
-                address, null, user.getCustomImageUrl(), token.get(0));
+                user.getAddress().split("#"), null, user.getCustomImageUrl(), accessToken);
 
         if(!petCardImage.getOriginalFilename().equals("")) {
-            PetCard petCard = petCardService.createPetCardByUserId(id, petCardImage, dto.getPetCardNumber());
+            PetCard petCard = petCardService.createPetCardByUserId(userId, petCardImage, dto.getPetCardNumber());
             userDto.setPetCardNumber(petCard.getCardNumber());
             userDto.setPetCardImageUrl(petCard.getImageUrl());
         }

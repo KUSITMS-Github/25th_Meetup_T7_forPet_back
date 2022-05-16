@@ -19,12 +19,11 @@ public class UserDto {
     private String phoneNumber;
     @JsonProperty("pet_card_number")
     private String petCardNumber;
-    private SignUpDto.Address address;
+    private String[] address;
 
     private String petCardImageUrl;
     private String customImageUrl;
 
-    @JsonProperty("access_token")
-    private String accessToken;
+    private String token;
 
 }

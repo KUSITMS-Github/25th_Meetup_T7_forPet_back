@@ -6,6 +6,7 @@ import com.kusitms.forpet.domain.UserRefreshToken;
 import com.kusitms.forpet.dto.ApiResponse;
 import com.kusitms.forpet.dto.LoginDto;
 import com.kusitms.forpet.security.TokenProvider;
+import com.kusitms.forpet.service.JWTTokenService;
 import com.kusitms.forpet.service.UserService;
 import com.kusitms.forpet.util.CookieUtils;
 import com.kusitms.forpet.util.HeaderUtil;
@@ -17,12 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
 
     private final TokenProvider tokenProvider;
+    private final JWTTokenService jwtTokenService;
     private final UserService userService;
     private final AppProperties appProperties;
 
@@ -30,20 +33,27 @@ public class AuthController {
     private final static String REFRESH_TOKEN = "refresh_token";
 
     /*
-    oauth2에서 redirect 되는 uri에 token이 함께 온다.
+     리다이렉트된 id를 다시 받아와 회원가입 여부를 반환
      */
-    @GetMapping("/oauth2/redirect")
-    public ApiResponse login(@RequestParam(value="token") String token) {
-        Long userId = tokenProvider.getUserIdFromToken(token);
-        User user = userService.findByUserId(userId);
+    @GetMapping("/auth/signup")
+    public ApiResponse isSignUp(@RequestParam(value="id") Long id,
+                                HttpServletRequest request,
+                                HttpServletResponse response) {
+        boolean isSignUp = true;
+        String accessToken = null;
 
-        boolean isSignup = true;
-        // 회원 가입이 필요한 경우
-        if(user.getName() == null) {
-            isSignup = false;
+        // 1. id로 회원가입 여부 확인
+        User user = userService.findByUserId(id);
+        if(user.getNickname() == null) {
+            // 회원가입이 되어 있지 않다면 access token 발급
+            isSignUp = false;
+            accessToken = jwtTokenService.createJWTToken(user);
+        } else {
+            // 회원가입이 되어 있다면 access token 발급과 refresh token 쿠키 저장
+            accessToken = jwtTokenService.createJWTToken(user, request, response);
         }
 
-        return ApiResponse.success("data", new LoginDto(token, isSignup));
+        return ApiResponse.success("data", new LoginDto(isSignUp, accessToken));
     }
 
     // access token 재발급
