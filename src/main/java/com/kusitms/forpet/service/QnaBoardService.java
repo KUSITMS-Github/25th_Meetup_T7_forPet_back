@@ -3,7 +3,7 @@ package com.kusitms.forpet.service;
 import com.kusitms.forpet.domain.BookmarkQna;
 import com.kusitms.forpet.domain.QnaBoard;
 import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.dto.QnaBoard.QnaBoardResponseDto;
+import com.kusitms.forpet.dto.QnaBoard.QnaBoardResByIdDto;
 import com.kusitms.forpet.repository.BookmarkQnaRep;
 import com.kusitms.forpet.repository.CommentQnaRep;
 import com.kusitms.forpet.repository.QnaBoardRep;
@@ -69,19 +69,26 @@ public class QnaBoardService {
      * 게시글 조회
      * @param boardId
      */
-    public QnaBoardResponseDto getBoardById(Long boardId) {
+    public QnaBoardResByIdDto getBoardById(Long userid, Long boardId) {
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId).get();
 
-        QnaBoardResponseDto dto = null;
+        // 접속한 사용자가 북마크 했는지 여부 판단
+        boolean toggle = false;
+        List<BookmarkQna> byUserAndQna = bookmarkQnaRepository.findByUserAndQna(userid, boardId);
+        if (byUserAndQna != null) {
+            toggle = true;
+        }
+
+        QnaBoardResByIdDto dto = null;
 
         if(qnaBoard.getUser().getRole().equals(Role.USER)){
             if(qnaBoard.getImageUrlList() != null) {
-                dto = new QnaBoardResponseDto(qnaBoard.getId(), "예비반려인", qnaBoard.getUser().getNickname(),
+                dto = new QnaBoardResByIdDto(qnaBoard.getId(), toggle, "예비반려인", qnaBoard.getUser().getNickname(),
                         qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
                         qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
                         qnaBoard.getImageUrlList().split("#"));
             } else {
-                dto = new QnaBoardResponseDto(qnaBoard.getId(), "예비반려인", qnaBoard.getUser().getNickname(),
+                dto = new QnaBoardResByIdDto(qnaBoard.getId(), toggle, "예비반려인", qnaBoard.getUser().getNickname(),
                         qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
                         qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
                         null);
@@ -90,12 +97,12 @@ public class QnaBoardService {
         }
         if(qnaBoard.getUser().getRole().equals(Role.FORPET_USER)){
             if(qnaBoard.getImageUrlList() != null) {
-                dto = new QnaBoardResponseDto(qnaBoard.getId(), "반려인", qnaBoard.getUser().getNickname(),
+                dto = new QnaBoardResByIdDto(qnaBoard.getId(),toggle, "반려인", qnaBoard.getUser().getNickname(),
                         qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
                         qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
                         qnaBoard.getImageUrlList().split("#"));
             } else {
-                dto = new QnaBoardResponseDto(qnaBoard.getId(), "반려인", qnaBoard.getUser().getNickname(),
+                dto = new QnaBoardResByIdDto(qnaBoard.getId(), toggle,"반려인", qnaBoard.getUser().getNickname(),
                         qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
                         qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
                         null);
@@ -144,7 +151,6 @@ public class QnaBoardService {
     }
 
 
-
     /**
      * qnaBoard 북마크
      * @param userid
@@ -159,24 +165,22 @@ public class QnaBoardService {
         bookmarkQna.setUser(user);
         bookmarkQna.setQnaBoard(qnaBoard);
 
-        BookmarkQna save = bookmarkQnaRepository.save(bookmarkQna);
+        //중복 북마크 방지
+        if(isNotAlreadyLike(userid, boardId)) {
+            BookmarkQna save = bookmarkQnaRepository.save(bookmarkQna);
+            Map<String, Integer> map = new HashMap<>();
+            map.put("id" , save.getId().intValue());
+            map.put("cnt", save.getQnaBoard().getBookmarkQnaList().size());
 
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        System.out.println(save.getQnaBoard().getBookmarkQnaList().size());
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        List<BookmarkQna> b = save.getQnaBoard().getBookmarkQnaList();
-        for (BookmarkQna b1 : b) {
-            System.out.println();
-        }
+            return map;
 
+        } else
+            return null;
+    }
 
-        Map<String, Integer> map = new HashMap<>();
-
-        map.put("id" , save.getId().intValue());
-        map.put("cnt", save.getQnaBoard().getBookmarkQnaList().size()-1);
-
-
-        return map;
+    //사용자가 이미 북마크 한 게시물인지 체크
+    private boolean isNotAlreadyLike(Long userid, Long boardId) {
+        return bookmarkQnaRepository.findByUserAndQna(userid, boardId).isEmpty();
     }
 
 
@@ -188,12 +192,6 @@ public class QnaBoardService {
         BookmarkQna bookmarkQna = bookmarkQnaRepository.findById(bookmarkId).get();
         bookmarkQnaRepository.delete(bookmarkQna);
 
-        List<BookmarkQna> b = bookmarkQna.getQnaBoard().getBookmarkQnaList();
-        for (BookmarkQna b1 : b) {
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            System.out.println(b1.getId());
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        }
         return bookmarkQna.getQnaBoard().getBookmarkQnaList().size();
     }
 

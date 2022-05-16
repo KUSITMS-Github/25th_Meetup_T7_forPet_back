@@ -1,7 +1,6 @@
 package com.kusitms.forpet.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.kusitms.forpet.dto.SignUpDto;
 import com.kusitms.forpet.security.Role;
 import lombok.*;
 
