@@ -24,6 +24,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
 @Configuration
@@ -106,10 +109,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                     .authorizeRequests()
                     .antMatchers("/",
                         "/error",
-                        "/favicon.ico", "/qnaBoard/**").permitAll()
+                        "/favicon.ico", "/qnaBoard/**","/signup/**").permitAll()
                     .antMatchers("/auth/**", "/oauth2/**").permitAll() //로그인
                     .antMatchers("/offline-map/**", "online-map/**").permitAll() //핵심 기능
-                    .antMatchers("/signup/**").hasRole("GUEST") // 회원가입
+                    //.antMatchers("/signup/**").hasRole("GUEST") // 회원가입
                     .antMatchers("/certify/**", "/mypage/**").hasAnyRole("USER", "FORPET_USER") // 마이페이지, 우리동네 인증
                     .antMatchers("/community/**").hasRole("FORPET_USER")
                     .anyRequest().authenticated()
