@@ -1,12 +1,9 @@
 package com.kusitms.forpet.controller;
 
-import com.kusitms.forpet.domain.Category;
 import com.kusitms.forpet.domain.Community;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.dto.ApiResponse;
 import com.kusitms.forpet.dto.CommunityDto;
-import com.kusitms.forpet.dto.ReviewRequestDto;
-import com.kusitms.forpet.dto.placeDto;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.CommunityService;
 import com.kusitms.forpet.service.UserService;
@@ -51,30 +48,30 @@ public class CommunityController {
         List<Community> popularList = communityService.findOrderByThumbsUpAndAddress(addressList);
         popularList = getCommunityListBySize(popularList, popularList.size() < 7 ? popularList.size() : 7);
 
-        List<Community> meetingList = communityService.findByCategoryAndAddress(Category.MEETING, addressList);
+        List<Community> meetingList = communityService.findByCategoryAndAddress("meeting", addressList);
         meetingList = getCommunityListBySize(meetingList, meetingList.size() < 7 ? meetingList.size() : 7);
 
-        List<Community> sharingList = communityService.findByCategoryAndAddress(Category.SHARING, addressList);
+        List<Community> sharingList = communityService.findByCategoryAndAddress("sharing", addressList);
         sharingList = getCommunityListBySize(sharingList, sharingList.size() < 9 ? sharingList.size() : 9);
 
-        List<Community> boastingList = communityService.findByCategoryAndAddress(Category.BOASTING, addressList);
+        List<Community> boastingList = communityService.findByCategoryAndAddress("boasting", addressList);
         boastingList = getCommunityListBySize(boastingList, boastingList.size() < 9 ? boastingList.size() : 9);
 
         // domain -> dto
         List<CommunityDto.CommunityResponse> popularResponseList = popularList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory().getValue(), 2))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         List<CommunityDto.CommunityResponse> meetingResponseList = meetingList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory().getValue(), 2))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         List<CommunityDto.CommunityResponse> sharingResponseList = sharingList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory().getValue(), 2))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         List<CommunityDto.CommunityResponse> boastingResponseList = boastingList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory().getValue(), 2))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         postList.put("popular", popularResponseList);
@@ -120,7 +117,7 @@ public class CommunityController {
         List<Community> searchList = communityService.findByKeyword(keyword, addressList, page, size);
 
         List<CommunityDto.CommunityListResponse> searchResponseList = searchList.stream()
-                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUserId().getUserId(), profile_image, m.getUserId().getNickname()), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory().getValue(), 2))
+                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUserId().getUserId(), profile_image, m.getUserId().getNickname()), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         return ApiResponse.success("data", searchResponseList);
@@ -131,7 +128,7 @@ public class CommunityController {
      */
     @GetMapping("/list")
     public ApiResponse getAllPostListByCategory(HttpServletRequest request,
-                                                @RequestParam(value="category") Category category,
+                                                @RequestParam(value="category") String category,
                                                 @RequestParam int page,
                                                 @RequestParam int size) {
         String accessToken = HeaderUtil.getAccessToken(request);
@@ -149,12 +146,16 @@ public class CommunityController {
             profile_image = user.getImageUrl();
         }
 
+        if(category.equals("all")) {
+            // 카테고리가 전체라면 LIKE 검색이 안되게
+            category = "";
+        }
         //System.out.println(Category.valueOf(category));
         List<Community> categoryList = communityService.findByCategoryAndAddress(category, addressList, page, size);
 
         // domain -> dto
         List<CommunityDto.CommunityListResponse> categoryResponseList = categoryList.stream()
-                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUserId().getUserId(), profile_image, m.getUserId().getNickname()), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory().getValue(), 2))
+                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUserId().getUserId(), profile_image, m.getUserId().getNickname()), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         return ApiResponse.success("data", categoryResponseList);
@@ -184,7 +185,7 @@ public class CommunityController {
             isWriter = true;
         }
         CommunityDto.CommunityDetailResponse communityResponse = new CommunityDto.CommunityDetailResponse(
-                community.getPostId(), new CommunityDto.Writer(community.getUserId().getUserId(), profile_image, community.getUserId().getNickname()), isWriter, community.getTitle(), community.getContent(), community.getDate(), community.getThumbsUpCnt(), community.getImageUrlList().split("#"), community.getCategory().getValue(), 2);
+                community.getPostId(), new CommunityDto.Writer(community.getUserId().getUserId(), profile_image, community.getUserId().getNickname()), isWriter, community.getTitle(), community.getContent(), community.getDate(), community.getThumbsUpCnt(), community.getImageUrlList().split("#"), community.getCategory(), 2);
         return ApiResponse.success("data", communityResponse);
     }
 

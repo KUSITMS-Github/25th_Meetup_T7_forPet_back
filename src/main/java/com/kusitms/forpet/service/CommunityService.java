@@ -1,6 +1,5 @@
 package com.kusitms.forpet.service;
 
-import com.kusitms.forpet.domain.Category;
 import com.kusitms.forpet.domain.Community;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.dto.CommunityDto;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -43,15 +41,15 @@ public class CommunityService {
     /**
      * 카테고리 포스트 - 페이지네이션 필요 없음.
      */
-    public List<Community> findByCategoryAndAddress(Category category, String[] addressList) {
+    public List<Community> findByCategoryAndAddress(String category, String[] addressList) {
         if(addressList.length == 1) {
-            return communityRepository.findByCategoryAndAddress(category.getValue(),
+            return communityRepository.findByCategoryAndAddress(category,
                     addressList[0], NO_ADDRESS, NO_ADDRESS);
         } else if(addressList.length == 2) {
-            return communityRepository.findByCategoryAndAddress(category.getValue(),
+            return communityRepository.findByCategoryAndAddress(category,
                     addressList[0], addressList[1], NO_ADDRESS);
         } else {
-            return communityRepository.findByCategoryAndAddress(category.getValue(),
+            return communityRepository.findByCategoryAndAddress(category,
                     addressList[0], addressList[1], addressList[2]);
         }
     }
@@ -59,17 +57,16 @@ public class CommunityService {
     /**
      * 카테고리 포스트 - 페이지네이션
      */
-    public List<Community> findByCategoryAndAddress(Category category, String[] addressList, int page, int size) {
-       System.out.println(category.getValue().toUpperCase());
+    public List<Community> findByCategoryAndAddress(String category, String[] addressList, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if(addressList.length == 1) {
-            return communityRepository.findByCategoryAndAddress(category.getValue().toUpperCase(),
+            return communityRepository.findByCategoryAndAddress(category,
                     addressList[0], NO_ADDRESS, NO_ADDRESS, pageable);
         } else if(addressList.length == 2) {
-            return communityRepository.findByCategoryAndAddress(category.getValue().toUpperCase(),
+            return communityRepository.findByCategoryAndAddress(category,
                     addressList[0], addressList[1], NO_ADDRESS, pageable);
         } else {
-            return communityRepository.findByCategoryAndAddress(category.getValue().toUpperCase(),
+            return communityRepository.findByCategoryAndAddress(category,
                     addressList[0], addressList[1], addressList[2], pageable);
         }
     }
@@ -139,7 +136,7 @@ public class CommunityService {
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .imageUrlList(imageUrlList.toString())
-                .category(Category.valueOf(requestDto.getCategory()))
+                .category(requestDto.getCategory())
                 .address(user.getAddress())
                 .build();
 
@@ -174,7 +171,7 @@ public class CommunityService {
         // 포스트 수정
         Optional<Community> community = communityRepository.findById(postId);
         if(community.isPresent()) {
-            community.get().update(requestDto.getTitle(), requestDto.getContent(), imageUrlList.toString(), Category.valueOf(requestDto.getCategory()), user.getAddress());
+            community.get().update(requestDto.getTitle(), requestDto.getContent(), imageUrlList.toString(), requestDto.getCategory(), user.getAddress());
             communityRepository.saveAndFlush(community.get());
         }
         return community.get().getPostId();

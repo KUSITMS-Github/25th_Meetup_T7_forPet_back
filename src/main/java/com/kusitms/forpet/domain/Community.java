@@ -37,14 +37,12 @@ public class Community {
     @Lob
     private String imageUrlList;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Category category;
+    private String category;
 
     private String address;
 
     @Builder
-    private Community(User userId, String title, String content, String imageUrlList, Category category, String address) {
+    private Community(User userId, String title, String content, String imageUrlList, String category, String address) {
         this.userId = userId;
         this.title = title;
         this.content = content;
@@ -64,7 +62,7 @@ public class Community {
     /**
      * 포스트 수정
      */
-    public void update(String title, String content, String imageUrlList, Category category, String address) {
+    public void update(String title, String content, String imageUrlList, String category, String address) {
         this.title = title;
         this.content = content;
         this.imageUrlList = imageUrlList;
