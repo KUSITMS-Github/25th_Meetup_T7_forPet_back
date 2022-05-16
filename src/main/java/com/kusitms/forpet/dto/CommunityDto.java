@@ -34,8 +34,7 @@ public class CommunityDto {
         @JsonProperty(value = "user_id")
         private Long userId;
         private String title;
-        @JsonProperty(value = "thumbs_up_cnt")
-        private Long thumbsUpCnt;
+        private int likes;
         @JsonProperty(value = "image_url_list")
         private String[] imageUrlList;
         private String category;
@@ -53,8 +52,7 @@ public class CommunityDto {
         private Long postId;
         private Writer writer;
         private String title;
-        @JsonProperty(value = "thumbs_up_cnt")
-        private Long thumbsUpCnt;
+        private int likes;
         @JsonProperty(value = "image_url_list")
         private String[] imageUrlList;
         private String category;
@@ -76,13 +74,16 @@ public class CommunityDto {
         private String title;
         private String content;
         private LocalDateTime date;
-        @JsonProperty(value = "thumbs_up_cnt")
-        private Long thumbsUpCnt;
+        private int likes;
         @JsonProperty(value = "image_url_list")
         private String[] imageUrlList;
         private String category;
         @JsonProperty(value = "comment_cnt")
         private int commentCnt;
+        @JsonProperty(value = "is_like")
+        private boolean isLike;
+        @JsonProperty(value = "is_bookmark")
+        private boolean isBookMark;
     }
 
     @Data

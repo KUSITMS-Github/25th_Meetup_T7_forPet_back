@@ -1,9 +1,10 @@
 package com.kusitms.forpet.service;
 
-import com.kusitms.forpet.domain.Community;
-import com.kusitms.forpet.domain.User;
+import com.kusitms.forpet.domain.*;
 import com.kusitms.forpet.dto.CommunityDto;
+import com.kusitms.forpet.repository.BookmarkCommRepository;
 import com.kusitms.forpet.repository.CommunityRepository;
+import com.kusitms.forpet.repository.LikesCommRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,8 @@ import java.util.Optional;
 public class CommunityService {
     private final S3Uploader s3Uploader;
     private final CommunityRepository communityRepository;
+    private final LikesCommRepository likesCommRepository;
+    private final BookmarkCommRepository bookmarkCommRepository;
     private final static String NO_ADDRESS = "x";
 
     /**
@@ -132,7 +135,7 @@ public class CommunityService {
 
         // 포스트 저장
         Community newComm = Community.builder()
-                .userId(user)
+                .user(user)
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .imageUrlList(imageUrlList.toString())
@@ -180,5 +183,113 @@ public class CommunityService {
     public Long deletePost(Long postId) {
         communityRepository.deleteById(postId);
         return postId;
+    }
+
+    /**
+     * 게시글 좋아요
+     */
+    @Transactional
+    public int saveLikes(User user, Long postId) {
+        Optional<Community> comm = communityRepository.findById(postId);
+        Community community = null;
+        LikesComm likesComm = null;
+        if(comm.isPresent()) {
+            community = comm.get();
+
+            likesComm = new LikesComm();
+            likesComm.setUser(user);
+            likesComm.setCommunity(community);
+
+            likesCommRepository.save(likesComm);
+        }
+
+        return likesComm.getCommunity().getLikesCommList().size()-1;
+    }
+
+    /**
+     * 게시글 좋아요 취소
+     */
+    @Transactional
+    public int deleteLikes(User user, Long postId) {
+        Optional<Community> comm = communityRepository.findById(postId);
+        Community community = null;
+        LikesComm likesComm = null;
+        if(comm.isPresent()) {
+            community = comm.get();
+
+            likesComm = likesCommRepository.findByCommunityAndUser(community, user).get();
+            likesComm.getCommunity().getLikesCommList().remove(likesComm);
+
+            communityRepository.save(community);
+            likesCommRepository.delete(likesComm);
+        }
+
+        return likesComm.getCommunity().getLikesCommList().size();
+    }
+
+    /**
+     * 좋아요 여부 확인( 좋아요 했다면 true)
+     */
+    @Transactional
+    public boolean getLikes(User user, Community community) {
+        Optional<LikesComm> likesComm = likesCommRepository.findByCommunityAndUser(community, user);
+            if(likesComm.isPresent()) {
+                return true;
+            }
+        return false;
+    }
+
+    /**
+     * 게시글 북마크
+     */
+    @Transactional
+    public int saveBookMark(User user, Long postId) {
+        Optional<Community> comm = communityRepository.findById(postId);
+        Community community = null;
+        BookmarkComm bookmarkComm = null;
+        if(comm.isPresent()) {
+            community = comm.get();
+
+            bookmarkComm = new BookmarkComm();
+            bookmarkComm.setUser(user);
+            bookmarkComm.setCommunity(community);
+
+            bookmarkCommRepository.save(bookmarkComm);
+        }
+
+        return bookmarkComm.getCommunity().getBookmarkCommList().size()-1;
+    }
+
+    /**
+     * 게시글 좋아요 취소
+     */
+    @Transactional
+    public int deleteBookMark(User user, Long postId) {
+        Optional<Community> comm = communityRepository.findById(postId);
+        Community community = null;
+        BookmarkComm bookmarkComm = null;
+        if(comm.isPresent()) {
+            community = comm.get();
+
+            bookmarkComm = bookmarkCommRepository.findByCommunityAndUser(community, user).get();
+            bookmarkComm.getCommunity().getBookmarkCommList().remove(bookmarkComm);
+
+            communityRepository.save(community);
+            bookmarkCommRepository.delete(bookmarkComm);
+        }
+
+        return bookmarkComm.getCommunity().getBookmarkCommList().size();
+    }
+
+    /**
+     * 좋아요 여부 확인( 좋아요 했다면 true)
+     */
+    @Transactional
+    public boolean getBookMark(User user, Community community) {
+        Optional<BookmarkComm> bookmarkComm = bookmarkCommRepository.findByCommunityAndUser(community, user);
+        if(bookmarkComm.isPresent()) {
+            return true;
+        }
+        return false;
     }
 }

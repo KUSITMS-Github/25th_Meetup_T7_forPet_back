@@ -59,19 +59,19 @@ public class CommunityController {
 
         // domain -> dto
         List<CommunityDto.CommunityResponse> popularResponseList = popularList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory(), 2))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUser().getUserId(), m.getTitle(), m.getLikesCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         List<CommunityDto.CommunityResponse> meetingResponseList = meetingList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory(), 2))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUser().getUserId(), m.getTitle(), m.getLikesCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         List<CommunityDto.CommunityResponse> sharingResponseList = sharingList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory(), 2))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUser().getUserId(), m.getTitle(), m.getLikesCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         List<CommunityDto.CommunityResponse> boastingResponseList = boastingList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory(), 2))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUser().getUserId(), m.getTitle(), m.getLikesCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         postList.put("popular", popularResponseList);
@@ -117,7 +117,7 @@ public class CommunityController {
         List<Community> searchList = communityService.findByKeyword(keyword, addressList, page, size);
 
         List<CommunityDto.CommunityListResponse> searchResponseList = searchList.stream()
-                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUserId().getUserId(), profile_image, m.getUserId().getNickname()), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory(), 2))
+                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle(), m.getLikesCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         return ApiResponse.success("data", searchResponseList);
@@ -155,7 +155,7 @@ public class CommunityController {
 
         // domain -> dto
         List<CommunityDto.CommunityListResponse> categoryResponseList = categoryList.stream()
-                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUserId().getUserId(), profile_image, m.getUserId().getNickname()), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory(), 2))
+                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle(), m.getLikesCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         return ApiResponse.success("data", categoryResponseList);
@@ -170,22 +170,34 @@ public class CommunityController {
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
+        User user = userService.findByUserId(userId);
         Community community = communityService.findCommunityById(postId);
 
         // 사용자 프로필
         String profile_image;
-        if(community.getUserId().getCustomImageUrl() != null) {
-            profile_image = community.getUserId().getCustomImageUrl();
+        if(community.getUser().getCustomImageUrl() != null) {
+            profile_image = community.getUser().getCustomImageUrl();
         } else {
-            profile_image = community.getUserId().getImageUrl();
+            profile_image = community.getUser().getImageUrl();
         }
 
         boolean isWriter = false;
-        if(community.getUserId().getUserId() == userId) {
+        if(community.getUser().getUserId() == user.getUserId()) {
             isWriter = true;
         }
+
+        boolean isLike = false;
+        if(communityService.getLikes(user, community)) {
+            isLike = true;
+        }
+
+        boolean isBookMark = false;
+        if(communityService.getBookMark(user, community)) {
+            isBookMark = true;
+        }
+
         CommunityDto.CommunityDetailResponse communityResponse = new CommunityDto.CommunityDetailResponse(
-                community.getPostId(), new CommunityDto.Writer(community.getUserId().getUserId(), profile_image, community.getUserId().getNickname()), isWriter, community.getTitle(), community.getContent(), community.getDate(), community.getThumbsUpCnt(), community.getImageUrlList().split("#"), community.getCategory(), 2);
+                community.getPostId(), new CommunityDto.Writer(community.getUser().getUserId(), profile_image, community.getUser().getNickname()), isWriter, community.getTitle(), community.getContent(), community.getDate(), community.getLikesCommList().size(), community.getImageUrlList().split("#"), community.getCategory(), 2, isLike, isBookMark);
         return ApiResponse.success("data", communityResponse);
     }
 
@@ -235,4 +247,63 @@ public class CommunityController {
         return ApiResponse.created("post_id", id);
     }
 
+    /**
+     * 게시글 좋아요
+     */
+    @PostMapping("/{postId}/like")
+    public ApiResponse createLikes(HttpServletRequest request,
+                                   @PathVariable(value="postId")Long postId) {
+        String accessToken = HeaderUtil.getAccessToken(request);
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+
+        User user = userService.findByUserId(userId);
+        int cnt = communityService.saveLikes(user, postId);
+
+        return ApiResponse.success("likes", cnt);
+    }
+
+    /**
+     * 게시글 좋아요 취소
+     */
+    @DeleteMapping("/{postId}/like")
+    public ApiResponse deleteLikes(HttpServletRequest request,
+                                   @PathVariable(value="postId")Long postId) {
+        String accessToken = HeaderUtil.getAccessToken(request);
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+
+        User user = userService.findByUserId(userId);
+        int cnt = communityService.deleteLikes(user, postId);
+
+        return ApiResponse.success("likes", cnt);
+    }
+
+    /**
+     * 게시글 북마크
+     */
+    @PostMapping("/{postId}/bookmark")
+    public ApiResponse createBookmark(HttpServletRequest request,
+                                   @PathVariable(value="postId")Long postId) {
+        String accessToken = HeaderUtil.getAccessToken(request);
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+
+        User user = userService.findByUserId(userId);
+        int cnt = communityService.saveBookMark(user, postId);
+
+        return ApiResponse.success("bookmark", cnt);
+    }
+
+    /**
+     * 게시글 북마크 취소
+     */
+    @DeleteMapping("/{postId}/bookmark")
+    public ApiResponse deleteBookmark(HttpServletRequest request,
+                                   @PathVariable(value="postId")Long postId) {
+        String accessToken = HeaderUtil.getAccessToken(request);
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+
+        User user = userService.findByUserId(userId);
+        int cnt = communityService.deleteBookMark(user, postId);
+
+        return ApiResponse.success("bookmark", cnt);
+    }
 }
