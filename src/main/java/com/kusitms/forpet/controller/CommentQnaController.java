@@ -25,12 +25,12 @@ public class CommentQnaController {
     @PostMapping("/qnaBoard/{boardId}/comment")
     public Long commentSave(HttpServletRequest request,
                             @PathVariable("boardId") Long boardId,
-                            @RequestBody CommentQnaReqDto commentQnaReqDto) {
+                            @RequestBody CommentQnaReqDto comment) {
 
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userid = tokenProvider.getUserIdFromToken(accessToken);
 
-        return commentQnaService.commentSave(userid, boardId, commentQnaReqDto.getComment());
+        return commentQnaService.commentSave(userid, boardId, comment.getComment());
     }
 
 
