@@ -65,9 +65,9 @@ public class CertifyController {
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
-        PetCard petCard = petCardService.createPetCardByUserId(userId, petCardImage, petCardNumber);
+        petCardService.createPetCardByUserId(userId, petCardImage, petCardNumber);
 
-        return ApiResponse.success("data", petCard);
+        return ApiResponse.success("data", null);
     }
 
     /**
@@ -83,7 +83,7 @@ public class CertifyController {
         user.updateAddress(address.getAddressList());
         userService.save(user);
 
-        return ApiResponse.created("data", address);
+        return ApiResponse.created("data", null);
     }
 
 }

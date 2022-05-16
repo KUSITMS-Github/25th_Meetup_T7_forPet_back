@@ -11,7 +11,8 @@ public enum Category {
      */
     MEETING("meeting"),
     SHARING("sharing"),
-    BOASTING("boasting");
+    BOASTING("boasting"),
+    ALL("");
 
     private String value;
 }

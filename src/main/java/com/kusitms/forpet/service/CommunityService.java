@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -59,15 +60,16 @@ public class CommunityService {
      * 카테고리 포스트 - 페이지네이션
      */
     public List<Community> findByCategoryAndAddress(Category category, String[] addressList, int page, int size) {
+       System.out.println(category.getValue().toUpperCase());
         Pageable pageable = PageRequest.of(page, size);
         if(addressList.length == 1) {
-            return communityRepository.findByCategoryAndAddress(category.getValue(),
+            return communityRepository.findByCategoryAndAddress(category.getValue().toUpperCase(),
                     addressList[0], NO_ADDRESS, NO_ADDRESS, pageable);
         } else if(addressList.length == 2) {
-            return communityRepository.findByCategoryAndAddress(category.getValue(),
+            return communityRepository.findByCategoryAndAddress(category.getValue().toUpperCase(),
                     addressList[0], addressList[1], NO_ADDRESS, pageable);
         } else {
-            return communityRepository.findByCategoryAndAddress(category.getValue(),
+            return communityRepository.findByCategoryAndAddress(category.getValue().toUpperCase(),
                     addressList[0], addressList[1], addressList[2], pageable);
         }
     }
@@ -167,6 +169,7 @@ public class CommunityService {
         System.out.println(">>>>>>>>>>>>>>>>>>>>");
         System.out.println(imageUrlList);
         System.out.println(">>>>>>>>>>>>>>>>>>>>");
+
 
         // 포스트 수정
         Optional<Community> community = communityRepository.findById(postId);

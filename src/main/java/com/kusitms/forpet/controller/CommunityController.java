@@ -49,32 +49,32 @@ public class CommunityController {
         Map<String, List<CommunityDto.CommunityResponse>> postList = new HashMap<>();
 
         List<Community> popularList = communityService.findOrderByThumbsUpAndAddress(addressList);
-        popularList = popularList.subList(0, 7); // 7개
+        popularList = getCommunityListBySize(popularList, popularList.size() < 7 ? popularList.size() : 7);
 
         List<Community> meetingList = communityService.findByCategoryAndAddress(Category.MEETING, addressList);
-        meetingList = meetingList.subList(0, 7); // 7개
+        meetingList = getCommunityListBySize(meetingList, meetingList.size() < 7 ? meetingList.size() : 7);
 
         List<Community> sharingList = communityService.findByCategoryAndAddress(Category.SHARING, addressList);
-        sharingList = sharingList.subList(0, 9); // 9개
+        sharingList = getCommunityListBySize(sharingList, sharingList.size() < 9 ? sharingList.size() : 9);
 
         List<Community> boastingList = communityService.findByCategoryAndAddress(Category.BOASTING, addressList);
-        boastingList = boastingList.subList(0, 9); // 9개
+        boastingList = getCommunityListBySize(boastingList, boastingList.size() < 9 ? boastingList.size() : 9);
 
         // domain -> dto
         List<CommunityDto.CommunityResponse> popularResponseList = popularList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getContent(),m.getDate(), m.getThumbsUpCnt(), m.getImageUrlList(), m.getCategory().getValue()))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory().getValue(), 2))
                 .collect(Collectors.toList());
 
         List<CommunityDto.CommunityResponse> meetingResponseList = meetingList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getContent(),m.getDate(), m.getThumbsUpCnt(), m.getImageUrlList(), m.getCategory().getValue()))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory().getValue(), 2))
                 .collect(Collectors.toList());
 
         List<CommunityDto.CommunityResponse> sharingResponseList = sharingList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getContent(),m.getDate(), m.getThumbsUpCnt(), m.getImageUrlList(), m.getCategory().getValue()))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory().getValue(), 2))
                 .collect(Collectors.toList());
 
         List<CommunityDto.CommunityResponse> boastingResponseList = boastingList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getContent(),m.getDate(), m.getThumbsUpCnt(), m.getImageUrlList(), m.getCategory().getValue()))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory().getValue(), 2))
                 .collect(Collectors.toList());
 
         postList.put("popular", popularResponseList);
@@ -84,6 +84,14 @@ public class CommunityController {
 
         return ApiResponse.success("data", postList);
     }
+
+    /*
+     list를 개수만큼
+     */
+    public List<Community> getCommunityListBySize(List<Community> list, int size) {
+        return list.subList(0, size);
+    }
+
 
     /**
      * 검색
@@ -100,11 +108,19 @@ public class CommunityController {
         User user = userService.findByUserId(userId);
         String[] addressList = user.getAddress().split("#");
 
+        // 사용자 프로필
+        String profile_image;
+        if(user.getCustomImageUrl() != null) {
+            profile_image = user.getCustomImageUrl();
+        } else {
+            profile_image = user.getImageUrl();
+        }
+
         // 페이지네이션
         List<Community> searchList = communityService.findByKeyword(keyword, addressList, page, size);
 
-        List<CommunityDto.CommunityResponse> searchResponseList = searchList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getContent(),m.getDate(), m.getThumbsUpCnt(), m.getImageUrlList(), m.getCategory().getValue()))
+        List<CommunityDto.CommunityListResponse> searchResponseList = searchList.stream()
+                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUserId().getUserId(), profile_image, m.getUserId().getNickname()), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory().getValue(), 2))
                 .collect(Collectors.toList());
 
         return ApiResponse.success("data", searchResponseList);
@@ -125,25 +141,50 @@ public class CommunityController {
         User user = userService.findByUserId(userId);
         String[] addressList = user.getAddress().split("#");
 
+        // 사용자 프로필
+        String profile_image;
+        if(user.getCustomImageUrl() != null) {
+            profile_image = user.getCustomImageUrl();
+        } else {
+            profile_image = user.getImageUrl();
+        }
+
         //System.out.println(Category.valueOf(category));
         List<Community> categoryList = communityService.findByCategoryAndAddress(category, addressList, page, size);
 
         // domain -> dto
-        List<CommunityDto.CommunityResponse> searchResponseList = categoryList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUserId().getUserId(), m.getTitle(), m.getContent(),m.getDate(), m.getThumbsUpCnt(), m.getImageUrlList(), m.getCategory().getValue()))
+        List<CommunityDto.CommunityListResponse> categoryResponseList = categoryList.stream()
+                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUserId().getUserId(), profile_image, m.getUserId().getNickname()), m.getTitle(), m.getThumbsUpCnt(), m.getImageUrlList().split("#"), m.getCategory().getValue(), 2))
                 .collect(Collectors.toList());
 
-        return ApiResponse.success("data", searchResponseList);
+        return ApiResponse.success("data", categoryResponseList);
     }
 
     /**
      * 게시글 상세 조회
      */
     @GetMapping("/{postId}")
-    public ApiResponse getPostById(@PathVariable Long postId) {
+    public ApiResponse getPostById(HttpServletRequest request,
+                                   @PathVariable Long postId) {
+        String accessToken = HeaderUtil.getAccessToken(request);
+        Long userId = tokenProvider.getUserIdFromToken(accessToken);
+
         Community community = communityService.findCommunityById(postId);
-        CommunityDto.CommunityResponse communityResponse = new CommunityDto.CommunityResponse(
-                community.getPostId(), community.getUserId().getUserId(), community.getTitle(), community.getContent(), community.getDate(), community.getThumbsUpCnt(), community.getImageUrlList(), community.getCategory().getValue());
+
+        // 사용자 프로필
+        String profile_image;
+        if(community.getUserId().getCustomImageUrl() != null) {
+            profile_image = community.getUserId().getCustomImageUrl();
+        } else {
+            profile_image = community.getUserId().getImageUrl();
+        }
+
+        boolean isWriter = false;
+        if(community.getUserId().getUserId() == userId) {
+            isWriter = true;
+        }
+        CommunityDto.CommunityDetailResponse communityResponse = new CommunityDto.CommunityDetailResponse(
+                community.getPostId(), new CommunityDto.Writer(community.getUserId().getUserId(), profile_image, community.getUserId().getNickname()), isWriter, community.getTitle(), community.getContent(), community.getDate(), community.getThumbsUpCnt(), community.getImageUrlList().split("#"), community.getCategory().getValue(), 2);
         return ApiResponse.success("data", communityResponse);
     }
 
