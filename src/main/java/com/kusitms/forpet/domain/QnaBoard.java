@@ -29,7 +29,7 @@ public class QnaBoard {
     private String imageUrlList;
 
     private String hashTag;          //해시태그 정보
-    private LocalDateTime createDate;
+    private String createDate;
     private int likes;               //좋아요 개수
 
 
@@ -54,6 +54,18 @@ public class QnaBoard {
     public void setUser(User user) {
         this.user = user;
         user.getQnaBoardList().add(this);
+    }
+
+
+    //==LocalDateTime 커스텀==//
+    public void setCreateDate(LocalDateTime localDateTime) {
+        //월, 일
+        String month = String.valueOf(localDateTime.getMonthValue());
+        String day = String.valueOf(localDateTime.getDayOfMonth());
+        //시, 분
+        String hour = String.valueOf(localDateTime.getHour());
+        String min = String.format("%02d", localDateTime.getMinute());
+        this.createDate = month + "/" + day + " " + hour + ":" + min;
     }
 
 

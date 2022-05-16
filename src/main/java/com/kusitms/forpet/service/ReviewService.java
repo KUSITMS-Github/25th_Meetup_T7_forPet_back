@@ -35,12 +35,9 @@ public class ReviewService {
 
         Review review = null;
 
-        if(multipartFiles != null) {
+        if(multipartFiles != null) {    //이미지 존제
             //리뷰 이미지 s3 저장
             List<String> imageNameList = s3Uploader.uploadImage(multipartFiles);
-            System.out.println(">>>>>>>>>>>>>>>>>>>>");
-            System.out.println(imageNameList);
-            System.out.println(">>>>>>>>>>>>>>>>>>>>");
             //리뷰 이미지 url로 변경
             StringBuilder imageUrlList = new StringBuilder();
             for (String imageName : imageNameList) {
@@ -48,13 +45,9 @@ public class ReviewService {
                 imageUrlList.append(imageName);
                 imageUrlList.append("#");
             }
-            System.out.println(">>>>>>>>>>>>>>>>>>>>");
-            System.out.println(imageUrlList);
-            System.out.println(">>>>>>>>>>>>>>>>>>>>");
-
             //리뷰 생성
             review = Review.createReview(user,star, content,placeInfo, imageUrlList.toString());
-        } else {
+        } else {    //이미지 존재 X
             review = Review.createReview(user,star, content,placeInfo, null);
         }
 

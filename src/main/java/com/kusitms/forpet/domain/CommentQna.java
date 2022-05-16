@@ -20,7 +20,7 @@ public class CommentQna {
     private Long id;
 
     private String comment;             //댓글 내용
-    private LocalDateTime createDate;
+    private String createDate;
     private int likes;                  //좋아요 수
 
     //연관관계
@@ -43,6 +43,19 @@ public class CommentQna {
         this.qnaBoard = qnaBoard;
         qnaBoard.getCommentQnaList().add(this);
     }
+
+
+    //==LocalDateTime 커스텀==//
+    public void setCreateDate(LocalDateTime localDateTime) {
+        //월, 일
+        String month = String.valueOf(localDateTime.getMonthValue());
+        String day = String.valueOf(localDateTime.getDayOfMonth());
+        //시, 분
+        String hour = String.valueOf(localDateTime.getHour());
+        String min = String.format("%02d", localDateTime.getMinute());
+        this.createDate = month + "/" + day + " " + hour + ":" + min;
+    }
+
 
     //== 생성 메서드 ==//
     public static CommentQna createCommentQna(User user, QnaBoard qnaBoard, String comment) {

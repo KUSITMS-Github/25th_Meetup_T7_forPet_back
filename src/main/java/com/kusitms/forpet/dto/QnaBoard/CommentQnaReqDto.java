@@ -5,8 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class QnaBoardRequestDto {
-    public String title;
-    public String content;
+public class CommentQnaReqDto {
+    String comment;
 }
-
