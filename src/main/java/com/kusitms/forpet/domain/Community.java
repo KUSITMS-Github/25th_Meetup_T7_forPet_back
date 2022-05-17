@@ -72,4 +72,9 @@ public class Community {
     @JsonIgnore
     @OneToMany(mappedBy = "community")
     private List<LikesComm> likesCommList = new ArrayList<>();
+
+    // 댓글(Community 참조 관계)
+    @JsonIgnore
+    @OneToMany(mappedBy = "community")
+    private List<CommentComm> commentCommList = new ArrayList<>();
 }

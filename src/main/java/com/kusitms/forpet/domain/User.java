@@ -82,6 +82,12 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<LikesComm> likesCommList = new ArrayList<>();
 
+    // 댓글(Community) 참고 관계
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<CommentComm> commentCommList = new ArrayList<>();
+
+
     @Builder(builderClassName= "social", builderMethodName = "socialBuilder")
     private User(String name, @Email String email, String imageUrl, Role role) {
         this.name = name;

@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +23,7 @@ public class ReviewService {
     private final APIRep apiRepository;
     private final S3Uploader s3Uploader;
     private final UserRepository userRepository;
+
 
     /**
      * 리뷰 생성
