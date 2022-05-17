@@ -5,6 +5,7 @@ import com.kusitms.forpet.dto.ApiResponse;
 import com.kusitms.forpet.dto.MyPage.BookmarkOfflineDto;
 import com.kusitms.forpet.dto.MyPage.HistoryBoardDTO;
 import com.kusitms.forpet.dto.MyPage.UserDetailDto;
+import com.kusitms.forpet.dto.MyPage.UserUpdateDto;
 import com.kusitms.forpet.dto.SignUpDto;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.MyPageService;
@@ -57,15 +58,15 @@ public class MyPageController {
      */
     @PutMapping("/edit")
     public ApiResponse updateMyProfile(HttpServletRequest request,
-                                       @RequestPart(value ="nickname") String nickname,
+                                       @RequestPart(value ="user_update_dto") UserUpdateDto dto,
                                        @RequestPart(value = "profile_image", required=false) MultipartFile profileImage) {
         //userid 값 가져오기
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
-        UserDetailDto dto = myPageService.updateUser(userId, nickname, profileImage);
+        UserDetailDto result = myPageService.updateUser(userId, dto, profileImage);
 
-        return ApiResponse.success("data", dto);
+        return ApiResponse.success("data", result);
     }
     /**
      * 오프라인 지도 빼고 community 수정해야함!

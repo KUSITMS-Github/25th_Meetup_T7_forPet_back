@@ -4,6 +4,7 @@ import com.kusitms.forpet.domain.*;
 import com.kusitms.forpet.dto.MyPage.BookmarkOfflineDto;
 import com.kusitms.forpet.dto.MyPage.HistoryBoardDTO;
 import com.kusitms.forpet.dto.MyPage.UserDetailDto;
+import com.kusitms.forpet.dto.MyPage.UserUpdateDto;
 import com.kusitms.forpet.repository.CommentQnaRep;
 import com.kusitms.forpet.repository.PetCardRepository;
 import com.kusitms.forpet.repository.QnaBoardRep;
@@ -63,7 +64,7 @@ public class MyPageService {
     /**
      * 마이페이지 사용자 정보 수정
      */
-    public UserDetailDto updateUser(Long userId, String nickname, MultipartFile profileImage) {
+    public UserDetailDto updateUser(Long userId, UserUpdateDto dto, MultipartFile profileImage) {
         User user = userRepository.findByUserId(userId);
 
         // 프로필 사진
@@ -77,8 +78,12 @@ public class MyPageService {
             user.updateCustomImage(profileImageUrl.toString());
         }
 
-        // 닉네임
-        user.updateNickname(nickname);
+        // 닉네임과 주소 업데이트
+        /**
+         * null 처리해주어야 함!
+         */
+        user.updateNickname(dto.getNickname());
+        user.updateAddress(dto.getAddress().getAddressList());
 
         userRepository.save(user);
 
