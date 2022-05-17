@@ -40,6 +40,11 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    // 동물 등록 카드 참조관계
+    @JsonIgnore
+    @OneToOne(mappedBy = "user")
+    private PetCard petcard;
+
     //리뷰 참조관계
     @JsonIgnore
     @OneToMany(mappedBy = "user")

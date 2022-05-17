@@ -17,21 +17,21 @@ public class PetCard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cardId;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id", unique=true)
-    private User userId;
+    private User user;
 
     private String cardNumber;
 
     private String imageUrl;
 
     @Builder
-    public PetCard(User userId, String cardNumber, String imageUrl) {
-        Assert.notNull(userId, "userId must not be null");
+    public PetCard(User user, String cardNumber, String imageUrl) {
+        Assert.notNull(user, "userId must not be null");
         Assert.hasText(cardNumber, "cardNumber must not be empty");
         Assert.hasText(imageUrl, "imageUrl must not be empty");
 
-        this.userId = userId;
+        this.user = user;
         this.cardNumber = cardNumber;
         this.imageUrl = imageUrl;
     }

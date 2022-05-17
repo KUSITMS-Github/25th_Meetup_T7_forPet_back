@@ -32,7 +32,7 @@ public class PetCardService {
         userRepository.save(user);
 
         PetCard petCard = PetCard.builder()
-                .userId(user)
+                .user(user)
                 .cardNumber(cardNumber)
                 .imageUrl(petCardImageUrl.toString())
                 .build();
@@ -42,6 +42,10 @@ public class PetCardService {
     }
 
     public PetCard findByUserId(User userId) {
-        return petCardRepository.findByUserId(userId);
+        Optional<PetCard> petCardOptional = petCardRepository.findByUserId(userId);
+        if(petCardOptional.isPresent()) {
+            return petCardOptional.get();
+        }
+        return null;
     }
 }
