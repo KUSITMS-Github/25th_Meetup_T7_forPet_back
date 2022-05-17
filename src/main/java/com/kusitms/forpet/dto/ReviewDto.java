@@ -13,7 +13,7 @@ public class ReviewDto {
     private String profileImageUrl;
     private int star;
     private String content;
-    private LocalDateTime createDate;
+    private String createDate;
     private String[] imageUrlList;
 
 }

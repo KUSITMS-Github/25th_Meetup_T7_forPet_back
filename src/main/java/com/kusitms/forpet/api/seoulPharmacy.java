@@ -35,15 +35,15 @@ public class seoulPharmacy {
     public void load() {
         String result = "";
         long cnt = 81;
-        int array[] = {2, 1001, 2000};
+        //int array[] = {2, 1001, 2000};
 
-        for (int page : array) {
+        //for (int page : array) {
             try {
                 URL url = new URL("http://openapi.seoul.go.kr:8088/"
                         + String.format("%s", KEY)
                         + "/json/LOCALDATA_020302/"
-                        + String.format("%d", page)
-                        + String.format("/%d/", page + 998));
+                        + String.format("%d", 2)
+                        + String.format("/%d/", 1000 ));//page + 998));
                 System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
                 System.out.println(url.toString());
                 System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -93,7 +93,7 @@ public class seoulPharmacy {
                 e.printStackTrace();
             }
         }
-    }
+    //}
 
 }
 

@@ -4,6 +4,7 @@ import com.kusitms.forpet.domain.BookmarkQna;
 import com.kusitms.forpet.domain.QnaBoard;
 import com.kusitms.forpet.dto.ApiResponse;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardRequestDto;
+import com.kusitms.forpet.dto.QnaBoard.QnaBoardResByIdDto;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardResponseDto;
 import com.kusitms.forpet.repository.QnaBoardRep;
 import com.kusitms.forpet.security.Role;
@@ -53,8 +54,13 @@ public class QnaBoardController {
 
     //백과사전 게시글
     @GetMapping("/qnaBoard/{boardId}")
-    public ApiResponse getBoardWithComment(@PathVariable(value = "boardId") Long boardId) {
-        QnaBoardResponseDto dto = qnaBoardService.getBoardById(boardId);
+    public ApiResponse getBoardWithComment(HttpServletRequest request, @PathVariable(value = "boardId") Long boardId) {
+
+        //userid 값 가져오기
+        String accessToken = HeaderUtil.getAccessToken(request);
+        Long userid = tokenProvider.getUserIdFromToken(accessToken);
+
+        QnaBoardResByIdDto dto = qnaBoardService.getBoardById(userid, boardId);
 
         return ApiResponse.success("data", dto);
     }
@@ -274,16 +280,24 @@ public class QnaBoardController {
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userid = tokenProvider.getUserIdFromToken(accessToken);
 
-        Map<String, Integer> map = qnaBoardService.createBookmark(userid, boardId);
+        Map<String, Integer> result = qnaBoardService.createBookmark(userid, boardId);
 
-        return ApiResponse.success("data", map);
+        if(result != null)
+            return ApiResponse.success("data", result);
+        else
+            return ApiResponse.badRequest();
+
     }
 
 
     //백과사전 북마크 취소
-    @DeleteMapping("/qnaBoard/{bookmarkId}/bookmark")
-    public ApiResponse deleteBookmark(@PathVariable(value = "bookmarkId") Long bookmarkId) {
-        int cnt = qnaBoardService.deleteBookmark(bookmarkId);
+    @DeleteMapping("/qnaBoard/{boardId}/bookmark")
+    public ApiResponse deleteBookmark(HttpServletRequest request, @PathVariable(value = "boardId") Long boardId) {
+        //userid 값 가져오기
+        String accessToken = HeaderUtil.getAccessToken(request);
+        Long userid = tokenProvider.getUserIdFromToken(accessToken);
+
+        int cnt = qnaBoardService.deleteBookmark(userid, boardId);
 
         return ApiResponse.success("data", cnt);
     }

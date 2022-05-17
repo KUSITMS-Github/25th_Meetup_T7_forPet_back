@@ -23,7 +23,7 @@ public class placeInfo {
 
     private String category;
 
-    private String name;        //병원명
+    private String name;        //이름
     private String address;    //소재지 주소(도로명)
 
     private String longitude;     //경도
@@ -49,7 +49,8 @@ public class placeInfo {
         for(Review review : reviewList) {
             sum += review.getStar();
         }
-        placeInfo.setStarAvg(((double)sum/reviewList.size()));
+
+        placeInfo.setStarAvg(Math.round((double)sum/reviewList.size()*10)/10.0);
 
         return placeInfo;
     }

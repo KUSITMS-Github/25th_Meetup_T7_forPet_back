@@ -7,7 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 @Entity
 @Getter @Setter
@@ -23,7 +27,7 @@ public class Review {
     private int star;
 
     private String content;
-    private LocalDateTime createDate;
+    private String createDate;
 
     @Lob
     private String imageUrlList;
@@ -51,6 +55,17 @@ public class Review {
         this.user = user;
         user.getReviewList().add(this);
     }
+
+
+    //==LocalDateTime 커스텀==//
+    public void setCreateDate(LocalDateTime localDateTime) {
+        String month = String.valueOf(localDateTime.getMonthValue());
+        String day = String.valueOf(localDateTime.getDayOfMonth());
+        DayOfWeek dayOfWeek = localDateTime.getDayOfWeek();
+        String dayOfWeekKor = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREA);
+        this.createDate = month + "." + day + " " + dayOfWeekKor;
+    }
+
 
 
     //==생성 메서드==//

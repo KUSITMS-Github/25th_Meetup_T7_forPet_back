@@ -11,6 +11,7 @@ public class ApiResponse<T> {
     public static final int CREATED = 201;
     private final static int NOT_FOUND = 404;
     private final static int FAILED = 500;
+    private final static int BAD_REQUEST = 400;
     private final static String SUCCESS_MESSAGE = "SUCCESS";
     private final static String CREATED_MESSAGE = "CREATED";
     private final static String UPDATED_MESSAGE = "UPDATED";
@@ -20,6 +21,7 @@ public class ApiResponse<T> {
     private final static String INVALID_REFRESH_TOKEN = "Invalid refresh token.";
     private final static String NOT_EXPIRED_TOKEN_YET = "Not expired token yet.";
     private final static String EXPIRED_TOKEN = "Expired token.";
+    private final static String BAD_REQUEST_MESSAGE = "Bad Request";
 
     private final ApiResponseHeader header;
     private final Map<String, T> body;
@@ -61,5 +63,9 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> expiredToken() {
         return new ApiResponse(new ApiResponseHeader(FAILED, EXPIRED_TOKEN), null);
+    }
+
+    public static <T> ApiResponse<T> badRequest() {
+        return new ApiResponse<>(new ApiResponseHeader(BAD_REQUEST, BAD_REQUEST_MESSAGE), null);
     }
 }

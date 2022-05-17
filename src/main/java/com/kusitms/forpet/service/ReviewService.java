@@ -3,6 +3,7 @@ package com.kusitms.forpet.service;
 import com.kusitms.forpet.domain.Review;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.placeInfo;
+import com.kusitms.forpet.dto.ReviewDto;
 import com.kusitms.forpet.repository.APIRep;
 import com.kusitms.forpet.repository.ReviewRep;
 import com.kusitms.forpet.repository.UserRepository;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,25 +33,24 @@ public class ReviewService {
         placeInfo placeInfo = apiRepository.findById(placeid).get();
         User user = userRepository.findById(userid).get();
 
-        //리뷰 이미지 s3 저장
-        List<String> imageNameList = s3Uploader.uploadImage(multipartFiles);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
-        System.out.println(imageNameList);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
-        //리뷰 이미지 url로 변경
-        StringBuilder imageUrlList = new StringBuilder();
-        for (String imageName : imageNameList) {
-            imageUrlList.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
-            imageUrlList.append(imageName);
-            imageUrlList.append("#");
-        }
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
-        System.out.println(imageUrlList);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
+        Review review = null;
 
-        //리뷰 생성
-        Review review = Review.createReview(user,
-                star, content,placeInfo, imageUrlList.toString());
+        if(multipartFiles != null) {    //이미지 존제
+            //리뷰 이미지 s3 저장
+            List<String> imageNameList = s3Uploader.uploadImage(multipartFiles);
+            //리뷰 이미지 url로 변경
+            StringBuilder imageUrlList = new StringBuilder();
+            for (String imageName : imageNameList) {
+                imageUrlList.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
+                imageUrlList.append(imageName);
+                imageUrlList.append("#");
+            }
+            //리뷰 생성
+            review = Review.createReview(user,star, content,placeInfo, imageUrlList.toString());
+        } else {    //이미지 존재 X
+            review = Review.createReview(user,star, content,placeInfo, null);
+        }
+
         // 별점수, 리뷰수 업데이트
         placeInfo = placeInfo.setStarAvgAndReviewCnt(placeInfo);
 
@@ -60,8 +62,29 @@ public class ReviewService {
     }
 
 
-    public List<Review> findReviewByPlaceId(Long placeid) {
-        return reviewRepository.findByplaceInfo(placeid);
+    /**
+     * 리뷰 정보
+     * @param placeid
+     */
+    public List<ReviewDto> findReviewByPlaceId(Long placeid) {
+        List<Review> list = reviewRepository.findByplaceInfo(placeid);
+
+        List<ReviewDto> collect = new ArrayList<>();
+
+        //entity -> dto 변환
+        for(Review r : list) {
+            if(r.getImageUrlList() != null) {
+                collect.add(new ReviewDto(r.getId(), r.getUser().getNickname(), r.getUser().getImageUrl(), r.getStar(), r.getContent(),
+                        r.getCreateDate(), r.getImageUrlList().split("#")));
+            } else{
+                collect.add(new ReviewDto(r.getId(), r.getUser().getNickname(), r.getUser().getImageUrl(), r.getStar(), r.getContent(),
+                        r.getCreateDate(), null));
+            }
+        }
+
+        return collect;
     }
+
+
 }
 
