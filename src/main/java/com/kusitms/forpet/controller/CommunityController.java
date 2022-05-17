@@ -59,19 +59,19 @@ public class CommunityController {
 
         // domain -> dto
         List<CommunityDto.CommunityResponse> popularResponseList = popularList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUser().getUserId(), m.getTitle(), m.getLikesCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUser().getUserId(), m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         List<CommunityDto.CommunityResponse> meetingResponseList = meetingList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUser().getUserId(), m.getTitle(), m.getLikesCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUser().getUserId(), m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         List<CommunityDto.CommunityResponse> sharingResponseList = sharingList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUser().getUserId(), m.getTitle(), m.getLikesCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUser().getUserId(), m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         List<CommunityDto.CommunityResponse> boastingResponseList = boastingList.stream()
-                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUser().getUserId(), m.getTitle(), m.getLikesCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
+                .map(m -> new CommunityDto.CommunityResponse(m.getPostId(), m.getUser().getUserId(), m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         postList.put("popular", popularResponseList);
@@ -117,7 +117,7 @@ public class CommunityController {
         List<Community> searchList = communityService.findByKeyword(keyword, addressList, page, size);
 
         List<CommunityDto.CommunityListResponse> searchResponseList = searchList.stream()
-                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle(), m.getLikesCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
+                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         return ApiResponse.success("data", searchResponseList);
@@ -155,7 +155,7 @@ public class CommunityController {
 
         // domain -> dto
         List<CommunityDto.CommunityListResponse> categoryResponseList = categoryList.stream()
-                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle(), m.getLikesCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
+                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2))
                 .collect(Collectors.toList());
 
         return ApiResponse.success("data", categoryResponseList);
@@ -197,7 +197,7 @@ public class CommunityController {
         }
 
         CommunityDto.CommunityDetailResponse communityResponse = new CommunityDto.CommunityDetailResponse(
-                community.getPostId(), new CommunityDto.Writer(community.getUser().getUserId(), profile_image, community.getUser().getNickname()), isWriter, community.getTitle(), community.getContent(), community.getDate(), community.getLikesCommList().size(), community.getImageUrlList().split("#"), community.getCategory(), 2, isLike, isBookMark);
+                community.getPostId(), new CommunityDto.Writer(community.getUser().getUserId(), profile_image, community.getUser().getNickname()), isWriter, community.getTitle(), community.getContent(), community.getDate(), community.getLikesCommList().size(),  community.getBookmarkCommList().size(), community.getImageUrlList().split("#"), community.getCategory(), 2, isLike, isBookMark);
         return ApiResponse.success("data", communityResponse);
     }
 
