@@ -291,9 +291,13 @@ public class QnaBoardController {
 
 
     //백과사전 북마크 취소
-    @DeleteMapping("/qnaBoard/{bookmarkId}/bookmark")
-    public ApiResponse deleteBookmark(@PathVariable(value = "bookmarkId") Long bookmarkId) {
-        int cnt = qnaBoardService.deleteBookmark(bookmarkId);
+    @DeleteMapping("/qnaBoard/{boardId}/bookmark")
+    public ApiResponse deleteBookmark(HttpServletRequest request, @PathVariable(value = "boardId") Long boardId) {
+        //userid 값 가져오기
+        String accessToken = HeaderUtil.getAccessToken(request);
+        Long userid = tokenProvider.getUserIdFromToken(accessToken);
+
+        int cnt = qnaBoardService.deleteBookmark(userid, boardId);
 
         return ApiResponse.success("data", cnt);
     }

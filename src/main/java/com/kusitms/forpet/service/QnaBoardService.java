@@ -186,13 +186,13 @@ public class QnaBoardService {
 
     /**
      * qnaBoard 북마크 취소
-     * @param bookmarkId
+     * @param userId, boardId
      */
-    public int deleteBookmark(Long bookmarkId) {
-        BookmarkQna bookmarkQna = bookmarkQnaRepository.findById(bookmarkId).get();
-        bookmarkQnaRepository.delete(bookmarkQna);
+    public int deleteBookmark(Long userId, Long boardId) {
+        bookmarkQnaRepository.deleteBookmark(userId, boardId);
+        QnaBoard qnaBoard = qnaBoardRepository.findById(boardId).get();
 
-        return bookmarkQna.getQnaBoard().getBookmarkQnaList().size();
+        return qnaBoard.getBookmarkQnaList().size();
     }
 
 
