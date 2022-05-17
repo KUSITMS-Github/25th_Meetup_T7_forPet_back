@@ -35,6 +35,7 @@ public class CommunityDto {
         private Long userId;
         private String title;
         private int likes;
+        private int bookmarks;
         @JsonProperty(value = "image_url_list")
         private String[] imageUrlList;
         private String category;
@@ -53,6 +54,7 @@ public class CommunityDto {
         private Writer writer;
         private String title;
         private int likes;
+        private int bookmarks;
         @JsonProperty(value = "image_url_list")
         private String[] imageUrlList;
         private String category;
@@ -75,6 +77,7 @@ public class CommunityDto {
         private String content;
         private LocalDateTime date;
         private int likes;
+        private int bookmarks;
         @JsonProperty(value = "image_url_list")
         private String[] imageUrlList;
         private String category;
