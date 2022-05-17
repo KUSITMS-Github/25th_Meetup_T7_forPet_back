@@ -44,4 +44,15 @@ public class UserService {
         userRefreshTokenRepository.deleteById(userId);
     }
 
+    /**
+     * 주소 등록 여부
+     */
+    public boolean getIsAddress(User user) {
+        if(user.getAddress() != null) {
+            return true;
+        }
+        return false;
+    }
+
+
 }

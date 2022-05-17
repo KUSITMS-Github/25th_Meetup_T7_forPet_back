@@ -29,20 +29,21 @@ public class PetCardService {
         User user = temp.get();
         user.updateRole(Role.FORPET_USER);
 
-        userRepository.save(user);
-
         PetCard petCard = PetCard.builder()
                 .user(user)
                 .cardNumber(cardNumber)
                 .imageUrl(petCardImageUrl.toString())
                 .build();
+
+
+        userRepository.save(user);
         petCardRepository.save(petCard);
 
         return petCard;
     }
 
-    public PetCard findByUserId(User userId) {
-        Optional<PetCard> petCardOptional = petCardRepository.findByUserId(userId);
+    public PetCard findByUserId(User user) {
+        Optional<PetCard> petCardOptional = petCardRepository.findByUser(user);
         if(petCardOptional.isPresent()) {
             return petCardOptional.get();
         }

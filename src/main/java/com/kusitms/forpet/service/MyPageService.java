@@ -3,27 +3,110 @@ package com.kusitms.forpet.service;
 import com.kusitms.forpet.domain.*;
 import com.kusitms.forpet.dto.MyPage.BookmarkOfflineDto;
 import com.kusitms.forpet.dto.MyPage.HistoryBoardDTO;
+import com.kusitms.forpet.dto.MyPage.UserDetailDto;
 import com.kusitms.forpet.repository.CommentQnaRep;
+import com.kusitms.forpet.repository.PetCardRepository;
 import com.kusitms.forpet.repository.QnaBoardRep;
 import com.kusitms.forpet.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
-
+    private final PetCardRepository petCardRepository;
     private final UserRepository userRepository;
     private final CommentQnaRep commentQnaRep;
     private final QnaBoardRep qnaBoardRep;
+    private final S3Uploader s3Uploader;
 
 
+    /**
+     * 마이페이지 사용자 정보 조회
+     */
+    public UserDetailDto getUser(Long userId) {
+        User user = userRepository.findByUserId(userId);
+
+        // 프로필 사진
+        String profileImage;
+        if(user.getCustomImageUrl() != null) {
+            profileImage = user.getCustomImageUrl();
+        } else {
+            profileImage = user.getImageUrl();
+        }
+
+        // 주소 인증 여부
+        boolean isCertifiedAddress = false;
+        if(user.getAddress() != null) {
+            isCertifiedAddress = true;
+        }
+
+        Optional<PetCard> petcard = petCardRepository.findByUser(user);
+        // 동물 등록 카드 여부
+        boolean isCertifiedPetCard = false;
+        if(petcard.isPresent()) {
+            isCertifiedPetCard = true;
+        }
+
+        UserDetailDto userDetailDto = new UserDetailDto(user.getUserId(), isCertifiedAddress, isCertifiedPetCard, user.getAddress().split("#"), user.getNickname(), user.getName(), profileImage);
+
+        return userDetailDto;
+    }
+    /**
+     * 마이페이지 사용자 정보 수정
+     */
+    public UserDetailDto updateUser(Long userId, String nickname, MultipartFile profileImage) {
+        User user = userRepository.findByUserId(userId);
+
+        // 프로필 사진
+        if(!profileImage.getOriginalFilename().equals("")) {
+            // image file -> url
+            String profileImageName = s3Uploader.uploadImage(profileImage);
+            StringBuilder profileImageUrl = new StringBuilder();
+            profileImageUrl.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
+            profileImageUrl.append(profileImageName);
+
+            user.updateCustomImage(profileImageUrl.toString());
+        }
+
+        // 닉네임
+        user.updateNickname(nickname);
+
+        userRepository.save(user);
+
+        // 프로필 사진
+        String profileImageDto;
+        if(user.getCustomImageUrl() != null) {
+            profileImageDto = user.getCustomImageUrl();
+        } else {
+            profileImageDto = user.getImageUrl();
+        }
+
+        // 주소 인증 여부
+        boolean isCertifiedAddress = false;
+        if(user.getAddress() != null) {
+            isCertifiedAddress = true;
+        }
+
+        // 동물 등록 카드 여부
+        Optional<PetCard> petcard = petCardRepository.findByUser(user);
+        // 동물 등록 카드 여부
+        boolean isCertifiedPetCard = false;
+        if(petcard.isPresent()) {
+            isCertifiedPetCard = true;
+        }
+
+        UserDetailDto userDetailDto = new UserDetailDto(user.getUserId(), isCertifiedAddress, isCertifiedPetCard, user.getAddress().split("#"), user.getNickname(), user.getName(), profileImageDto);
+        return userDetailDto;
+    }
     /**
      * 마이페이지 히스토리 내가 쓴 글(커뮤니티, 백과사전)
      * @param userid
