@@ -60,6 +60,7 @@ public class CommunityDto {
         private String category;
         @JsonProperty(value = "comment_cnt")
         private int commentCnt;
+        private LocalDateTime createdDate;
     }
 
     /**
