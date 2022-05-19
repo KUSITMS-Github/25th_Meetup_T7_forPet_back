@@ -193,8 +193,17 @@ public class CommunityService {
         Optional<Community> comm = communityRepository.findById(postId);
         Community community = null;
         LikesComm likesComm = null;
+
+
         if(comm.isPresent()) {
             community = comm.get();
+
+            // 중복 방지
+            Optional<LikesComm> likesCommOptional = likesCommRepository.findByCommunityAndUser(community, user);
+            if(likesCommOptional.isPresent()) {
+                // 좋아요한 적이 있다면 -1 반환
+                return -1;
+            }
 
             likesComm = new LikesComm();
             likesComm.setUser(user);
