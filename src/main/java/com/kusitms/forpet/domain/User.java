@@ -40,6 +40,7 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+
     //리뷰 참조관계
     @JsonIgnore
     @OneToMany(mappedBy = "user")
@@ -119,6 +120,8 @@ public class User {
     public void updateAddress(String address) {
         this.address = address;
     }
+
+    public void updateNickname(String nickname) { this.nickname = nickname; }
 
     // 회원가입
     public void signupUser(String nickname, String phone, String address) {

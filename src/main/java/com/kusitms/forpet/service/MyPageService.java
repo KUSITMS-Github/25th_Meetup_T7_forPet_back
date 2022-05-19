@@ -3,27 +3,115 @@ package com.kusitms.forpet.service;
 import com.kusitms.forpet.domain.*;
 import com.kusitms.forpet.dto.MyPage.BookmarkOfflineDto;
 import com.kusitms.forpet.dto.MyPage.HistoryBoardDTO;
+import com.kusitms.forpet.dto.MyPage.UserDetailDto;
+import com.kusitms.forpet.dto.MyPage.UserUpdateDto;
 import com.kusitms.forpet.repository.CommentQnaRep;
+import com.kusitms.forpet.repository.PetCardRepository;
 import com.kusitms.forpet.repository.QnaBoardRep;
 import com.kusitms.forpet.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
-
+    private final PetCardRepository petCardRepository;
     private final UserRepository userRepository;
     private final CommentQnaRep commentQnaRep;
     private final QnaBoardRep qnaBoardRep;
+    private final S3Uploader s3Uploader;
 
 
+    /**
+     * 마이페이지 사용자 정보 조회
+     */
+    public UserDetailDto getUser(Long userId) {
+        User user = userRepository.findByUserId(userId);
+
+        // 프로필 사진
+        String profileImage;
+        if(user.getCustomImageUrl() != null) {
+            profileImage = user.getCustomImageUrl();
+        } else {
+            profileImage = user.getImageUrl();
+        }
+
+        // 주소 인증 여부
+        boolean isCertifiedAddress = false;
+        if(user.getAddress() != null) {
+            isCertifiedAddress = true;
+        }
+
+        Optional<PetCard> petcard = petCardRepository.findByUser(user);
+        // 동물 등록 카드 여부
+        boolean isCertifiedPetCard = false;
+        if(petcard.isPresent()) {
+            isCertifiedPetCard = true;
+        }
+
+        UserDetailDto userDetailDto = new UserDetailDto(user.getUserId(), isCertifiedAddress, isCertifiedPetCard, user.getAddress().split("#"), user.getNickname(), user.getName(), profileImage);
+
+        return userDetailDto;
+    }
+    /**
+     * 마이페이지 사용자 정보 수정
+     */
+    public UserDetailDto updateUser(Long userId, UserUpdateDto dto, MultipartFile profileImage) {
+        User user = userRepository.findByUserId(userId);
+
+        // 프로필 사진
+        if(!profileImage.getOriginalFilename().equals("")) {
+            // image file -> url
+            String profileImageName = s3Uploader.uploadImage(profileImage);
+            StringBuilder profileImageUrl = new StringBuilder();
+            profileImageUrl.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
+            profileImageUrl.append(profileImageName);
+
+            user.updateCustomImage(profileImageUrl.toString());
+        }
+
+        // 닉네임과 주소 업데이트
+        /**
+         * null 처리해주어야 함!
+         */
+        user.updateNickname(dto.getNickname());
+        user.updateAddress(dto.getAddress().getAddressList());
+
+        userRepository.save(user);
+
+        // 프로필 사진
+        String profileImageDto;
+        if(user.getCustomImageUrl() != null) {
+            profileImageDto = user.getCustomImageUrl();
+        } else {
+            profileImageDto = user.getImageUrl();
+        }
+
+        // 주소 인증 여부
+        boolean isCertifiedAddress = false;
+        if(user.getAddress() != null) {
+            isCertifiedAddress = true;
+        }
+
+        // 동물 등록 카드 여부
+        Optional<PetCard> petcard = petCardRepository.findByUser(user);
+        // 동물 등록 카드 여부
+        boolean isCertifiedPetCard = false;
+        if(petcard.isPresent()) {
+            isCertifiedPetCard = true;
+        }
+
+        UserDetailDto userDetailDto = new UserDetailDto(user.getUserId(), isCertifiedAddress, isCertifiedPetCard, user.getAddress().split("#"), user.getNickname(), user.getName(), profileImageDto);
+        return userDetailDto;
+    }
     /**
      * 마이페이지 히스토리 내가 쓴 글(커뮤니티, 백과사전)
      * @param userid
@@ -32,19 +120,19 @@ public class MyPageService {
 
         User user = userRepository.findById(userid).get();
 
-        //List<Bookmark> CommunityList = user.getCommunityList();
+        List<Community> CommunityList = user.getCommunityList();
         List<QnaBoard> QnaList = user.getQnaBoardList();
 
         //entity -> dto 변환 (커뮤니티)
-        //List<Community> CommunityCollect = CommunityList.stream().map(m -> new HistoryBoardDTO(m.getId(), "커뮤니티 - " + m.getCategory(),  m.getTitle(), m.getLikes(), 댓글+대댓글))
-        //.collect(Collectors.toList());
+        List<HistoryBoardDTO> CommunityCollect = CommunityList.stream().map(m -> new HistoryBoardDTO(m.getPostId(), "커뮤니티 - " + m.getCategory(),  m.getTitle()))
+                .collect(Collectors.toList());
 
         //entity -> dto 변환 (퍼펫트 백과사전)
-        List<HistoryBoardDTO> QnaCollect = QnaList.stream().map(m -> new HistoryBoardDTO(m.getId(), "퍼펫트 백과" , m.getTitle(), m.getLikes(), m.getCommentQnaList().size()))
+        List<HistoryBoardDTO> QnaCollect = QnaList.stream().map(m -> new HistoryBoardDTO(m.getId(), "퍼펫트 백과" , m.getTitle()))
                 .collect(Collectors.toList());
 
         //return new Result(CommunityCollect, QnaCollect);
-        return new Result(1, 2);
+        return new Result(CommunityCollect, QnaCollect);
     }
 
 
@@ -63,7 +151,7 @@ public class MyPageService {
         for(Long qnaId : qnaIdList) {
             QnaBoard qnaBoard = qnaBoardRep.findById(qnaId).get();
             qnaCollect.add(new HistoryBoardDTO(qnaBoard.getId(), "퍼펫트 백과" ,
-                    qnaBoard.getTitle(), qnaBoard.getLikes(), qnaBoard.getCommentQnaList().size()));
+                    qnaBoard.getTitle()));
         }
 
         return qnaCollect;
@@ -92,26 +180,24 @@ public class MyPageService {
      * 마이페이지 북마크(커뮤니티, 백과사전)
      * @param userid
      */
-    public List<HistoryBoardDTO> getBookmarkBoard(Long userid) {
+    public Result getBookmarkBoard(Long userid) {
 
         User user = userRepository.findById(userid).get();
 
-        //List<BookmarkCommunity> bookmarkCommunityList = user.getBookmarkCommunityList();
+        List<BookmarkComm> bookmarkCommunityList = user.getBookmarkCommList();
         List<BookmarkQna> bookmarkQnaList = user.getBookmarkQnaList();
 
         //entity -> dto 변환 (커뮤니티)
-        //bookmarkCommunityList.stream.map(m -> new HistoryBoardDTO(m.getCommunity().getId(), "커뮤니티 - " + m.getCategory(),
-                        //m.getCommunity().getTitle(), m.getCommunity().getLikes(), 댓글+대댓글);
+        List<HistoryBoardDTO> CommCollect = bookmarkCommunityList.stream().map(m -> new HistoryBoardDTO(m.getCommunity().getPostId(),"커뮤니티 - " + m.getCommunity().getCategory(),
+                        m.getCommunity().getTitle()))
+                .collect(Collectors.toList());
 
         //entity -> dto 변환 (퍼펫트 백과사전)
         List<HistoryBoardDTO> QnaCollect = bookmarkQnaList.stream().map(m -> new HistoryBoardDTO(m.getQnaBoard().getId(), "퍼펫트 백과" ,
-                        m.getQnaBoard().getTitle(), m.getQnaBoard().getLikes(), m.getQnaBoard().getCommentQnaList().size()))
+                        m.getQnaBoard().getTitle()))
                 .collect(Collectors.toList());
 
-        //return new Result<, QnaCollect>();
-        //return new Result(1,1);
-
-        return QnaCollect;
+        return new Result(CommCollect, QnaCollect);
     }
 
 
