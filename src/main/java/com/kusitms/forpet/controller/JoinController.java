@@ -39,12 +39,8 @@ public class JoinController {
         String accessToken = HeaderUtil.getAccessToken(request);
 
         // 회원가입 시 가져오는 token은 유효하지 않을 수 있음.
-        Long userId;
-        if(!tokenProvider.validateToken(accessToken)) {
-            userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
-        } else {
-            userId = tokenProvider.getUserIdFromToken(accessToken);
-        }
+        Long userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
+
         User kakaoUser = joinService.findByUserId(userId);
 
         KakaoUserDto userDto = new KakaoUserDto(kakaoUser.getUserId(), kakaoUser.getName(), kakaoUser.getEmail(), kakaoUser.getImageUrl());
@@ -90,12 +86,8 @@ public class JoinController {
         String accessToken = HeaderUtil.getAccessToken(request);
 
         // 회원가입을 진행하며 token이 만료되었을 수 있다.
-        Long userId;
-        if(!tokenProvider.validateToken(accessToken)) {
-            userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
-        } else {
-            userId = tokenProvider.getUserIdFromToken(accessToken);
-        }
+        Long userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
+
 
         User user = joinService.createUser(userId, dto, profileImage);
         accessToken = jwtTokenService.createJWTToken(user, request, response);

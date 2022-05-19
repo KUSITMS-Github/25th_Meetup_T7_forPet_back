@@ -4,12 +4,17 @@ import com.kusitms.forpet.config.AppProperties;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.UserRefreshToken;
 import com.kusitms.forpet.dto.ApiResponse;
+import com.kusitms.forpet.dto.ErrorCode;
 import com.kusitms.forpet.dto.LoginDto;
+import com.kusitms.forpet.exception.CustomException;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.JWTTokenService;
 import com.kusitms.forpet.service.UserService;
 import com.kusitms.forpet.util.CookieUtils;
 import com.kusitms.forpet.util.HeaderUtil;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -61,30 +66,29 @@ public class AuthController {
     public ApiResponse refreshToken (HttpServletRequest request, HttpServletResponse response) {
         // access token 확인, 유효성 검사
         String accessToken = HeaderUtil.getAccessToken(request);
-        if(!tokenProvider.validateToken(accessToken)) {
-            return ApiResponse.invalidAccessToken();
-        }
+        tokenExceptionHandler(accessToken);
 
         // refresh token 확인, 유효성 검사
         String refreshToken = CookieUtils.getCookie(request, REFRESH_TOKEN)
                 .map(Cookie::getValue)
                 .orElse((null));
-        if(!tokenProvider.validateToken(refreshToken)) {
-            return ApiResponse.invalidRefreshToken();
-        }
+
+        boolean isAccessTokenExpired = tokenExceptionHandler(accessToken);
+        boolean isRefreshTokenExpired = tokenExceptionHandler(refreshToken);
 
         // jwt가 만료 기간을 넘지 않았다면 재발급 과정이 필요 없음.
-        if(tokenProvider.validateToken(accessToken) && tokenProvider.validateToken(refreshToken)) {
-            return ApiResponse.notExpiredTokenYet();
+        if(isAccessTokenExpired && isRefreshTokenExpired) {
+            throw new CustomException(ErrorCode.NOT_EXPIRED_TOKEN);
         }
 
         // userId로 DB refresh token 확인
         Long userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
         User user = User.builder()
                         .userId(userId).build();
+
         UserRefreshToken userRefreshToken = userService.findByUserIdAndRefreshToken(user, refreshToken);
         if(userRefreshToken == null) {
-            return ApiResponse.invalidRefreshToken();
+            throw new CustomException(ErrorCode.MISMATCH_REFRESH_TOKEN);
         }
 
         String newAccessToken = tokenProvider.createAccessToken(userId);
@@ -96,6 +100,7 @@ public class AuthController {
             refreshToken = tokenProvider.createRefreshToken(userId);
 
             userRefreshToken.setRefreshToken(refreshToken);
+            userService.save(userRefreshToken);
 
             int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
 
@@ -109,9 +114,9 @@ public class AuthController {
     public ApiResponse logout(HttpServletRequest request) {
         // access token 확인
         String accessToken = HeaderUtil.getAccessToken(request);
-        if(!tokenProvider.validateToken(accessToken)) {
-            return ApiResponse.invalidAccessToken();
-        }
+
+        // 토큰 유효성 검사
+        tokenExceptionHandler(accessToken);
 
         // access token으로 userId 가져옴
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
@@ -119,5 +124,24 @@ public class AuthController {
         userService.deleteRefreshTokenByUserId(userId);
 
         return ApiResponse.success("message", "로그아웃 되었습니다.");
+    }
+
+    public boolean tokenExceptionHandler(String token) {
+        try {
+            tokenProvider.validateToken(token);
+        } catch (SecurityException | MalformedJwtException e) {
+            new CustomException(ErrorCode.INVALID_AUTH_TOKEN);
+        } catch (ExpiredJwtException e) {
+            // 만료된 토큰에 대해서는 에러 응답 보내지 않음.
+            return false;
+        } catch (UnsupportedJwtException e) {
+            new CustomException(ErrorCode.UNSUPPORTED_AUTH_TOKEN);
+        } catch (IllegalArgumentException e) {
+            new CustomException(ErrorCode.WRONG_TOKEN);
+        } catch (Exception e) {
+            new CustomException(ErrorCode.UNKNOWN_ERROR);
+        }
+
+        return true;
     }
 }

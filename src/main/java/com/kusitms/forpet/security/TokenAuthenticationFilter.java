@@ -4,9 +4,13 @@ import com.kusitms.forpet.config.AppProperties;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.UserRefreshToken;
 import com.kusitms.forpet.dto.ApiResponse;
+import com.kusitms.forpet.dto.ErrorCode;
 import com.kusitms.forpet.repository.UserRefreshTokenRepository;
 import com.kusitms.forpet.service.UserService;
 import com.kusitms.forpet.util.CookieUtils;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -43,9 +47,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String jwt = getJwtFromRequest(request);
         try {
-            String jwt = getJwtFromRequest(request);
-
             System.out.println("access token in header : " + jwt);
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 Long userId = tokenProvider.getUserIdFromToken(jwt);
@@ -56,10 +59,26 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (Exception ex) {
-            log.error("Could not set user authentication in security context", ex);
+        } catch (SecurityException | MalformedJwtException e) {
+            request.setAttribute("exception", ErrorCode.INVALID_AUTH_TOKEN.toString());
+        } catch (ExpiredJwtException e) {
+            log.error(ErrorCode.EXPIRED_AUTH_TOKEN.toString());
+            request.setAttribute("exception", ErrorCode.EXPIRED_AUTH_TOKEN.toString());
+        } catch (UnsupportedJwtException e) {
+            request.setAttribute("exception", ErrorCode.UNSUPPORTED_AUTH_TOKEN.toString());
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("exception", ErrorCode.WRONG_TOKEN.toString());
+        } catch (Exception e) {
+            log.error("================================================");
+            log.error("JwtFilter - doFilterInternal() 오류발생");
+            log.error("token : {}", jwt);
+            log.error("Exception Message : {}", e.getMessage());
+            log.error("Exception StackTrace : {");
+            e.printStackTrace();
+            log.error("}");
+            log.error("================================================");
+            request.setAttribute("exception", ErrorCode.UNKNOWN_ERROR.toString());
         }
-
         filterChain.doFilter(request, response);
     }
 
@@ -71,6 +90,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
+    /*
     // 토큰 재발급
     private String refreshToken(HttpServletRequest request, HttpServletResponse response, String expiredToken) {
         String refreshToken = CookieUtils.getCookie(request, REFRESH_TOKEN)
@@ -109,4 +129,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
         return "denied";
     }
+    */
+
 }

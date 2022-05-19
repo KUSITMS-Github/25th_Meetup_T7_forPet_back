@@ -83,18 +83,13 @@ public class TokenProvider {
 
     public Long getUserIdFromExpiredToken(String token) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(appProperties.getAuth().getTokenSecret())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+           return getUserIdFromToken(token);
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT token.");
             Claims claims = e.getClaims();
             String userId = claims.getSubject();
             return Long.parseLong(userId);
         }
-        return null;
     }
     // token의 유효시간
     public Long getValidTime(String token) {
@@ -108,21 +103,8 @@ public class TokenProvider {
     }
 
     // 유효한 토큰인지 검사
-    public boolean validateToken(String authToken) {
-        try {
-            Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
-            return true;
-        } catch (SignatureException ex) {
-            log.error("Invalid JWT signature");
-        } catch (MalformedJwtException ex) {
-            log.error("Invalid JWT token");
-        } catch (UnsupportedJwtException ex) {
-            log.error("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            log.error("JWT claims string is empty.");
-        } catch (ExpiredJwtException ex) {
-            log.error("Expired JWT token.");
-        }
-        return false;
+    public boolean validateToken(String authToken) throws Exception{
+        Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
+        return true;
     }
 }

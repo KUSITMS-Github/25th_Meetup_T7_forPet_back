@@ -20,6 +20,7 @@ public class UserService {
     public void save(User user) {
         userRepository.saveAndFlush(user);
     }
+    public void save(UserRefreshToken token) { userRefreshTokenRepository.saveAndFlush(token); }
 
     @Transactional(readOnly = true)
     public User findByUserId(Long userId) {
