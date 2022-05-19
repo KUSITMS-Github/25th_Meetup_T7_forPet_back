@@ -69,7 +69,7 @@ public class MyPageService {
         User user = userRepository.findByUserId(userId);
 
         // 프로필 사진
-        if(!profileImage.getOriginalFilename().equals("")) {
+        if(!profileImage.isEmpty()) {
             // image file -> url
             String profileImageName = s3Uploader.uploadImage(profileImage);
             StringBuilder profileImageUrl = new StringBuilder();
@@ -80,17 +80,19 @@ public class MyPageService {
         }
 
         // 닉네임과 주소 업데이트
-        /**
-         * null 처리해주어야 함!
-         */
-        user.updateNickname(dto.getNickname());
-        user.updateAddress(dto.getAddress().getAddressList());
+        if(StringUtils.isNotEmpty(dto.getNickname())) {
+            user.updateNickname(dto.getNickname());
+        }
+
+        if(StringUtils.isNotEmpty(dto.getAddress().getAddressList())) {
+            user.updateAddress(dto.getAddress().getAddressList());
+        }
 
         userRepository.save(user);
 
         // 프로필 사진
         String profileImageDto;
-        if(user.getCustomImageUrl() != null) {
+        if(StringUtils.isNotEmpty(user.getCustomImageUrl())) {
             profileImageDto = user.getCustomImageUrl();
         } else {
             profileImageDto = user.getImageUrl();
@@ -98,13 +100,12 @@ public class MyPageService {
 
         // 주소 인증 여부
         boolean isCertifiedAddress = false;
-        if(user.getAddress() != null) {
+        if(StringUtils.isNotEmpty(user.getAddress())) {
             isCertifiedAddress = true;
         }
 
         // 동물 등록 카드 여부
         Optional<PetCard> petcard = petCardRepository.findByUser(user);
-        // 동물 등록 카드 여부
         boolean isCertifiedPetCard = false;
         if(petcard.isPresent()) {
             isCertifiedPetCard = true;
@@ -200,8 +201,6 @@ public class MyPageService {
 
         return new Result(CommCollect, QnaCollect);
     }
-
-
 
     @Data
     @AllArgsConstructor

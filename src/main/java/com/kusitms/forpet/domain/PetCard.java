@@ -21,18 +21,15 @@ public class PetCard {
     @JoinColumn(name = "user_id", unique=true)
     private User user;
 
-    private String cardNumber;
 
     private String imageUrl;
 
     @Builder
-    public PetCard(User user, String cardNumber, String imageUrl) {
+    public PetCard(User user, String imageUrl) {
         Assert.notNull(user, "userId must not be null");
-        Assert.hasText(cardNumber, "cardNumber must not be empty");
         Assert.hasText(imageUrl, "imageUrl must not be empty");
 
         this.user = user;
-        this.cardNumber = cardNumber;
         this.imageUrl = imageUrl;
     }
 }

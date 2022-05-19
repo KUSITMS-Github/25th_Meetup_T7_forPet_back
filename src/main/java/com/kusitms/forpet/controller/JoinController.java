@@ -89,7 +89,7 @@ public class JoinController {
         accessToken = jwtTokenService.createJWTToken(user, request, response);
 
         if(!petCardImage.getOriginalFilename().equals("")) {
-            PetCard petCard = petCardService.createPetCardByUserId(userId, petCardImage, dto.getPetCardNumber());
+            PetCard petCard = petCardService.createPetCardByUserId(userId, petCardImage);
         }
 
         return ApiResponse.created("token", accessToken);

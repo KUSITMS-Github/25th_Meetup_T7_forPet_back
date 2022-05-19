@@ -23,6 +23,8 @@ public enum ErrorCode {
     CANNOT_DUPLICATE_LIKE(BAD_REQUEST, "이미 좋아요한 게시물입니다."),
     CANNOT_DUPLICATE_BOOKMARK(BAD_REQUEST, "이미 북마크한 게시물입니다."),
 
+    CANNOT_CERTIFY(BAD_REQUEST, "인증 정보를 함께 등록해야 합니다."),
+
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
     EXPIRED_AUTH_TOKEN(UNAUTHORIZED, "액세스 토큰이 만료되었습니다. 토큰을 재발급해주세요."),

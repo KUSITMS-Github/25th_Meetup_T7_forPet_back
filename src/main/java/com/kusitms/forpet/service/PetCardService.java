@@ -18,7 +18,7 @@ public class PetCardService {
     private final PetCardRepository petCardRepository;
     private final UserRepository userRepository;
 
-    public PetCard createPetCardByUserId(Long userId, MultipartFile petCardImage, String cardNumber) {
+    public PetCard createPetCardByUserId(Long userId, MultipartFile petCardImage) {
         String petCardImageName = s3Uploader.uploadImage(petCardImage);
         StringBuilder petCardImageUrl = new StringBuilder();
         petCardImageUrl.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
@@ -31,10 +31,8 @@ public class PetCardService {
 
         PetCard petCard = PetCard.builder()
                 .user(user)
-                .cardNumber(cardNumber)
                 .imageUrl(petCardImageUrl.toString())
                 .build();
-
 
         userRepository.save(user);
         petCardRepository.save(petCard);
