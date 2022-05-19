@@ -16,6 +16,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,7 +50,7 @@ public class AuthController {
 
         // 1. id로 회원가입 여부 확인
         User user = userService.findByUserId(id);
-        if(user.getNickname() == null) {
+        if(StringUtils.isEmpty(user.getNickname())) {
             // 회원가입이 되어 있지 않다면 access token 발급
             isSignUp = false;
             accessToken = jwtTokenService.createJWTToken(user);
@@ -85,28 +87,33 @@ public class AuthController {
         User user = User.builder()
                         .userId(userId).build();
 
-        UserRefreshToken userRefreshToken = userService.findByUserIdAndRefreshToken(user, refreshToken);
-        if(userRefreshToken == null) {
+        // access 토큰 갱신
+        String newAccessToken = tokenProvider.createAccessToken(userId);
+
+        Optional<UserRefreshToken> userRefreshTokenOptional = userService.findByUserIdAndRefreshToken(user, refreshToken);
+        if(userRefreshTokenOptional.isPresent()) {
+            UserRefreshToken userRefreshToken = userRefreshTokenOptional.get();
+
+            long validTime = tokenProvider.getValidTime(refreshToken);
+            // refresh token 기간이 3일 이하로 남은 경우, refresh 토큰 갱신
+            if(validTime <= THREE_DAYS_MSEC) {
+                // refresh token 설정
+                refreshToken = tokenProvider.createRefreshToken(userId);
+
+                userRefreshToken.setRefreshToken(refreshToken);
+                userService.save(userRefreshToken);
+
+                int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
+
+                CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
+                CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
+            }
+            return ApiResponse.success("token", newAccessToken);
+
+        } else {
             throw new CustomException(ErrorCode.MISMATCH_REFRESH_TOKEN);
         }
 
-        String newAccessToken = tokenProvider.createAccessToken(userId);
-
-        long validTime = tokenProvider.getValidTime(refreshToken);
-        // refresh token 기간이 3일 이하로 남은 경우, refresh 토큰 갱신
-        if(validTime <= THREE_DAYS_MSEC) {
-            // refresh token 설정
-            refreshToken = tokenProvider.createRefreshToken(userId);
-
-            userRefreshToken.setRefreshToken(refreshToken);
-            userService.save(userRefreshToken);
-
-            int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
-
-            CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
-            CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
-        }
-        return ApiResponse.success("token", newAccessToken);
     }
 
     @GetMapping("/logout")

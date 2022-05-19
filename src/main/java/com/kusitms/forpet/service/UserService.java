@@ -37,7 +37,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserRefreshToken findByUserIdAndRefreshToken(User user, String refreshToken) {
+    public Optional<UserRefreshToken> findByUserIdAndRefreshToken(User user, String refreshToken) {
         return userRefreshTokenRepository.findByUserIdAndRefreshToken(user, refreshToken);
     }
 

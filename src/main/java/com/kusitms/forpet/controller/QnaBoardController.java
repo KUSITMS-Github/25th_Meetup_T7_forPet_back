@@ -5,6 +5,8 @@ import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardRequestDto;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardResByIdDto;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardResponseDto;
+import com.kusitms.forpet.dto.response.ErrorCode;
+import com.kusitms.forpet.exception.CustomException;
 import com.kusitms.forpet.repository.QnaBoardRep;
 import com.kusitms.forpet.security.Role;
 import com.kusitms.forpet.security.TokenProvider;
@@ -281,11 +283,11 @@ public class QnaBoardController {
 
         Map<String, Integer> result = qnaBoardService.createBookmark(userid, boardId);
 
-        if(result != null)
-            return ApiResponse.success("data", result);
-        else
-            return ApiResponse.badRequest();
+        if(result == null) {
+            // throw new CustomException(ErrorCode.UNKNOWN_ERROR);
+        }
 
+        return ApiResponse.success("data", result);
     }
 
 
