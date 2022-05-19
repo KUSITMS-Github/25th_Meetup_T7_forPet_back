@@ -12,6 +12,7 @@ import com.kusitms.forpet.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,7 +39,7 @@ public class MyPageService {
 
         // 프로필 사진
         String profileImage;
-        if(user.getCustomImageUrl() != null) {
+        if(!StringUtils.isEmpty(user.getCustomImageUrl())) {
             profileImage = user.getCustomImageUrl();
         } else {
             profileImage = user.getImageUrl();
@@ -46,7 +47,7 @@ public class MyPageService {
 
         // 주소 인증 여부
         boolean isCertifiedAddress = false;
-        if(user.getAddress() != null) {
+        if(!StringUtils.isEmpty(user.getAddress())) {
             isCertifiedAddress = true;
         }
 

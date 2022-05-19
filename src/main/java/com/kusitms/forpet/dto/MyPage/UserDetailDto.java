@@ -13,7 +13,7 @@ public class UserDetailDto {
     private boolean isCertifiedAddress;
     @JsonProperty(value = "is_certified_pet_card")
     private boolean isCertifiedPetCard;
-    private String[] addressList;
+    private String[] address;
     private String nickname;
     private String name;
     @JsonProperty(value = "profile_image_url")
