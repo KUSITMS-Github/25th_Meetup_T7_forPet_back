@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
-import static com.kusitms.forpet.dto.ErrorCode.*;
+import static com.kusitms.forpet.dto.response.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor

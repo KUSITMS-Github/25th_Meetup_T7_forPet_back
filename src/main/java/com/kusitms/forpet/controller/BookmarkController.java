@@ -1,7 +1,7 @@
 package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.Bookmark;
-import com.kusitms.forpet.dto.ApiResponse;
+import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.BookmarkByCategoryDto;
 import com.kusitms.forpet.dto.BookmarkByUserIdDto;
 import com.kusitms.forpet.repository.BookmarkRep;

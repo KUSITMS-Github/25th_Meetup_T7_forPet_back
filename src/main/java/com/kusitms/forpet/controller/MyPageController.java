@@ -1,12 +1,10 @@
 package com.kusitms.forpet.controller;
 
-import com.kusitms.forpet.domain.CommentQna;
-import com.kusitms.forpet.dto.ApiResponse;
+import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.MyPage.BookmarkOfflineDto;
 import com.kusitms.forpet.dto.MyPage.HistoryBoardDTO;
 import com.kusitms.forpet.dto.MyPage.UserDetailDto;
 import com.kusitms.forpet.dto.MyPage.UserUpdateDto;
-import com.kusitms.forpet.dto.SignUpDto;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.MyPageService;
 import com.kusitms.forpet.service.UserService;

@@ -1,13 +1,6 @@
 package com.kusitms.forpet.security;
 
-import com.kusitms.forpet.config.AppProperties;
-import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.domain.UserRefreshToken;
-import com.kusitms.forpet.dto.ApiResponse;
-import com.kusitms.forpet.dto.ErrorCode;
-import com.kusitms.forpet.repository.UserRefreshTokenRepository;
-import com.kusitms.forpet.service.UserService;
-import com.kusitms.forpet.util.CookieUtils;
+import com.kusitms.forpet.dto.response.ErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -22,7 +15,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -34,16 +26,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private TokenProvider tokenProvider;
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private AppProperties appProperties;
-    @Autowired
-    private UserRefreshTokenRepository userRefreshTokenRepository;
-
-
-    private final static long THREE_DAYS_MSEC = 259200000;
-    private final static String REFRESH_TOKEN = "refresh_token";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -89,46 +71,4 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
-
-    /*
-    // 토큰 재발급
-    private String refreshToken(HttpServletRequest request, HttpServletResponse response, String expiredToken) {
-        String refreshToken = CookieUtils.getCookie(request, REFRESH_TOKEN)
-                .map(Cookie::getValue)
-                .orElse((null));
-        // refresh token 검증
-        if(tokenProvider.validateToken(refreshToken)) {
-            // userId로 DB의 refresh Token이 있는지 확인
-            Long userId = tokenProvider.getUserIdFromExpiredToken(expiredToken);
-            User user = User.builder()
-                    .userId(userId).build();
-            System.out.println("userID : " + userId + ", refresh token : " + refreshToken);
-            UserRefreshToken userRefreshToken = userService.findByUserIdAndRefreshToken(user, refreshToken);
-            if(userRefreshToken == null) {
-                return "denied";
-            }
-
-            // 새로운 토큰 발급
-            String newToken = tokenProvider.createAccessToken(userId);
-
-            // refresh token 기간이 3일 이하로 남은 경우에 refresh token 갱신
-            long validTime = tokenProvider.getValidTime(refreshToken);
-            if(validTime <= THREE_DAYS_MSEC) {
-                // refresh token 설정
-                refreshToken = tokenProvider.createRefreshToken(userId);
-
-                userRefreshToken.setRefreshToken(refreshToken);
-                userRefreshTokenRepository.save(userRefreshToken);
-
-                int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
-
-                CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
-                CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
-            }
-            return newToken;
-        }
-        return "denied";
-    }
-    */
-
 }

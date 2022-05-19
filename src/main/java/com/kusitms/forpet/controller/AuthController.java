@@ -3,8 +3,8 @@ package com.kusitms.forpet.controller;
 import com.kusitms.forpet.config.AppProperties;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.UserRefreshToken;
-import com.kusitms.forpet.dto.ApiResponse;
-import com.kusitms.forpet.dto.ErrorCode;
+import com.kusitms.forpet.dto.response.ApiResponse;
+import com.kusitms.forpet.dto.response.ErrorCode;
 import com.kusitms.forpet.dto.LoginDto;
 import com.kusitms.forpet.exception.CustomException;
 import com.kusitms.forpet.security.TokenProvider;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

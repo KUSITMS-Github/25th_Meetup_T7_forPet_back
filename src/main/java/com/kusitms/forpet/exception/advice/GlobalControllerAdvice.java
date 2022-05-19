@@ -1,20 +1,17 @@
 package com.kusitms.forpet.exception.advice;
 
-import com.kusitms.forpet.dto.ErrorResponse;
+import com.kusitms.forpet.dto.response.ErrorResponse;
 import com.kusitms.forpet.exception.CustomException;
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolationException;
 
-import static com.kusitms.forpet.dto.ErrorCode.DUPLICATE_RESOURCE;
-import static com.kusitms.forpet.dto.ErrorCode.EXPIRED_AUTH_TOKEN;
+import static com.kusitms.forpet.dto.response.ErrorCode.DUPLICATE_RESOURCE;
 
 @Slf4j
 @RestControllerAdvice

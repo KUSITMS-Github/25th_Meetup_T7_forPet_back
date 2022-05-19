@@ -1,8 +1,7 @@
 package com.kusitms.forpet.controller;
 
-import com.kusitms.forpet.domain.BookmarkQna;
 import com.kusitms.forpet.domain.QnaBoard;
-import com.kusitms.forpet.dto.ApiResponse;
+import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardRequestDto;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardResByIdDto;
 import com.kusitms.forpet.dto.QnaBoard.QnaBoardResponseDto;

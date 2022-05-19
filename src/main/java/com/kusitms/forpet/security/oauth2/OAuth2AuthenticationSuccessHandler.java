@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 
-import static com.kusitms.forpet.dto.ErrorCode.UNAUTHORIZED_REDIRECT_URI;
+import static com.kusitms.forpet.dto.response.ErrorCode.UNAUTHORIZED_REDIRECT_URI;
 import static com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
 @Component

@@ -2,7 +2,7 @@ package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.Community;
 import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.dto.ApiResponse;
+import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.CommunityDto;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.CommunityService;

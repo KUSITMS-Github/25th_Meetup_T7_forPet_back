@@ -1,4 +1,4 @@
-package com.kusitms.forpet.dto;
+package com.kusitms.forpet.dto.response;
 
 import lombok.*;
 

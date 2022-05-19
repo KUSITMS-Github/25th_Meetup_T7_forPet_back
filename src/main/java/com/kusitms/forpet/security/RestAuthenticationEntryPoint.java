@@ -1,7 +1,6 @@
 package com.kusitms.forpet.security;
 
-import com.kusitms.forpet.dto.ErrorCode;
-import io.jsonwebtoken.ExpiredJwtException;
+import com.kusitms.forpet.dto.response.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.springframework.security.core.AuthenticationException;

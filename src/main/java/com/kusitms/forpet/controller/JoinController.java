@@ -1,26 +1,21 @@
 package com.kusitms.forpet.controller;
 
-import com.kusitms.forpet.config.AppProperties;
 import com.kusitms.forpet.domain.PetCard;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.dto.*;
+import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.JWTTokenService;
 import com.kusitms.forpet.service.JoinService;
 import com.kusitms.forpet.service.PetCardService;
-import com.kusitms.forpet.util.CookieUtils;
 import com.kusitms.forpet.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Random;
-
-import static com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REFRESH_TOKEN;
 
 @RestController
 @RequiredArgsConstructor

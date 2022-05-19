@@ -1,6 +1,6 @@
 package com.kusitms.forpet.exception;
 
-import com.kusitms.forpet.dto.ErrorCode;
+import com.kusitms.forpet.dto.response.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
