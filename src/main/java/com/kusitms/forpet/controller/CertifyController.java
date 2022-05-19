@@ -2,8 +2,10 @@ package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.PetCard;
 import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.dto.ApiResponse;
+import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.SignUpDto;
+import com.kusitms.forpet.dto.response.ErrorCode;
+import com.kusitms.forpet.exception.CustomException;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.PetCardService;
 import com.kusitms.forpet.service.UserService;
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,13 +60,15 @@ public class CertifyController {
      */
     @PostMapping("/pet-card")
     public ApiResponse certifyPetCard(HttpServletRequest request,
-                                      @RequestPart(value="pet_card_number") String petCardNumber,
-                                      @RequestPart(value="pet_card_image") MultipartFile petCardImage) {
-
+                                      @RequestPart(value="pet_card_image", required = false) MultipartFile petCardImage) {
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
-        petCardService.createPetCardByUserId(userId, petCardImage, petCardNumber);
+        if(petCardImage.isEmpty()) {
+            throw new CustomException(ErrorCode.CANNOT_CERTIFY);
+        }
+
+        petCardService.createPetCardByUserId(userId, petCardImage);
 
         return ApiResponse.success("data", null);
     }

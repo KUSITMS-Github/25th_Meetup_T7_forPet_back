@@ -1,7 +1,6 @@
 package com.kusitms.forpet.controller;
 
-import com.kusitms.forpet.domain.Review;
-import com.kusitms.forpet.dto.ApiResponse;
+import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.ReviewDto;
 import com.kusitms.forpet.dto.ReviewRequestDto;
 import com.kusitms.forpet.security.TokenProvider;
@@ -13,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController

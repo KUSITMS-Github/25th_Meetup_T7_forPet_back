@@ -2,6 +2,7 @@ package com.kusitms.forpet.service;
 
 import com.kusitms.forpet.domain.*;
 import com.kusitms.forpet.dto.CommunityDto;
+import com.kusitms.forpet.exception.CustomException;
 import com.kusitms.forpet.repository.BookmarkCommRepository;
 import com.kusitms.forpet.repository.CommunityRepository;
 import com.kusitms.forpet.repository.LikesCommRepository;
@@ -14,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.kusitms.forpet.dto.response.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -198,11 +201,10 @@ public class CommunityService {
         if(comm.isPresent()) {
             community = comm.get();
 
-            // 중복 방지
             Optional<LikesComm> likesCommOptional = likesCommRepository.findByCommunityAndUser(community, user);
             if(likesCommOptional.isPresent()) {
-                // 좋아요한 적이 있다면 -1 반환
-                return -1;
+                // 이미 좋아요한 경우
+                throw new CustomException(CANNOT_DUPLICATE_LIKE);
             }
 
             likesComm = new LikesComm();

@@ -20,6 +20,7 @@ public class UserService {
     public void save(User user) {
         userRepository.saveAndFlush(user);
     }
+    public void save(UserRefreshToken token) { userRefreshTokenRepository.saveAndFlush(token); }
 
     @Transactional(readOnly = true)
     public User findByUserId(Long userId) {
@@ -36,7 +37,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserRefreshToken findByUserIdAndRefreshToken(User user, String refreshToken) {
+    public Optional<UserRefreshToken> findByUserIdAndRefreshToken(User user, String refreshToken) {
         return userRefreshTokenRepository.findByUserIdAndRefreshToken(user, refreshToken);
     }
 

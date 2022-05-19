@@ -2,7 +2,7 @@ package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.Community;
 import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.dto.ApiResponse;
+import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.CommunityDto;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.CommunityService;
@@ -259,10 +259,6 @@ public class CommunityController {
         User user = userService.findByUserId(userId);
         int cnt = communityService.saveLikes(user, postId);
 
-        if(cnt == -1) {
-            // 이미 좋아요 했다면 ... 에러 응답 정의 시 처리 -> 북마크도 처리
-            return ApiResponse.success("likes", cnt);
-        }
         return ApiResponse.success("likes", cnt);
     }
 

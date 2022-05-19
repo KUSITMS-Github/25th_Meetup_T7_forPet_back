@@ -1,7 +1,7 @@
 package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.MapClickCount;
-import com.kusitms.forpet.dto.ApiResponse;
+import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.ClickDto;
 import com.kusitms.forpet.service.OnlineMapService;
 import lombok.AllArgsConstructor;

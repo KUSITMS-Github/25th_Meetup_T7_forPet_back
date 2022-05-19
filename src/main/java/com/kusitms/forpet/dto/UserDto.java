@@ -12,6 +12,7 @@ public class UserDto {
     private Long userId;
     private String name;
     private String email;
+    @JsonProperty("image_url")
     private String imageUrl;
 
     private String nickname;
@@ -21,7 +22,9 @@ public class UserDto {
     private String petCardNumber;
     private String[] address;
 
+    @JsonProperty("pet_card_image_url")
     private String petCardImageUrl;
+    @JsonProperty("custom_image_url")
     private String customImageUrl;
 
     private String token;

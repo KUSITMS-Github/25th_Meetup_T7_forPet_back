@@ -1,26 +1,21 @@
 package com.kusitms.forpet.controller;
 
-import com.kusitms.forpet.config.AppProperties;
 import com.kusitms.forpet.domain.PetCard;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.dto.*;
+import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.JWTTokenService;
 import com.kusitms.forpet.service.JoinService;
 import com.kusitms.forpet.service.PetCardService;
-import com.kusitms.forpet.util.CookieUtils;
 import com.kusitms.forpet.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Random;
-
-import static com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REFRESH_TOKEN;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,12 +34,8 @@ public class JoinController {
         String accessToken = HeaderUtil.getAccessToken(request);
 
         // 회원가입 시 가져오는 token은 유효하지 않을 수 있음.
-        Long userId;
-        if(!tokenProvider.isExpiredToken(accessToken)) {
-            userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
-        } else {
-            userId = tokenProvider.getUserIdFromToken(accessToken);
-        }
+        Long userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
+
         User kakaoUser = joinService.findByUserId(userId);
 
         KakaoUserDto userDto = new KakaoUserDto(kakaoUser.getUserId(), kakaoUser.getName(), kakaoUser.getEmail(), kakaoUser.getImageUrl());
@@ -90,24 +81,17 @@ public class JoinController {
         String accessToken = HeaderUtil.getAccessToken(request);
 
         // 회원가입을 진행하며 token이 만료되었을 수 있다.
-        Long userId;
-        if(!tokenProvider.isExpiredToken(accessToken)) {
-            userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
-        } else {
-            userId = tokenProvider.getUserIdFromToken(accessToken);
-        }
+        Long userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
 
         User user = joinService.createUser(userId, dto, profileImage);
+
+        // access token과 refresh token 발급
         accessToken = jwtTokenService.createJWTToken(user, request, response);
 
-        UserDto userDto = new UserDto(user.getUserId(), user.getName(), user.getEmail(), user.getImageUrl(), user.getNickname(), user.getPhone(), null,
-                user.getAddress().split("#"), null, user.getCustomImageUrl(), accessToken);
-
         if(!petCardImage.getOriginalFilename().equals("")) {
-            PetCard petCard = petCardService.createPetCardByUserId(userId, petCardImage, dto.getPetCardNumber());
-            userDto.setPetCardNumber(petCard.getCardNumber());
-            userDto.setPetCardImageUrl(petCard.getImageUrl());
+            PetCard petCard = petCardService.createPetCardByUserId(userId, petCardImage);
         }
-        return ApiResponse.created("data", userDto);
+
+        return ApiResponse.created("token", accessToken);
     }
 }

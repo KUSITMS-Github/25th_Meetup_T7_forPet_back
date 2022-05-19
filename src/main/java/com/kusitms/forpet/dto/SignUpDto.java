@@ -15,8 +15,6 @@ public class SignUpDto {
     private String nickname;
     @JsonProperty("phone_number")
     private String phoneNumber;
-    @JsonProperty("pet_card_number")
-    private String petCardNumber;
     private Address address;
 
     @Setter

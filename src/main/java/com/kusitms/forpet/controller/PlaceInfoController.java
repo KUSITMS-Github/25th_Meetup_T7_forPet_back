@@ -1,7 +1,7 @@
 package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.placeInfo;
-import com.kusitms.forpet.dto.ApiResponse;
+import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.CategoryDto;
 import com.kusitms.forpet.dto.placeDto;
 import com.kusitms.forpet.repository.APIRep;

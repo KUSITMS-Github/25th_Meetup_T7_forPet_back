@@ -2,8 +2,7 @@ package com.kusitms.forpet.security.oauth2;
 
 import com.kusitms.forpet.config.AppProperties;
 import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.domain.UserRefreshToken;
-import com.kusitms.forpet.exception.BadRequestException;
+import com.kusitms.forpet.exception.CustomException;
 import com.kusitms.forpet.repository.UserRefreshTokenRepository;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.security.UserPrincipal;
@@ -22,8 +21,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 
+import static com.kusitms.forpet.dto.response.ErrorCode.UNAUTHORIZED_REDIRECT_URI;
 import static com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
-import static com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REFRESH_TOKEN;
 
 @Component
 @RequiredArgsConstructor
@@ -58,7 +57,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .map(Cookie::getValue);
 
         if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
-            throw new BadRequestException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication" + redirectUri.get());
+            // 인증받지 않은 REDIRECT URI
+            throw new CustomException(UNAUTHORIZED_REDIRECT_URI);
         }
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
