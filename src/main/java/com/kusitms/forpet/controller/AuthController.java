@@ -74,7 +74,7 @@ public class AuthController {
         }
 
         // jwt가 만료 기간을 넘지 않았다면 재발급 과정이 필요 없음.
-        if(tokenProvider.isExpiredToken(accessToken) && tokenProvider.isExpiredToken(refreshToken)) {
+        if(tokenProvider.validateToken(accessToken) && tokenProvider.validateToken(refreshToken)) {
             return ApiResponse.notExpiredTokenYet();
         }
 

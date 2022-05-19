@@ -1,6 +1,8 @@
 package com.kusitms.forpet.security;
 
 import com.kusitms.forpet.config.AppProperties;
+import com.kusitms.forpet.dto.ErrorCode;
+import com.kusitms.forpet.exception.CustomException;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -119,20 +121,8 @@ public class TokenProvider {
         } catch (IllegalArgumentException ex) {
             log.error("JWT claims string is empty.");
         } catch (ExpiredJwtException ex) {
-            return true; // 만료 토큰이라면 exception 발생 x
+            log.error("Expired JWT token.");
         }
-        return false;
-    }
-
-    // 만료 토큰인지 검사
-    public boolean isExpiredToken(String authToken) {
-        try {
-            Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
-            return true;
-        } catch (ExpiredJwtException ex) {
-            log.error("Expired JWT token");
-        }
-
         return false;
     }
 }

@@ -40,7 +40,7 @@ public class JoinController {
 
         // 회원가입 시 가져오는 token은 유효하지 않을 수 있음.
         Long userId;
-        if(!tokenProvider.isExpiredToken(accessToken)) {
+        if(!tokenProvider.validateToken(accessToken)) {
             userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
         } else {
             userId = tokenProvider.getUserIdFromToken(accessToken);
@@ -91,7 +91,7 @@ public class JoinController {
 
         // 회원가입을 진행하며 token이 만료되었을 수 있다.
         Long userId;
-        if(!tokenProvider.isExpiredToken(accessToken)) {
+        if(!tokenProvider.validateToken(accessToken)) {
             userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
         } else {
             userId = tokenProvider.getUserIdFromToken(accessToken);

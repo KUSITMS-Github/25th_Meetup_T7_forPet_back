@@ -48,12 +48,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             System.out.println("access token in header : " + jwt);
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                if(!tokenProvider.isExpiredToken(jwt)) {
-                    // token이 만료되었다면 재발급
-                    jwt = refreshToken(request, response, jwt);
-                    response.setHeader("Authorization", "Bearer "+ jwt);
-                    System.out.println("new access token : " + jwt);
-                }
                 Long userId = tokenProvider.getUserIdFromToken(jwt);
 
                 UserDetails userDetails = customUserDetailsService.loadUserById(userId);
