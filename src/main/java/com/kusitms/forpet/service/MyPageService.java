@@ -120,19 +120,19 @@ public class MyPageService {
 
         User user = userRepository.findById(userid).get();
 
-        //List<Bookmark> CommunityList = user.getCommunityList();
+        List<Community> CommunityList = user.getCommunityList();
         List<QnaBoard> QnaList = user.getQnaBoardList();
 
         //entity -> dto 변환 (커뮤니티)
-        //List<Community> CommunityCollect = CommunityList.stream().map(m -> new HistoryBoardDTO(m.getId(), "커뮤니티 - " + m.getCategory(),  m.getTitle(), m.getLikes(), 댓글+대댓글))
-        //.collect(Collectors.toList());
+        List<HistoryBoardDTO> CommunityCollect = CommunityList.stream().map(m -> new HistoryBoardDTO(m.getPostId(), "커뮤니티 - " + m.getCategory(),  m.getTitle()))
+                .collect(Collectors.toList());
 
         //entity -> dto 변환 (퍼펫트 백과사전)
-        List<HistoryBoardDTO> QnaCollect = QnaList.stream().map(m -> new HistoryBoardDTO(m.getId(), "퍼펫트 백과" , m.getTitle(), m.getLikes(), m.getCommentQnaList().size()))
+        List<HistoryBoardDTO> QnaCollect = QnaList.stream().map(m -> new HistoryBoardDTO(m.getId(), "퍼펫트 백과" , m.getTitle()))
                 .collect(Collectors.toList());
 
         //return new Result(CommunityCollect, QnaCollect);
-        return new Result(1, 2);
+        return new Result(CommunityCollect, QnaCollect);
     }
 
 
@@ -151,7 +151,7 @@ public class MyPageService {
         for(Long qnaId : qnaIdList) {
             QnaBoard qnaBoard = qnaBoardRep.findById(qnaId).get();
             qnaCollect.add(new HistoryBoardDTO(qnaBoard.getId(), "퍼펫트 백과" ,
-                    qnaBoard.getTitle(), qnaBoard.getLikes(), qnaBoard.getCommentQnaList().size()));
+                    qnaBoard.getTitle()));
         }
 
         return qnaCollect;
@@ -180,26 +180,24 @@ public class MyPageService {
      * 마이페이지 북마크(커뮤니티, 백과사전)
      * @param userid
      */
-    public List<HistoryBoardDTO> getBookmarkBoard(Long userid) {
+    public Result getBookmarkBoard(Long userid) {
 
         User user = userRepository.findById(userid).get();
 
-        //List<BookmarkCommunity> bookmarkCommunityList = user.getBookmarkCommunityList();
+        List<BookmarkComm> bookmarkCommunityList = user.getBookmarkCommList();
         List<BookmarkQna> bookmarkQnaList = user.getBookmarkQnaList();
 
         //entity -> dto 변환 (커뮤니티)
-        //bookmarkCommunityList.stream.map(m -> new HistoryBoardDTO(m.getCommunity().getId(), "커뮤니티 - " + m.getCategory(),
-                        //m.getCommunity().getTitle(), m.getCommunity().getLikes(), 댓글+대댓글);
+        List<HistoryBoardDTO> CommCollect = bookmarkCommunityList.stream().map(m -> new HistoryBoardDTO(m.getCommunity().getPostId(),"커뮤니티 - " + m.getCommunity().getCategory(),
+                        m.getCommunity().getTitle()))
+                .collect(Collectors.toList());
 
         //entity -> dto 변환 (퍼펫트 백과사전)
         List<HistoryBoardDTO> QnaCollect = bookmarkQnaList.stream().map(m -> new HistoryBoardDTO(m.getQnaBoard().getId(), "퍼펫트 백과" ,
-                        m.getQnaBoard().getTitle(), m.getQnaBoard().getLikes(), m.getQnaBoard().getCommentQnaList().size()))
+                        m.getQnaBoard().getTitle()))
                 .collect(Collectors.toList());
 
-        //return new Result<, QnaCollect>();
-        //return new Result(1,1);
-
-        return QnaCollect;
+        return new Result(CommCollect, QnaCollect);
     }
 
 

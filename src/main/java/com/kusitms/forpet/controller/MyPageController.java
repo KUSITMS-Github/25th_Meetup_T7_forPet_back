@@ -74,20 +74,25 @@ public class MyPageController {
      */
 
 
-
-    //마이페이지 히스토리 내가 쓴 글(커뮤니티, 백과사전)
+    /**
+     * 마이페이지 히스토리 내가 쓴 글(커뮤니티, 백과사전)
+     */
     @GetMapping("/history/board")
-    public MyPageService.Result getBoard(HttpServletRequest request) {
+    public ApiResponse getBoard(HttpServletRequest request) {
 
         //userid 값 가져오기
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userid = tokenProvider.getUserIdFromToken(accessToken);
 
-        return myPageService.getBoard(userid);
+        MyPageService.Result result = myPageService.getBoard(userid);
+
+        return ApiResponse.success("data", result);
     }
 
 
-    //마이페이지 히스토리 답글(커뮤니티, 백과사전)
+    /**
+     * 마이페이지 히스토리 답글(커뮤니티, 백과사전)
+     */
     @GetMapping("/history/comment")
     public List<HistoryBoardDTO> getBoardByComment(HttpServletRequest request) {
 
@@ -97,7 +102,6 @@ public class MyPageController {
 
         return myPageService.getBoardByComment(userid);
     }
-
 
 
     //마이페이지
@@ -113,14 +117,15 @@ public class MyPageController {
 
 
     @GetMapping("/bookmark/board")
-    public List<HistoryBoardDTO> getBookmarkBoard(HttpServletRequest request) {
+    public ApiResponse getBookmarkBoard(HttpServletRequest request) {
 
         //userid 값 가져오기
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userid = tokenProvider.getUserIdFromToken(accessToken);
 
-        return myPageService.getBookmarkBoard(userid);
+        MyPageService.Result result = myPageService.getBookmarkBoard(userid);
 
+        return ApiResponse.success("data", result);
     }
 
 
