@@ -1,8 +1,6 @@
 package com.kusitms.forpet.security;
 
 import com.kusitms.forpet.config.AppProperties;
-import com.kusitms.forpet.dto.ErrorCode;
-import com.kusitms.forpet.exception.CustomException;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
