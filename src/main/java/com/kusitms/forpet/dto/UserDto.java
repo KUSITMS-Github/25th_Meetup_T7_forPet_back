@@ -19,7 +19,6 @@ public class UserDto {
     @JsonProperty("phone_number")
     private String phoneNumber;
     @JsonProperty("pet_card_number")
-    private String petCardNumber;
     private String[] address;
 
     @JsonProperty("pet_card_image_url")
