@@ -52,7 +52,7 @@ public class MyPageDto {
     @AllArgsConstructor
     public static class UserUpdateDto {
         private String nickname;
-        private SignUpDto.Address address;
+        private String address;
     }
 
 

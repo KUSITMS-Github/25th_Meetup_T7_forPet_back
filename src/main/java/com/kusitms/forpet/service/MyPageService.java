@@ -81,8 +81,8 @@ public class MyPageService {
             user.updateNickname(dto.getNickname());
         }
 
-        if(StringUtils.isNotEmpty(dto.getAddress().getAddressList())) {
-            user.updateAddress(dto.getAddress().getAddressList());
+        if(StringUtils.isNotEmpty(dto.getAddress())) {
+            user.updateAddress(dto.getAddress());
         }
 
         userRepository.save(user);
