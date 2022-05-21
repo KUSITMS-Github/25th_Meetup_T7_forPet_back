@@ -74,12 +74,12 @@ public class CertifyController {
      */
     @PostMapping("/address")
     public ApiResponse certifyAddress(HttpServletRequest request,
-                                      @RequestBody SignUpDto.Address address) {
+                                      @RequestBody String address) {
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         User user = userService.findByUserId(userId);
-        user.updateAddress(address.getAddressList());
+        user.updateAddress(address);
         userService.save(user);
 
         return ApiResponse.created("data", null);
