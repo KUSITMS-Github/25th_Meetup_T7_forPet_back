@@ -13,6 +13,7 @@ import com.kusitms.forpet.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -27,23 +28,19 @@ public class CertifyController {
     private final TokenProvider tokenProvider;
 
     /**
-     *  동네, 동물 카드 등록되었는지 여부
+     *  동네, 동물등록카드가 인증되었는지 여부를 반환
      */
     @GetMapping("")
     public ApiResponse certify(HttpServletRequest request) {
         String accessToken = HeaderUtil.getAccessToken(request);
-
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         User user = userService.findByUserId(userId);
 
         Map<String, Boolean> result = new HashMap<>();
 
-        if(user.getAddress() == null) {
-            result.put("certifiedAddress", false);
-        } else {
-            result.put("certifiedAddress", true);
-        }
+        if(StringUtils.isEmpty(user.getAddress())) { result.put("certifiedAddress", false) }
+        else { result.put("certifiedAddress", true); }
 
         PetCard petCard = petCardService.findByUserId(user);
         if(petCard == null) {
