@@ -11,7 +11,7 @@ public class ReviewDto {
     private Long id;
     private String nickName;
     private String profileImageUrl;
-    private int star;
+    private double star;
     private String content;
     private String createDate;
     private String[] imageUrlList;

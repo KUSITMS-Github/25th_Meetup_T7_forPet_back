@@ -24,7 +24,7 @@ public class Review {
     private Long id;
 
     @Column(nullable = false)
-    private int star;
+    private double star;
 
     private String content;
     private String createDate;

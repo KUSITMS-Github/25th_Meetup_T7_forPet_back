@@ -127,6 +127,7 @@ public class extraData {
         Map<String, String> mapSalon = new HashMap<String, String>();
         mapSalon.put("녹번동 131-41번지 102호 은평구 서울특별시 KR", "친절한애견미용실");
         mapSalon.put("서울특별시 은평구 불광2동 290-5", "은평애견");
+        mapSalon.put("서울특별시 은평구 증산동 158-1\n", "미용하는강아지");
         for(String key : mapSalon.keySet()) {
             Map<String, String> geo = geocoding.getGeoDataByAddress(key);
             placeInfo infoObj = new placeInfo(cnt, "미용실",
