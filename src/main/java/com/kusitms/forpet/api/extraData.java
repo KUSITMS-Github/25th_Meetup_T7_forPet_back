@@ -96,4 +96,60 @@ public class extraData {
         }
     }
 
+    //불광동 데이터 추가
+    public void save_bulgwang() {
+        long cnt = 50;
+        Map<String, String> mapHospital = new HashMap<String, String>();
+        mapHospital.put("서울특별시 은평구 대조동 14-240", "쿨펫동물병원");
+        mapHospital.put("서울특별시 은평구 갈현동 394-27", "메디펫동물병원");
+        mapHospital.put("서울특별시 은평구 불광로 59", "동물병원 움");
+        for(String key : mapHospital.keySet()) {
+            Map<String, String> geo = geocoding.getGeoDataByAddress(key);
+            placeInfo infoObj = new placeInfo(cnt, "동물병원",
+                    mapHospital.get(key), key, geo.get("lng"), geo.get("lat"), 0, 0, null, null);
+            apiRepository.save(infoObj);
+            cnt++;
+        }
+
+        Map<String, String> mapPharmacy = new HashMap<String, String>();
+        mapPharmacy.put("서울특별시 은평구 불광동 8-4", "우리약국");
+        mapPharmacy.put("서울특별시 은평구 불광동 285-27", "불광동우리들약국");
+        mapPharmacy.put("서울특별시 은평구 불광동 222-1", "안녕약국");
+
+        for(String key : mapPharmacy.keySet()) {
+            Map<String, String> geo = geocoding.getGeoDataByAddress(key);
+            placeInfo infoObj = new placeInfo(cnt, "동물약국",
+                    mapPharmacy.get(key), key, geo.get("lng"), geo.get("lat"), 0, 0, null, null);
+            apiRepository.save(infoObj);
+            cnt++;
+        }
+
+        Map<String, String> mapSalon = new HashMap<String, String>();
+        mapSalon.put("녹번동 131-41번지 102호 은평구 서울특별시 KR", "친절한애견미용실");
+        mapSalon.put("서울특별시 은평구 불광2동 290-5", "은평애견");
+        for(String key : mapSalon.keySet()) {
+            Map<String, String> geo = geocoding.getGeoDataByAddress(key);
+            placeInfo infoObj = new placeInfo(cnt, "미용실",
+                    mapSalon.get(key), key, geo.get("lng"), geo.get("lat"), 0, 0, null, null);
+            apiRepository.save(infoObj);
+            cnt++;
+        }
+
+        Map<String, String> mapCafe = new HashMap<String, String>();
+        mapCafe.put("서울특별시 은평구 불광동 연서로 298", "내생각 애견호텔");
+        mapCafe.put("서울특별시 은평구 불광동 연서로 253-7", "하리");
+        for(String key : mapCafe.keySet()) {
+            Map<String, String> geo = geocoding.getGeoDataByAddress(key);
+            placeInfo infoObj = new placeInfo(cnt, "카페",
+                    mapCafe.get(key), key, geo.get("lng"), geo.get("lat"), 0, 0, null, null);
+            apiRepository.save(infoObj);
+            cnt++;
+        }
+
+
+
+
+
+    }
+
 }

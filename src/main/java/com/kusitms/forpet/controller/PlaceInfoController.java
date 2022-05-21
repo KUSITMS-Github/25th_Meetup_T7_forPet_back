@@ -25,7 +25,8 @@ public class PlaceInfoController {
 
         List<placeInfo> list = apiService.findAll();
         //entity -> dto 변환
-        List<placeDto> collect = list.stream().map(m -> new placeDto(m.getId(), m.getCategory(), m.getName(), m.getAddress(), m.getLongitude(), m.getLatitude()))
+        List<placeDto> collect = list.stream().map(m -> new placeDto(m.getId(), m.getCategory(), m.getName(), m.getAddress(),
+                        m.getLongitude(), m.getLatitude(), m.getStarAvg(), m.getReviewCnt()))
                 .collect(Collectors.toList());
 
         return ApiResponse.success("data", new Result(collect.size(), collect));
@@ -48,10 +49,9 @@ public class PlaceInfoController {
         List<placeInfo> list = apiRepository.findAllByCategory(category);
 
         //entity -> dto 변환
-        List<CategoryDto> collect = list.stream().map(m -> new CategoryDto(m.getId(), m.getName(), m.getCategory(), m.getAddress(), m.getStarAvg(), m.getReviewCnt()))
+        List<placeDto> collect = list.stream().map(m -> new placeDto(m.getId(), m.getCategory(), m.getName(), m.getAddress(),
+                        m.getLongitude(), m.getLatitude(), m.getStarAvg(), m.getReviewCnt()))
                 .collect(Collectors.toList());
-
-        //return collect;
 
         return ApiResponse.success("data", collect);
     }
