@@ -20,6 +20,17 @@ public class UserDto {
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SignUpDto {
+        private String nickname;
+        @JsonProperty("phone_number")
+        private String phoneNumber;
+        private String address;
+
+    }
+
+    @Data
     @AllArgsConstructor
     public static class LoginDto {
         @JsonProperty("is_signup")

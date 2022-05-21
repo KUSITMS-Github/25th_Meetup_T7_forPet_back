@@ -3,7 +3,6 @@ package com.kusitms.forpet.controller;
 import com.kusitms.forpet.domain.PetCard;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.dto.response.ApiResponse;
-import com.kusitms.forpet.dto.SignUpDto;
 import com.kusitms.forpet.dto.response.ErrorCode;
 import com.kusitms.forpet.exception.CustomException;
 import com.kusitms.forpet.security.TokenProvider;

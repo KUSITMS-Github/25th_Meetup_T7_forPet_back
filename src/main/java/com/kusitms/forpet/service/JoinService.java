@@ -2,7 +2,7 @@ package com.kusitms.forpet.service;
 
 import com.kusitms.forpet.config.CoolSMSProperties;
 import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.dto.SignUpDto;
+import com.kusitms.forpet.dto.UserDto;
 import com.kusitms.forpet.repository.UserRep;
 import com.kusitms.forpet.security.Role;
 import lombok.RequiredArgsConstructor;
@@ -51,16 +51,16 @@ public class JoinService {
         }
     }
 
-    public User createUser(Long id, SignUpDto dto, MultipartFile profileImage) {
+    public User createUser(Long id, UserDto.SignUpDto dto, MultipartFile profileImage) {
         // user update
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()) {
             User newUser = user.get();
             if(dto.getAddress() == null) {
-                dto.setAddress(new SignUpDto.Address());
+                dto.setAddress(new UserDto.SignUpDto().getAddress());
             }
 
-            newUser.signupUser(dto.getNickname(), dto.getPhoneNumber(), dto.getAddress().getAddressList());
+            newUser.signupUser(dto.getNickname(), dto.getPhoneNumber(), dto.getAddress());
 
             //권한 변경 GUEST -> USER
             newUser.updateRole(Role.USER);
