@@ -3,7 +3,7 @@ package com.kusitms.forpet.service;
 import com.kusitms.forpet.config.CoolSMSProperties;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.dto.SignUpDto;
-import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.repository.UserRep;
 import com.kusitms.forpet.security.Role;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.java_sdk.api.Message;
@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class JoinService {
-    private final UserRepository userRepository;
+    private final UserRep userRepository;
     private final CoolSMSProperties coolSMSProperties;
     private final S3Uploader s3Uploader;
 

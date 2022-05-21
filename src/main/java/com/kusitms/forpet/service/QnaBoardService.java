@@ -3,11 +3,11 @@ package com.kusitms.forpet.service;
 import com.kusitms.forpet.domain.BookmarkQna;
 import com.kusitms.forpet.domain.QnaBoard;
 import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.dto.QnaBoard.QnaBoardResByIdDto;
+import com.kusitms.forpet.dto.QnaBoardDto;
 import com.kusitms.forpet.repository.BookmarkQnaRep;
 import com.kusitms.forpet.repository.CommentQnaRep;
 import com.kusitms.forpet.repository.QnaBoardRep;
-import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.repository.UserRep;
 import com.kusitms.forpet.security.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class QnaBoardService {
 
     private final QnaBoardRep qnaBoardRepository;
-    private final UserRepository userRepository;
+    private final UserRep userRepository;
     private final BookmarkQnaRep bookmarkQnaRepository;
     private final CommentQnaRep commentQnaRep;
     private final S3Uploader s3Uploader;
@@ -69,7 +69,7 @@ public class QnaBoardService {
      * 게시글 조회
      * @param boardId
      */
-    public QnaBoardResByIdDto getBoardById(Long userid, Long boardId) {
+    public QnaBoardDto.QnaBoardResByIdDto getBoardById(Long userid, Long boardId) {
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId).get();
 
         // 접속한 사용자가 북마크 했는지 여부 판단
@@ -79,16 +79,16 @@ public class QnaBoardService {
             toggle = true;
         }
 
-        QnaBoardResByIdDto dto = null;
+        QnaBoardDto.QnaBoardResByIdDto dto = null;
 
         if(qnaBoard.getUser().getRole().equals(Role.USER)){
             if(qnaBoard.getImageUrlList() != null) {
-                dto = new QnaBoardResByIdDto(qnaBoard.getId(), toggle, "예비반려인", qnaBoard.getUser().getNickname(),
+                dto = new QnaBoardDto.QnaBoardResByIdDto(qnaBoard.getId(), toggle, "예비반려인", qnaBoard.getUser().getNickname(),
                         qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
                         qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
                         qnaBoard.getImageUrlList().split("#"));
             } else {
-                dto = new QnaBoardResByIdDto(qnaBoard.getId(), toggle, "예비반려인", qnaBoard.getUser().getNickname(),
+                dto = new QnaBoardDto.QnaBoardResByIdDto(qnaBoard.getId(), toggle, "예비반려인", qnaBoard.getUser().getNickname(),
                         qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
                         qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
                         null);
@@ -97,12 +97,12 @@ public class QnaBoardService {
         }
         if(qnaBoard.getUser().getRole().equals(Role.FORPET_USER)){
             if(qnaBoard.getImageUrlList() != null) {
-                dto = new QnaBoardResByIdDto(qnaBoard.getId(),toggle, "반려인", qnaBoard.getUser().getNickname(),
+                dto = new QnaBoardDto.QnaBoardResByIdDto(qnaBoard.getId(),toggle, "반려인", qnaBoard.getUser().getNickname(),
                         qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
                         qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
                         qnaBoard.getImageUrlList().split("#"));
             } else {
-                dto = new QnaBoardResByIdDto(qnaBoard.getId(), toggle,"반려인", qnaBoard.getUser().getNickname(),
+                dto = new QnaBoardDto.QnaBoardResByIdDto(qnaBoard.getId(), toggle,"반려인", qnaBoard.getUser().getNickname(),
                         qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
                         qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
                         null);

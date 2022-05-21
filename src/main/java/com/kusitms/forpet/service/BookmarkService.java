@@ -5,7 +5,7 @@ import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.placeInfo;
 import com.kusitms.forpet.repository.APIRep;
 import com.kusitms.forpet.repository.BookmarkRep;
-import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.repository.UserRep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +16,7 @@ public class BookmarkService {
 
     private final BookmarkRep bookmarkRepository;
     private final APIRep apiRepository;
-    private final UserRepository userRepository;
+    private final UserRep userRepository;
 
     /**
      * 북마크 생성

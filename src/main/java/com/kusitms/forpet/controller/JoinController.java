@@ -2,7 +2,8 @@ package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.PetCard;
 import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.dto.*;
+import com.kusitms.forpet.dto.SignUpDto;
+import com.kusitms.forpet.dto.UserDto;
 import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.JWTTokenService;
@@ -38,7 +39,7 @@ public class JoinController {
 
         User kakaoUser = joinService.findByUserId(userId);
 
-        KakaoUserDto userDto = new KakaoUserDto(kakaoUser.getUserId(), kakaoUser.getName(), kakaoUser.getEmail(), kakaoUser.getImageUrl());
+        UserDto.KakaoUserDto userDto = new UserDto.KakaoUserDto(kakaoUser.getUserId(), kakaoUser.getName(), kakaoUser.getEmail(), kakaoUser.getImageUrl());
 
         return ApiResponse.success("data", userDto);
     }

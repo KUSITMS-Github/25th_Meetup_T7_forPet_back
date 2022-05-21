@@ -1,9 +1,8 @@
 package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.placeInfo;
+import com.kusitms.forpet.dto.OfflineMapDto;
 import com.kusitms.forpet.dto.response.ApiResponse;
-import com.kusitms.forpet.dto.CategoryDto;
-import com.kusitms.forpet.dto.placeDto;
 import com.kusitms.forpet.repository.APIRep;
 import com.kusitms.forpet.service.APIService;
 import lombok.AllArgsConstructor;
@@ -25,7 +24,7 @@ public class PlaceInfoController {
 
         List<placeInfo> list = apiService.findAll();
         //entity -> dto 변환
-        List<placeDto> collect = list.stream().map(m -> new placeDto(m.getId(), m.getCategory(), m.getName(), m.getAddress(), m.getLongitude(), m.getLatitude()))
+        List<OfflineMapDto.placeDto> collect = list.stream().map(m -> new OfflineMapDto.placeDto(m.getId(), m.getCategory(), m.getName(), m.getAddress(), m.getLongitude(), m.getLatitude()))
                 .collect(Collectors.toList());
 
         return ApiResponse.success("data", new Result(collect.size(), collect));
@@ -48,7 +47,7 @@ public class PlaceInfoController {
         List<placeInfo> list = apiRepository.findAllByCategory(category);
 
         //entity -> dto 변환
-        List<CategoryDto> collect = list.stream().map(m -> new CategoryDto(m.getId(), m.getName(), m.getCategory(), m.getAddress(), m.getStarAvg(), m.getReviewCnt()))
+        List<OfflineMapDto.CategoryDto> collect = list.stream().map(m -> new OfflineMapDto.CategoryDto(m.getId(), m.getName(), m.getCategory(), m.getAddress(), m.getStarAvg(), m.getReviewCnt()))
                 .collect(Collectors.toList());
 
         //return collect;
@@ -61,7 +60,7 @@ public class PlaceInfoController {
     @GetMapping("/offline-map/{placeid}/marker")
     public ApiResponse getPlaceInfoByMarker(@PathVariable("placeid") Long placeid) {
         placeInfo placeInfo = apiRepository.findById(placeid).get();
-        CategoryDto categoryDto = new CategoryDto(placeInfo.getId(), placeInfo.getName(), placeInfo.getCategory(),
+        OfflineMapDto.CategoryDto categoryDto = new OfflineMapDto.CategoryDto(placeInfo.getId(), placeInfo.getName(), placeInfo.getCategory(),
                 placeInfo.getAddress(), placeInfo.getStarAvg(), placeInfo.getReviewCnt());
 
         return ApiResponse.success("data", categoryDto);

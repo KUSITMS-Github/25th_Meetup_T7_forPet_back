@@ -1,14 +1,11 @@
 package com.kusitms.forpet.service;
 
 import com.kusitms.forpet.domain.*;
-import com.kusitms.forpet.dto.MyPage.BookmarkOfflineDto;
-import com.kusitms.forpet.dto.MyPage.HistoryBoardDTO;
-import com.kusitms.forpet.dto.MyPage.UserDetailDto;
-import com.kusitms.forpet.dto.MyPage.UserUpdateDto;
+import com.kusitms.forpet.dto.MyPageDto;
 import com.kusitms.forpet.repository.CommentQnaRep;
-import com.kusitms.forpet.repository.PetCardRepository;
+import com.kusitms.forpet.repository.PetCardRep;
 import com.kusitms.forpet.repository.QnaBoardRep;
-import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.repository.UserRep;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +21,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
-    private final PetCardRepository petCardRepository;
-    private final UserRepository userRepository;
+    private final PetCardRep petCardRepository;
+    private final UserRep userRepository;
     private final CommentQnaRep commentQnaRep;
     private final QnaBoardRep qnaBoardRep;
     private final S3Uploader s3Uploader;
@@ -34,7 +31,7 @@ public class MyPageService {
     /**
      * 마이페이지 사용자 정보 조회
      */
-    public UserDetailDto getUser(Long userId) {
+    public MyPageDto.UserDetailDto getUser(Long userId) {
         User user = userRepository.findByUserId(userId);
 
         // 프로필 사진
@@ -58,14 +55,14 @@ public class MyPageService {
             isCertifiedPetCard = true;
         }
 
-        UserDetailDto userDetailDto = new UserDetailDto(user.getUserId(), isCertifiedAddress, isCertifiedPetCard, user.getAddress().split("#"), user.getNickname(), user.getName(), profileImage);
+        MyPageDto.UserDetailDto userDetailDto = new MyPageDto.UserDetailDto(user.getUserId(), isCertifiedAddress, isCertifiedPetCard, user.getAddress().split("#"), user.getNickname(), user.getName(), profileImage);
 
         return userDetailDto;
     }
     /**
      * 마이페이지 사용자 정보 수정
      */
-    public UserDetailDto updateUser(Long userId, UserUpdateDto dto, MultipartFile profileImage) {
+    public MyPageDto.UserDetailDto updateUser(Long userId, MyPageDto.UserUpdateDto dto, MultipartFile profileImage) {
         User user = userRepository.findByUserId(userId);
 
         // 프로필 사진
@@ -111,7 +108,7 @@ public class MyPageService {
             isCertifiedPetCard = true;
         }
 
-        UserDetailDto userDetailDto = new UserDetailDto(user.getUserId(), isCertifiedAddress, isCertifiedPetCard, user.getAddress().split("#"), user.getNickname(), user.getName(), profileImageDto);
+        MyPageDto.UserDetailDto userDetailDto = new MyPageDto.UserDetailDto(user.getUserId(), isCertifiedAddress, isCertifiedPetCard, user.getAddress().split("#"), user.getNickname(), user.getName(), profileImageDto);
         return userDetailDto;
     }
     /**
@@ -126,11 +123,11 @@ public class MyPageService {
         List<QnaBoard> QnaList = user.getQnaBoardList();
 
         //entity -> dto 변환 (커뮤니티)
-        List<HistoryBoardDTO> CommunityCollect = CommunityList.stream().map(m -> new HistoryBoardDTO(m.getPostId(), "커뮤니티 - " + m.getCategory(),  m.getTitle()))
+        List<MyPageDto.HistoryBoardDTO> CommunityCollect = CommunityList.stream().map(m -> new MyPageDto.HistoryBoardDTO(m.getPostId(), "커뮤니티 - " + m.getCategory(),  m.getTitle()))
                 .collect(Collectors.toList());
 
         //entity -> dto 변환 (퍼펫트 백과사전)
-        List<HistoryBoardDTO> QnaCollect = QnaList.stream().map(m -> new HistoryBoardDTO(m.getId(), "퍼펫트 백과" , m.getTitle()))
+        List<MyPageDto.HistoryBoardDTO> QnaCollect = QnaList.stream().map(m -> new MyPageDto.HistoryBoardDTO(m.getId(), "퍼펫트 백과" , m.getTitle()))
                 .collect(Collectors.toList());
 
         //return new Result(CommunityCollect, QnaCollect);
@@ -144,15 +141,15 @@ public class MyPageService {
      * 커뮤니티 댓글+대댓글 추가
      * @param userid
      */
-    public List<HistoryBoardDTO> getBoardByComment(Long userid) {
+    public List<MyPageDto.HistoryBoardDTO> getBoardByComment(Long userid) {
 
         List<Long> qnaIdList = commentQnaRep.find(userid);
 
-        List<HistoryBoardDTO> qnaCollect = new ArrayList<>();
+        List<MyPageDto.HistoryBoardDTO> qnaCollect = new ArrayList<>();
 
         for(Long qnaId : qnaIdList) {
             QnaBoard qnaBoard = qnaBoardRep.findById(qnaId).get();
-            qnaCollect.add(new HistoryBoardDTO(qnaBoard.getId(), "퍼펫트 백과" ,
+            qnaCollect.add(new MyPageDto.HistoryBoardDTO(qnaBoard.getId(), "퍼펫트 백과" ,
                     qnaBoard.getTitle()));
         }
 
@@ -165,12 +162,12 @@ public class MyPageService {
      * 마이페이지 북마크(오프라인 지도)
      * @param userid
      */
-    public List<BookmarkOfflineDto> getBookmarkOfflineMap(Long userid) {
+    public List<MyPageDto.BookmarkOfflineDto> getBookmarkOfflineMap(Long userid) {
         User user = userRepository.findById(userid).get();
         List<Bookmark> list = user.getBookmarkList();
 
         //entity -> dto 변환
-        List<BookmarkOfflineDto> collect = list.stream().map(m -> new BookmarkOfflineDto(m.getPlaceInfo().getId(), m.getPlaceInfo().getCategory(),
+        List<MyPageDto.BookmarkOfflineDto> collect = list.stream().map(m -> new MyPageDto.BookmarkOfflineDto(m.getPlaceInfo().getId(), m.getPlaceInfo().getCategory(),
                 m.getPlaceInfo().getName(), m.getPlaceInfo().getAddress(), m.getPlaceInfo().getStarAvg(), m.getPlaceInfo().getReviewCnt()))
                 .collect(Collectors.toList());
 
@@ -190,12 +187,12 @@ public class MyPageService {
         List<BookmarkQna> bookmarkQnaList = user.getBookmarkQnaList();
 
         //entity -> dto 변환 (커뮤니티)
-        List<HistoryBoardDTO> CommCollect = bookmarkCommunityList.stream().map(m -> new HistoryBoardDTO(m.getCommunity().getPostId(),"커뮤니티 - " + m.getCommunity().getCategory(),
+        List<MyPageDto.HistoryBoardDTO> CommCollect = bookmarkCommunityList.stream().map(m -> new MyPageDto.HistoryBoardDTO(m.getCommunity().getPostId(),"커뮤니티 - " + m.getCommunity().getCategory(),
                         m.getCommunity().getTitle()))
                 .collect(Collectors.toList());
 
         //entity -> dto 변환 (퍼펫트 백과사전)
-        List<HistoryBoardDTO> QnaCollect = bookmarkQnaList.stream().map(m -> new HistoryBoardDTO(m.getQnaBoard().getId(), "퍼펫트 백과" ,
+        List<MyPageDto.HistoryBoardDTO> QnaCollect = bookmarkQnaList.stream().map(m -> new MyPageDto.HistoryBoardDTO(m.getQnaBoard().getId(), "퍼펫트 백과" ,
                         m.getQnaBoard().getTitle()))
                 .collect(Collectors.toList());
 

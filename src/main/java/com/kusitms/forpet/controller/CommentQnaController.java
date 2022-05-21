@@ -1,7 +1,6 @@
 package com.kusitms.forpet.controller;
 
-import com.kusitms.forpet.dto.QnaBoard.CommentQnaReqDto;
-import com.kusitms.forpet.dto.QnaBoard.CommentQnaRespDto;
+import com.kusitms.forpet.dto.QnaBoardDto;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.CommentQnaService;
 import com.kusitms.forpet.util.HeaderUtil;
@@ -25,7 +24,7 @@ public class CommentQnaController {
     @PostMapping("/qnaBoard/{boardId}/comment")
     public Long commentSave(HttpServletRequest request,
                             @PathVariable("boardId") Long boardId,
-                            @RequestBody CommentQnaReqDto comment) {
+                            @RequestBody QnaBoardDto.CommentQnaReqDto comment) {
 
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userid = tokenProvider.getUserIdFromToken(accessToken);
@@ -37,7 +36,7 @@ public class CommentQnaController {
     //백과사전 게시글 댓글 전체 조회
     @GetMapping("/qnaBoard/{boardId}/comment")
     public Result getCommentList(@PathVariable("boardId") Long boardId) {
-        List<CommentQnaRespDto> commentList = commentQnaService.getCommentList(boardId);
+        List<QnaBoardDto.CommentQnaRespDto> commentList = commentQnaService.getCommentList(boardId);
 
         return new Result(boardId, commentList);
     }

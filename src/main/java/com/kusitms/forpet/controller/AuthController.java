@@ -3,9 +3,9 @@ package com.kusitms.forpet.controller;
 import com.kusitms.forpet.config.AppProperties;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.UserRefreshToken;
+import com.kusitms.forpet.dto.UserDto;
 import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.response.ErrorCode;
-import com.kusitms.forpet.dto.LoginDto;
 import com.kusitms.forpet.exception.CustomException;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.JWTTokenService;
@@ -59,7 +59,7 @@ public class AuthController {
             accessToken = jwtTokenService.createJWTToken(user, request, response);
         }
 
-        return ApiResponse.success("data", new LoginDto(isSignUp, accessToken));
+        return ApiResponse.success("data", new UserDto.LoginDto(isSignUp, accessToken));
     }
 
     // access token 재발급

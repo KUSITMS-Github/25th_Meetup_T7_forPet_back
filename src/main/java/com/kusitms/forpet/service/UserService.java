@@ -2,8 +2,8 @@ package com.kusitms.forpet.service;
 
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.UserRefreshToken;
-import com.kusitms.forpet.repository.UserRefreshTokenRepository;
-import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.repository.UserRefreshTokenRep;
+import com.kusitms.forpet.repository.UserRep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,8 +14,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private final UserRep userRepository;
+    private final UserRefreshTokenRep userRefreshTokenRepository;
 
     public void save(User user) {
         userRepository.saveAndFlush(user);

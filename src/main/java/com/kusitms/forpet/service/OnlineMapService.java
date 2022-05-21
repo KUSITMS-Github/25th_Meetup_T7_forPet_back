@@ -1,7 +1,7 @@
 package com.kusitms.forpet.service;
 
 import com.kusitms.forpet.domain.MapClickCount;
-import com.kusitms.forpet.repository.MapClickCountRepository;
+import com.kusitms.forpet.repository.MapClickCountRep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class OnlineMapService {
-    private final MapClickCountRepository mapClickCountRepository;
+    private final MapClickCountRep mapClickCountRepository;
 
     public List<MapClickCount> getAllClickCnt() {
         return mapClickCountRepository.findAll();

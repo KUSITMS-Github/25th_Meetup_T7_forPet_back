@@ -1,9 +1,8 @@
 package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.Bookmark;
+import com.kusitms.forpet.dto.OfflineMapDto;
 import com.kusitms.forpet.dto.response.ApiResponse;
-import com.kusitms.forpet.dto.BookmarkByCategoryDto;
-import com.kusitms.forpet.dto.BookmarkByUserIdDto;
 import com.kusitms.forpet.repository.BookmarkRep;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.BookmarkService;
@@ -17,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @RestController
 @RequiredArgsConstructor
 public class BookmarkController {
@@ -24,6 +24,7 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
     private final BookmarkRep bookmarkRepository;
     private final TokenProvider tokenProvider;
+
 
     //북마크 생성
     @PostMapping("/offline-map/{placeid}/bookmark")
@@ -50,7 +51,7 @@ public class BookmarkController {
 
 
         //entity -> dto 변환
-        List<BookmarkByCategoryDto> collect = bookmarkList.stream().map(m -> new BookmarkByCategoryDto(m.getId(), m.getPlaceInfo().getId(), m.getPlaceInfo().getName(),
+        List<OfflineMapDto.BookmarkByCategoryDto> collect = bookmarkList.stream().map(m -> new OfflineMapDto.BookmarkByCategoryDto(m.getId(), m.getPlaceInfo().getId(), m.getPlaceInfo().getName(),
                         m.getPlaceInfo().getAddress(),m.getPlaceInfo().getLongitude(), m.getPlaceInfo().getLatitude()))
                 .collect(Collectors.toList());
 
@@ -77,7 +78,7 @@ public class BookmarkController {
         List<Bookmark> bookmarkList = bookmarkRepository.findByUserId(userid);
 
         //entity -> dto 변환
-        List<BookmarkByUserIdDto> collect = bookmarkList.stream().map(m -> new BookmarkByUserIdDto(m.getId(), m.getUser().getUserId(), m.getPlaceInfo().getId(),
+        List<OfflineMapDto.BookmarkByUserIdDto> collect = bookmarkList.stream().map(m -> new OfflineMapDto.BookmarkByUserIdDto(m.getId(), m.getUser().getUserId(), m.getPlaceInfo().getId(),
                         m.getPlaceInfo().getCategory() ,m.getPlaceInfo().getName(), m.getPlaceInfo().getAddress(), m.getPlaceInfo().getLongitude(), m.getPlaceInfo().getLatitude()))
                 .collect(Collectors.toList());
 
