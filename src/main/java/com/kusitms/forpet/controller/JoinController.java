@@ -70,6 +70,14 @@ public class JoinController {
     }
 
     /*
+        동물 인증 카드 (추후 특정 로직 구현 필요)
+     */
+    @GetMapping("/check/pet-card")
+    public ApiResponse checkPetCard() {
+        return ApiResponse.success("data", null);
+    }
+
+    /*
     회원가입
     */
     @PostMapping("")

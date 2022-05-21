@@ -111,7 +111,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                         "/error",
                         "/favicon.ico", "/qnaBoard/**","/signup/**", "/certify/**", "/mypage/**").permitAll()
                     .antMatchers("/auth/**", "/oauth2/**").permitAll() //로그인
-                    .antMatchers("/offline-map**", "/online-map/**").permitAll() //핵심 기능
+                    .antMatchers("/offline-map/**", "/online-map/**").permitAll() //핵심 기능
                     //.antMatchers("/signup/**").hasRole("GUEST") // 회원가입
                     //.antMatchers("/certify/**", "/mypage/**").hasAnyRole("USER", "FORPET_USER") // 마이페이지, 우리동네 인증
                     .antMatchers("/community/**").hasRole("FORPET_USER")
