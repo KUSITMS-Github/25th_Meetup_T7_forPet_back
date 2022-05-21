@@ -16,8 +16,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private final UserRep userRepository;
+    private final UserRefreshTokenRep userRefreshTokenRepository;
 
     @Transactional(rollbackFor=Exception.class)
     public void save(User user) {

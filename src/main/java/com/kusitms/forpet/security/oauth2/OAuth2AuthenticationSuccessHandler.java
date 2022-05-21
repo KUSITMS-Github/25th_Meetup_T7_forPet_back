@@ -3,7 +3,7 @@ package com.kusitms.forpet.security.oauth2;
 import com.kusitms.forpet.config.AppProperties;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.exception.CustomException;
-import com.kusitms.forpet.repository.UserRefreshTokenRepository;
+import com.kusitms.forpet.repository.UserRefreshTokenRep;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.security.UserPrincipal;
 import com.kusitms.forpet.service.UserService;
@@ -35,7 +35,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private final UserService userService;
 
-    private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private final UserRefreshTokenRep userRefreshTokenRepository;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String targetUrl = determineTargetUrl(request, response, authentication);

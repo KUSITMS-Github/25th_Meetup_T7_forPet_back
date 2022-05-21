@@ -2,7 +2,7 @@ package com.kusitms.forpet.security.oauth2;
 
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.exception.OAuth2AuthenticationProcessingException;
-import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.repository.UserRep;
 import com.kusitms.forpet.security.Role;
 import com.kusitms.forpet.security.UserPrincipal;
 import com.kusitms.forpet.security.oauth2.user.OAuth2UserInfo;
@@ -16,12 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import java.util.Optional;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.core.AuthenticationException;
 
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
-    private final UserRepository userRepository;
+    private final UserRep userRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {

@@ -2,7 +2,7 @@ package com.kusitms.forpet.security;
 
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.exception.ResourceNotFoundException;
-import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.repository.UserRep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
-    private UserRepository userRepository;
+    private UserRep userRepository;
 
     @Override
     @Transactional

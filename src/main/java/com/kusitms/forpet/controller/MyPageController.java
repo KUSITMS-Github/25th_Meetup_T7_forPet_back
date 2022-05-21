@@ -1,10 +1,7 @@
 package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.dto.response.ApiResponse;
-import com.kusitms.forpet.dto.MyPage.BookmarkOfflineDto;
-import com.kusitms.forpet.dto.MyPage.HistoryBoardDTO;
-import com.kusitms.forpet.dto.MyPage.UserDetailDto;
-import com.kusitms.forpet.dto.MyPage.UserUpdateDto;
+import com.kusitms.forpet.dto.MyPageDto;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.MyPageService;
 import com.kusitms.forpet.service.UserService;
@@ -35,7 +32,7 @@ public class MyPageController {
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
-        UserDetailDto dto = myPageService.getUser(userId);
+        MyPageDto.UserDetailDto dto = myPageService.getUser(userId);
 
         return ApiResponse.success("data", dto);
     }
@@ -46,7 +43,7 @@ public class MyPageController {
      */
     @GetMapping("/{id}")
     public ApiResponse getOthersProfile(@PathVariable(value = "id") Long id) {
-        UserDetailDto dto = myPageService.getUser(id);
+        MyPageDto.UserDetailDto dto = myPageService.getUser(id);
 
         return ApiResponse.success("data", dto);
     }
@@ -56,13 +53,13 @@ public class MyPageController {
      */
     @PutMapping("/edit")
     public ApiResponse updateMyProfile(HttpServletRequest request,
-                                       @RequestPart(value ="user_update_dto") UserUpdateDto dto,
+                                       @RequestPart(value ="user_update_dto") MyPageDto.UserUpdateDto dto,
                                        @RequestPart(value = "profile_image", required=false) MultipartFile profileImage) {
         //userid 값 가져오기
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
-        UserDetailDto result = myPageService.updateUser(userId, dto, profileImage);
+        MyPageDto.UserDetailDto result = myPageService.updateUser(userId, dto, profileImage);
 
         return ApiResponse.success("data", result);
     }
@@ -92,7 +89,7 @@ public class MyPageController {
      * 마이페이지 히스토리 답글(커뮤니티, 백과사전)
      */
     @GetMapping("/history/comment")
-    public List<HistoryBoardDTO> getBoardByComment(HttpServletRequest request) {
+    public List<MyPageDto.HistoryBoardDTO> getBoardByComment(HttpServletRequest request) {
 
         //userid 값 가져오기
         String accessToken = HeaderUtil.getAccessToken(request);
@@ -104,7 +101,7 @@ public class MyPageController {
 
     //마이페이지
     @GetMapping("/bookmark/offlineMap")
-    public List<BookmarkOfflineDto> getBookmarkOfflineMap(HttpServletRequest request) {
+    public List<MyPageDto.BookmarkOfflineDto> getBookmarkOfflineMap(HttpServletRequest request) {
 
         //userid 값 가져오기
         String accessToken = HeaderUtil.getAccessToken(request);

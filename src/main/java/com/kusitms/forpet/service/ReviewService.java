@@ -3,10 +3,10 @@ package com.kusitms.forpet.service;
 import com.kusitms.forpet.domain.Review;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.placeInfo;
-import com.kusitms.forpet.dto.ReviewDto;
+import com.kusitms.forpet.dto.OfflineMapDto;
 import com.kusitms.forpet.repository.APIRep;
 import com.kusitms.forpet.repository.ReviewRep;
-import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.repository.UserRep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +22,7 @@ public class ReviewService {
     private final ReviewRep reviewRepository;
     private final APIRep apiRepository;
     private final S3Uploader s3Uploader;
-    private final UserRepository userRepository;
+    private final UserRep userRepository;
 
     /**
      * 리뷰 생성
@@ -66,18 +65,18 @@ public class ReviewService {
      * 리뷰 정보
      * @param placeid
      */
-    public List<ReviewDto> findReviewByPlaceId(Long placeid) {
+    public List<OfflineMapDto.ReviewDto> findReviewByPlaceId(Long placeid) {
         List<Review> list = reviewRepository.findByplaceInfo(placeid);
 
-        List<ReviewDto> collect = new ArrayList<>();
+        List<OfflineMapDto.ReviewDto> collect = new ArrayList<>();
 
         //entity -> dto 변환
         for(Review r : list) {
             if(r.getImageUrlList() != null) {
-                collect.add(new ReviewDto(r.getId(), r.getUser().getNickname(), r.getUser().getImageUrl(), r.getStar(), r.getContent(),
+                collect.add(new OfflineMapDto.ReviewDto(r.getId(), r.getUser().getNickname(), r.getUser().getImageUrl(), r.getStar(), r.getContent(),
                         r.getCreateDate(), r.getImageUrlList().split("#")));
             } else{
-                collect.add(new ReviewDto(r.getId(), r.getUser().getNickname(), r.getUser().getImageUrl(), r.getStar(), r.getContent(),
+                collect.add(new OfflineMapDto.ReviewDto(r.getId(), r.getUser().getNickname(), r.getUser().getImageUrl(), r.getStar(), r.getContent(),
                         r.getCreateDate(), null));
             }
         }

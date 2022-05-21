@@ -2,8 +2,8 @@ package com.kusitms.forpet.service;
 
 import com.kusitms.forpet.domain.PetCard;
 import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.repository.PetCardRepository;
-import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.repository.PetCardRep;
+import com.kusitms.forpet.repository.UserRep;
 import com.kusitms.forpet.security.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,8 +16,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PetCardService {
     private final S3Uploader s3Uploader;
-    private final PetCardRepository petCardRepository;
-    private final UserRepository userRepository;
+    private final PetCardRep petCardRepository;
+    private final UserRep userRepository;
 
     @Transactional(rollbackFor=Exception.class)
     public PetCard createPetCardByUserId(Long userId, MultipartFile petCardImage) {

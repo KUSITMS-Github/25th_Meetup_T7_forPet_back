@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface LikesCommRepository extends JpaRepository<LikesComm, Long> {
+public interface LikesCommRep extends JpaRepository<LikesComm, Long> {
     public Optional<LikesComm> findByCommunityAndUser(Community community, User user);
 }

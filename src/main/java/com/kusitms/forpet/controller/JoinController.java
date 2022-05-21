@@ -2,7 +2,7 @@ package com.kusitms.forpet.controller;
 
 import com.kusitms.forpet.domain.PetCard;
 import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.dto.*;
+import com.kusitms.forpet.dto.UserDto;
 import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.response.ErrorCode;
 import com.kusitms.forpet.exception.CustomException;
@@ -40,7 +40,7 @@ public class JoinController {
 
         User kakaoUser = joinService.findByUserId(userId);
 
-        KakaoUserDto userDto = new KakaoUserDto(kakaoUser.getUserId(), kakaoUser.getName(), kakaoUser.getEmail(), kakaoUser.getImageUrl());
+        UserDto.KakaoUserDto userDto = new UserDto.KakaoUserDto(kakaoUser.getUserId(), kakaoUser.getName(), kakaoUser.getEmail(), kakaoUser.getImageUrl());
 
         return ApiResponse.success("data", userDto);
     }
@@ -86,7 +86,7 @@ public class JoinController {
     회원가입
     */
     @PostMapping("")
-    public ApiResponse signup(@RequestPart(value ="signup_dto") SignUpDto dto,
+    public ApiResponse signup(@RequestPart(value ="signup_dto") UserDto.SignUpDto dto,
                               @RequestPart(value = "profile_image", required=false) MultipartFile profileImage,
                               @RequestPart(value = "pet_card_image", required=false) MultipartFile petCardImage,
                               HttpServletRequest request, HttpServletResponse response) {

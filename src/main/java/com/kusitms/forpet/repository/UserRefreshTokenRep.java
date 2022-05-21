@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRefreshTokenRepository extends JpaRepository<UserRefreshToken, Long> {
+public interface UserRefreshTokenRep extends JpaRepository<UserRefreshToken, Long> {
     Optional<UserRefreshToken> findByUserId(User userId);
     Optional<UserRefreshToken> findByUserIdAndRefreshToken(User userId, String refreshToken);
 }

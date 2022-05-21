@@ -3,7 +3,7 @@ package com.kusitms.forpet.service;
 import com.kusitms.forpet.config.AppProperties;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.UserRefreshToken;
-import com.kusitms.forpet.repository.UserRefreshTokenRepository;
+import com.kusitms.forpet.repository.UserRefreshTokenRep;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.util.CookieUtils;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REFRESH_TOKEN;
 
@@ -21,7 +19,7 @@ import static com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRe
 @RequiredArgsConstructor
 public class JWTTokenService {
     private final AppProperties appProperties;
-    private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private final UserRefreshTokenRep userRefreshTokenRepository;
     private final TokenProvider tokenProvider;
 
     /*

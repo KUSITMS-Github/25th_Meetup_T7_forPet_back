@@ -3,9 +3,9 @@ package com.kusitms.forpet.service;
 import com.kusitms.forpet.domain.*;
 import com.kusitms.forpet.dto.CommunityDto;
 import com.kusitms.forpet.exception.CustomException;
-import com.kusitms.forpet.repository.BookmarkCommRepository;
-import com.kusitms.forpet.repository.CommunityRepository;
-import com.kusitms.forpet.repository.LikesCommRepository;
+import com.kusitms.forpet.repository.BookmarkCommRep;
+import com.kusitms.forpet.repository.CommunityRep;
+import com.kusitms.forpet.repository.LikesCommRep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,9 +22,9 @@ import static com.kusitms.forpet.dto.response.ErrorCode.*;
 @RequiredArgsConstructor
 public class CommunityService {
     private final S3Uploader s3Uploader;
-    private final CommunityRepository communityRepository;
-    private final LikesCommRepository likesCommRepository;
-    private final BookmarkCommRepository bookmarkCommRepository;
+    private final CommunityRep communityRepository;
+    private final LikesCommRep likesCommRepository;
+    private final BookmarkCommRep bookmarkCommRepository;
     private final static String NO_ADDRESS = "x";
 
     /**

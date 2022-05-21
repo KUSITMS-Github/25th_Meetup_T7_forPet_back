@@ -3,10 +3,10 @@ package com.kusitms.forpet.service;
 import com.kusitms.forpet.domain.CommentQna;
 import com.kusitms.forpet.domain.QnaBoard;
 import com.kusitms.forpet.domain.User;
-import com.kusitms.forpet.dto.QnaBoard.CommentQnaRespDto;
+import com.kusitms.forpet.dto.QnaBoardDto;
 import com.kusitms.forpet.repository.CommentQnaRep;
 import com.kusitms.forpet.repository.QnaBoardRep;
-import com.kusitms.forpet.repository.UserRepository;
+import com.kusitms.forpet.repository.UserRep;
 import com.kusitms.forpet.security.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.List;
 public class CommentQnaService {
 
     private final CommentQnaRep commentQnaRep;
-    private final UserRepository userRepository;
+    private final UserRep userRepository;
     private final QnaBoardRep qnaBoardRep;
 
 
@@ -48,21 +48,21 @@ public class CommentQnaService {
      * @param boardId
      */
     @Transactional
-    public List<CommentQnaRespDto> getCommentList(Long boardId) {
+    public List<QnaBoardDto.CommentQnaRespDto> getCommentList(Long boardId) {
         List<CommentQna> list = commentQnaRep.findAllByqnaBoard(boardId);
 
-        List<CommentQnaRespDto> collect = new ArrayList<>();
+        List<QnaBoardDto.CommentQnaRespDto> collect = new ArrayList<>();
 
         for(CommentQna c : list) {
             if(c.getUser().getRole().equals(Role.FORPET_USER)) {
-                collect.add(new CommentQnaRespDto(c.getId(),
+                collect.add(new QnaBoardDto.CommentQnaRespDto(c.getId(),
                         c.getUser().getImageUrl(), c.getUser().getNickname(),
                         "반려인",
                         c.getComment(), c.getCreateDate(), c.getLikes()));
             }
 
             if(c.getUser().getRole().equals(Role.USER)) {
-                collect.add(new CommentQnaRespDto(c.getId(),
+                collect.add(new QnaBoardDto.CommentQnaRespDto(c.getId(),
                         c.getUser().getImageUrl(), c.getUser().getNickname(),
                         "예비반려인",
                         c.getComment(), c.getCreateDate(), c.getLikes()));

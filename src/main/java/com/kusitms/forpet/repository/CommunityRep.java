@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface CommunityRepository extends JpaRepository<Community, Long> {
+public interface CommunityRep extends JpaRepository<Community, Long> {
     @Query(value= "SELECT * FROM community c " +
             "WHERE c.address LIKE %:addr1% OR c.address LIKE %:addr2% OR c.address LIKE %:addr3% " +
             "ORDER BY c.thumbs_up_cnt DESC", nativeQuery = true)
