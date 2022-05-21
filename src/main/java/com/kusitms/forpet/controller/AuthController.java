@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,16 +38,16 @@ public class AuthController {
     private final static String REFRESH_TOKEN = "refresh_token";
 
     /*
-     리다이렉트된 id를 다시 받아와 회원가입 여부를 반환
+     리다이렉트된 id를 받아와 회원가입 여부를 반환
      */
     @GetMapping("/auth/signup")
     public ApiResponse isSignUp(@RequestParam(value="id") Long id,
                                 HttpServletRequest request,
                                 HttpServletResponse response) {
         boolean isSignUp = true;
-        String accessToken = null;
+        String accessToken;
 
-        // 1. id로 회원가입 여부 확인
+        //id로 회원가입 여부 확인
         User user = userService.findByUserId(id);
         if(StringUtils.isEmpty(user.getNickname())) {
             // 회원가입이 되어 있지 않다면 access token 발급
@@ -90,30 +89,23 @@ public class AuthController {
         // access 토큰 갱신
         String newAccessToken = tokenProvider.createAccessToken(userId);
 
-        Optional<UserRefreshToken> userRefreshTokenOptional = userService.findByUserIdAndRefreshToken(user, refreshToken);
-        if(userRefreshTokenOptional.isPresent()) {
-            UserRefreshToken userRefreshToken = userRefreshTokenOptional.get();
+        UserRefreshToken userRefreshToken = userService.findByUserIdAndRefreshToken(user, refreshToken);
 
-            long validTime = tokenProvider.getValidTime(refreshToken);
-            // refresh token 기간이 3일 이하로 남은 경우, refresh 토큰 갱신
-            if(validTime <= THREE_DAYS_MSEC) {
-                // refresh token 설정
-                refreshToken = tokenProvider.createRefreshToken(userId);
+        long validTime = tokenProvider.getValidTime(refreshToken);
+        // refresh token 기간이 3일 이하로 남은 경우, refresh 토큰 갱신
+        if(validTime <= THREE_DAYS_MSEC) {
+            // refresh token 설정
+            refreshToken = tokenProvider.createRefreshToken(userId);
 
-                userRefreshToken.setRefreshToken(refreshToken);
-                userService.save(userRefreshToken);
+            userRefreshToken.setRefreshToken(refreshToken);
+            userService.save(userRefreshToken);
 
-                int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
+            int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
 
-                CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
-                CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
-            }
-            return ApiResponse.success("token", newAccessToken);
-
-        } else {
-            throw new CustomException(ErrorCode.MISMATCH_REFRESH_TOKEN);
+            CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
+            CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
         }
-
+        return ApiResponse.success("token", newAccessToken);
     }
 
     @GetMapping("/logout")
@@ -132,6 +124,7 @@ public class AuthController {
         return ApiResponse.success("message", "로그아웃 되었습니다.");
     }
 
+    // 토큰 validation 검사
     public boolean tokenExceptionHandler(String token) {
         try {
             tokenProvider.validateToken(token);

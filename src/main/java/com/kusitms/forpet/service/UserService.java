@@ -2,8 +2,10 @@ package com.kusitms.forpet.service;
 
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.domain.UserRefreshToken;
-import com.kusitms.forpet.repository.UserRefreshTokenRep;
-import com.kusitms.forpet.repository.UserRep;
+import com.kusitms.forpet.dto.response.ErrorCode;
+import com.kusitms.forpet.exception.CustomException;
+import com.kusitms.forpet.repository.UserRefreshTokenRepository;
+import com.kusitms.forpet.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +19,10 @@ public class UserService {
     private final UserRep userRepository;
     private final UserRefreshTokenRep userRefreshTokenRepository;
 
+    @Transactional(rollbackFor=Exception.class)
     public void save(User user) {
         userRepository.saveAndFlush(user);
     }
-    public void save(UserRefreshToken token) { userRefreshTokenRepository.saveAndFlush(token); }
 
     @Transactional(readOnly = true)
     public User findByUserId(Long userId) {
@@ -36,24 +38,23 @@ public class UserService {
         return userRepository.findByEmail(email).get();
     }
 
+    @Transactional(rollbackFor=Exception.class)
+    public void save(UserRefreshToken token) { userRefreshTokenRepository.saveAndFlush(token); }
+
     @Transactional(readOnly = true)
-    public Optional<UserRefreshToken> findByUserIdAndRefreshToken(User user, String refreshToken) {
-        return userRefreshTokenRepository.findByUserIdAndRefreshToken(user, refreshToken);
+    public UserRefreshToken findByUserIdAndRefreshToken(User user, String refreshToken) {
+        Optional<UserRefreshToken> userRefreshTokenOptional = userRefreshTokenRepository.findByUserIdAndRefreshToken(user, refreshToken);
+
+        if(userRefreshTokenOptional.isPresent()) {
+            return userRefreshTokenOptional.get();
+        } else {
+            throw new CustomException(ErrorCode.MISMATCH_REFRESH_TOKEN);
+        }
     }
 
+    @Transactional(rollbackFor=Exception.class)
     public void deleteRefreshTokenByUserId(Long userId) {
         userRefreshTokenRepository.deleteById(userId);
     }
-
-    /**
-     * 주소 등록 여부
-     */
-    public boolean getIsAddress(User user) {
-        if(user.getAddress() != null) {
-            return true;
-        }
-        return false;
-    }
-
 
 }

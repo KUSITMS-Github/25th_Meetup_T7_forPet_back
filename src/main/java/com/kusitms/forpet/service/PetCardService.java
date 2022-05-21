@@ -7,6 +7,7 @@ import com.kusitms.forpet.repository.UserRep;
 import com.kusitms.forpet.security.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
@@ -18,6 +19,7 @@ public class PetCardService {
     private final PetCardRep petCardRepository;
     private final UserRep userRepository;
 
+    @Transactional(rollbackFor=Exception.class)
     public PetCard createPetCardByUserId(Long userId, MultipartFile petCardImage) {
         String petCardImageName = s3Uploader.uploadImage(petCardImage);
         StringBuilder petCardImageUrl = new StringBuilder();
@@ -40,11 +42,12 @@ public class PetCardService {
         return petCard;
     }
 
-    public PetCard findByUserId(User user) {
+    @Transactional(readOnly = true)
+    public boolean findByUserId(User user) {
         Optional<PetCard> petCardOptional = petCardRepository.findByUser(user);
         if(petCardOptional.isPresent()) {
-            return petCardOptional.get();
+            return true;
         }
-        return null;
+        return false;
     }
 }
