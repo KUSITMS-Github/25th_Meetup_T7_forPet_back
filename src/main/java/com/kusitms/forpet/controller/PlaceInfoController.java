@@ -24,7 +24,7 @@ public class PlaceInfoController {
 
         List<placeInfo> list = apiService.findAll();
         //entity -> dto 변환
-        List<OfflineMapDto.placeDto> collect = list.stream().map(m -> new OfflineMapDto.placeDto(m.getId(), m.getCategory(), m.getName(), m.getAddress(), m.getLongitude(), m.getLatitude()))
+        List<OfflineMapDto.placeDto> collect = list.stream().map(m -> new OfflineMapDto.placeDto(m.getId(), m.getCategory(), m.getName(), m.getAddress(), m.getLongitude(), m.getLatitude(), m.getStarAvg(), m.getReviewCnt()))
                 .collect(Collectors.toList());
 
         return ApiResponse.success("data", new Result(collect.size(), collect));

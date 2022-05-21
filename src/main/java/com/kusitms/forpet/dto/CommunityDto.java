@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -99,5 +100,33 @@ public class CommunityDto {
         private String userProfileImage;
         @JsonProperty(value="user_nickname")
         private String userNickname;
+    }
+
+    /**
+     * 부모 댓글
+     */
+    @Data
+    @AllArgsConstructor
+    public static class CommentParentResDto {
+        private Long id;            //댓글 고유 id
+        private String imageUrl;
+        private String nickName;
+        private String comment;
+        private String createDate;
+        private int likes;
+        private List<CommentChildResDto> childResDto;
+    }
+
+
+
+    /**
+     * 자식 댓글
+     */
+    @Data
+    @AllArgsConstructor
+    public static class CommentChildResDto {
+        private Long id;
+        private Long parentId;
+        private String content;
     }
 }

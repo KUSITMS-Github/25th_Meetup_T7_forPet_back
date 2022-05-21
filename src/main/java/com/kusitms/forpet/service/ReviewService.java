@@ -29,7 +29,7 @@ public class ReviewService {
      * 리뷰 생성
      */
     @Transactional
-    public Long createReviewByPlaceId(Long placeid, Long userid, int star, String content,  List<MultipartFile> multipartFiles) {
+    public Long createReviewByPlaceId(Long placeid, Long userid, double star, String content,  List<MultipartFile> multipartFiles) {
         placeInfo placeInfo = apiRepository.findById(placeid).get();
         User user = userRepository.findById(userid).get();
 

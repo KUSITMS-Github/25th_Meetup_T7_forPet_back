@@ -148,9 +148,30 @@ public class extraData {
         }
 
 
+        Map<String, String> mapPark = new HashMap<String, String>();
+        mapPark.put("서울특별시 은평구 불광동 산42-5", "북한산생태공원");
+        for(String key : mapPark.keySet()) {
+            Map<String, String> geo = geocoding.getGeoDataByAddress(key);
+            placeInfo infoObj = new placeInfo(cnt, "공원",
+                    mapPark.get(key), key, geo.get("lng"), geo.get("lat"), 0, 0, null, null);
+            apiRepository.save(infoObj);
+            cnt++;
+        }
 
+    }
 
-
+    public void saveEat() {
+        long cnt = 62;
+        Map<String, String> mapEat = new HashMap<String, String>();
+        mapEat.put("경기도 고양시 덕양구 서오릉로 334-91", "왕릉일가");
+        mapEat.put("서울특별시 은평구 통일로85길 6", "코스믹버거랩");
+        for(String key : mapEat.keySet()) {
+            Map<String, String> geo = geocoding.getGeoDataByAddress(key);
+            placeInfo infoObj = new placeInfo(cnt, "식당",
+                    mapEat.get(key), key, geo.get("lng"), geo.get("lat"), 0, 0, null, null);
+            apiRepository.save(infoObj);
+            cnt++;
+        }
     }
 
 }

@@ -70,7 +70,7 @@ public class Review {
 
     //==생성 메서드==//
     public static Review createReview(User user,
-                                      int star, String content, placeInfo placeInfo, String imageUrlList){
+                                      double star, String content, placeInfo placeInfo, String imageUrlList){
         Review review = new Review();
         review.setUser(user);
         review.setStar(star);

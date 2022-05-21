@@ -37,6 +37,7 @@ public class ForpetApplication {
 		//BeanContext.get(extraData.class).save_school();
 		//BeanContext.get(extraData.class).save_cafe();
 		//BeanContext.get(extraData.class).save_bulgwang();
+		//BeanContext.get(extraData.class).saveEat();
 	}
 
 	@PostConstruct
