@@ -4,6 +4,8 @@ import com.kusitms.forpet.domain.PetCard;
 import com.kusitms.forpet.domain.User;
 import com.kusitms.forpet.dto.*;
 import com.kusitms.forpet.dto.response.ApiResponse;
+import com.kusitms.forpet.dto.response.ErrorCode;
+import com.kusitms.forpet.exception.CustomException;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.JWTTokenService;
 import com.kusitms.forpet.service.JoinService;
@@ -72,8 +74,11 @@ public class JoinController {
     /*
         동물 인증 카드 (추후 특정 로직 구현 필요)
      */
-    @GetMapping("/check/pet-card")
-    public ApiResponse checkPetCard() {
+    @PostMapping("/check/pet-card")
+    public ApiResponse checkPetCard(@RequestPart(value="pet_card_image") MultipartFile petCardImage) {
+        if(petCardImage.isEmpty()) {
+            throw new CustomException(ErrorCode.CANNOT_CERTIFY);
+        }
         return ApiResponse.success("data", null);
     }
 

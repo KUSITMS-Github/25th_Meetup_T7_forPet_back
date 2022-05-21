@@ -39,11 +39,11 @@ public class CertifyController {
 
         Map<String, Boolean> result = new HashMap<>();
 
-        if(StringUtils.isEmpty(user.getAddress())) { result.put("certifiedAddress", false) }
+        if(StringUtils.isEmpty(user.getAddress())) { result.put("certifiedAddress", false); }
         else { result.put("certifiedAddress", true); }
 
-        PetCard petCard = petCardService.findByUserId(user);
-        if(petCard == null) {
+        boolean petCard = petCardService.findByUserId(user);
+        if(!petCard) {
             result.put("certifiedPetCard", false);
         } else {
             result.put("certifiedPetCard", true);
