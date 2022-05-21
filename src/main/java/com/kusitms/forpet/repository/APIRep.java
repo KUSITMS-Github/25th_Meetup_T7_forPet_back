@@ -1,12 +1,15 @@
 package com.kusitms.forpet.repository;
 
 import com.kusitms.forpet.domain.placeInfo;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
 public interface APIRep extends JpaRepository<placeInfo, Long> {
+
+    List<placeInfo> findAllByOrderByIdDesc();
 
     List<placeInfo> findAllByCategory(String category);
 

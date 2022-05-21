@@ -14,9 +14,10 @@ public class APIService {
 
     private final APIRep apiRepository;
 
+
+
     @Transactional(readOnly = true)
     public List<placeInfo> findAll() {
-        return apiRepository.findAll();
+        return apiRepository.findAllByOrderByIdDesc();
     }
-
 }

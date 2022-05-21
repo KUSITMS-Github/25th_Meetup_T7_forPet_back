@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
@@ -35,6 +36,7 @@ public class ForpetApplication {
 		//BeanContext.get(extraData.class).save_center();
 		//BeanContext.get(extraData.class).save_school();
 		//BeanContext.get(extraData.class).save_cafe();
+		//BeanContext.get(extraData.class).save_bulgwang();
 	}
 
 	@PostConstruct
