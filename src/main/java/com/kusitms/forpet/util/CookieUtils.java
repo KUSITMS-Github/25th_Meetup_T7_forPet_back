@@ -21,7 +21,15 @@ public class CookieUtils {
         return Optional.empty();
     }
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        Cookie cookie = new Cookie(name, value);
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                //.domain("ifuwanna.tistory.com")
+                .sameSite("None")
+                .secure(true)
+                .path("/")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+
+        /*Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
@@ -30,7 +38,7 @@ public class CookieUtils {
 
         // SameSite 설정 추가
         String cookieString = "SameSite=None;";
-        response.addHeader("Set-Cookie", cookieString);
+        response.addHeader("Set-Cookie", cookieString);*/
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
