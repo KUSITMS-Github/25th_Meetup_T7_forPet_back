@@ -51,8 +51,6 @@ public class PlaceInfoController {
                         m.getAddress(), m.getLongitude(), m.getLatitude(), m.getStarAvg(), m.getReviewCnt()))
                 .collect(Collectors.toList());
 
-        //return collect;
-
         return ApiResponse.success("data", collect);
     }
 
