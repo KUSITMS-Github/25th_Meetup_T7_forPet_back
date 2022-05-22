@@ -42,7 +42,7 @@ public class JWTTokenService {
         int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
 
         CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
+        CookieUtils.setCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
 
         return accessToken;
     }
