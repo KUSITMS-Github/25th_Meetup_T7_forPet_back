@@ -10,14 +10,18 @@ import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.JWTTokenService;
 import com.kusitms.forpet.service.JoinService;
 import com.kusitms.forpet.service.PetCardService;
+import com.kusitms.forpet.util.CookieUtils;
 import com.kusitms.forpet.util.HeaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Random;
+
+import static com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REFRESH_TOKEN;
 
 @RestController
 @RequiredArgsConstructor
@@ -110,5 +114,19 @@ public class JoinController {
         accessToken = jwtTokenService.createJWTToken(user, request, response);
 
         return ApiResponse.created("token", accessToken);
+    }
+
+    @GetMapping("/test")
+    public void cookie(HttpServletRequest request) {
+        // access token 확인, 유효성 검사
+        String accessToken = HeaderUtil.getAccessToken(request);
+
+        // refresh token 확인, 유효성 검사
+        String refreshToken = CookieUtils.getCookie(request, REFRESH_TOKEN)
+                .map(Cookie::getValue)
+                .orElse((null));
+
+        System.out.println(accessToken);
+        System.out.println(refreshToken);
     }
 }

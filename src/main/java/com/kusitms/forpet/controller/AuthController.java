@@ -66,7 +66,6 @@ public class AuthController {
     public ApiResponse refreshToken (HttpServletRequest request, HttpServletResponse response) {
         // access token 확인, 유효성 검사
         String accessToken = HeaderUtil.getAccessToken(request);
-        tokenExceptionHandler(accessToken);
 
         // refresh token 확인, 유효성 검사
         String refreshToken = CookieUtils.getCookie(request, REFRESH_TOKEN)
