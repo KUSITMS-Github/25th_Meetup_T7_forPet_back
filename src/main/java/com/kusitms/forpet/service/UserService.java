@@ -52,6 +52,14 @@ public class UserService {
         }
     }
 
+
+    @Transactional(readOnly = true)
+    public Optional<UserRefreshToken> findRefreshTokenByUserId(User user) {
+        Optional<UserRefreshToken> userRefreshTokenOptional = userRefreshTokenRepository.findByUserId(user);
+
+        return userRefreshTokenOptional;
+    }
+
     @Transactional(rollbackFor=Exception.class)
     public void deleteRefreshTokenByUserId(Long userId) {
         userRefreshTokenRepository.deleteById(userId);

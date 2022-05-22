@@ -21,8 +21,8 @@ public class CookieUtils {
         return Optional.empty();
     }
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
+        System.out.println(" cookie 구워지는 중 : " +  name);
         ResponseCookie cookie = ResponseCookie.from(name, value)
-                //.domain("ifuwanna.tistory.com")
                 .maxAge(maxAge)
                 .sameSite("None")
                 .secure(true)
@@ -30,30 +30,6 @@ public class CookieUtils {
                 .httpOnly(true)
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());
-
-        /*Cookie cookie = new Cookie(name, value);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(maxAge);
-        cookie.setSecure(true);
-        response.addCookie(cookie);
-
-        // SameSite 설정 추가
-        String cookieString = "SameSite=None;";
-        response.addHeader("Set-Cookie", cookieString);*/
-    }
-
-    // add 말고 set
-    public static void setCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        ResponseCookie cookie = ResponseCookie.from(name, value)
-                //.domain("ifuwanna.tistory.com")
-                .maxAge(maxAge)
-                .sameSite("None")
-                .secure(true)
-                .path("/")
-                .httpOnly(true)
-                .build();
-        response.setHeader("Set-Cookie", cookie.toString());
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {

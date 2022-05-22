@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Optional;
+
 import static com.kusitms.forpet.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REFRESH_TOKEN;
 
 
@@ -34,15 +36,22 @@ public class JWTTokenService {
         String refreshToken = tokenProvider.createRefreshToken(user.getUserId());
 
         // refresh 토큰 DB 저장
+        Optional<UserRefreshToken> userRefreshTokenOptional = userRefreshTokenRepository.findByUserId(user);
         UserRefreshToken userRefreshToken = new UserRefreshToken();
+        if(userRefreshTokenOptional.isPresent()) {
+            // db에 있다면 update
+            userRefreshToken = userRefreshTokenOptional.get();
+        }
         userRefreshToken.setUserId(user);
         userRefreshToken.setRefreshToken(refreshToken);
+
         userRefreshTokenRepository.saveAndFlush(userRefreshToken);
 
-        int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
 
-        CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtils.setCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
+        // 쿠키 저장하지 않음 -> 쿠키 세팅 도메인 이슈
+        //int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
+        //CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
+        //CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
 
         return accessToken;
     }

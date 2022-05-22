@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -67,10 +68,20 @@ public class AuthController {
         // access token 확인, 유효성 검사
         String accessToken = HeaderUtil.getAccessToken(request);
 
-        // refresh token 확인, 유효성 검사
-        String refreshToken = CookieUtils.getCookie(request, REFRESH_TOKEN)
+        Long userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
+        User user = User.builder()
+                .userId(userId).build();
+
+        // userId로 DB refresh token 확인
+        Optional<UserRefreshToken> userRefreshTokenOptional = userService.findRefreshTokenByUserId(user);
+        if(!userRefreshTokenOptional.isPresent()) {
+            // DB에 user id에 해당하는 refresh token이 없음.
+            throw new CustomException(ErrorCode.MISMATCH_REFRESH_TOKEN);
+        }
+        String refreshToken = userRefreshTokenOptional.get().getRefreshToken();
+                /*= CookieUtils.getCookie(request, REFRESH_TOKEN)
                 .map(Cookie::getValue)
-                .orElse((null));
+                .orElse((null));*/
 
         boolean isAccessTokenExpired = tokenExceptionHandler(accessToken);
         boolean isRefreshTokenExpired = tokenExceptionHandler(refreshToken);
@@ -79,11 +90,6 @@ public class AuthController {
         if(isAccessTokenExpired && isRefreshTokenExpired) {
             throw new CustomException(ErrorCode.NOT_EXPIRED_TOKEN);
         }
-
-        // userId로 DB refresh token 확인
-        Long userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
-        User user = User.builder()
-                        .userId(userId).build();
 
         // access 토큰 갱신
         String newAccessToken = tokenProvider.createAccessToken(userId);
@@ -99,10 +105,13 @@ public class AuthController {
             userRefreshToken.setRefreshToken(refreshToken);
             userService.save(userRefreshToken);
 
-            int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
+            /**
+             *  쿠키 세팅 하지 않음 -> 도메인 이슈
+             */
+            /*int cookieMaxAge = (int) appProperties.getAuth().getRefreshTokenExpiry() / 60;
 
             CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
-            CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);
+            CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);*/
         }
         return ApiResponse.success("token", newAccessToken);
     }
