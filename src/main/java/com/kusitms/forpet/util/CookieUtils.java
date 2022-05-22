@@ -23,11 +23,13 @@ public class CookieUtils {
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 //.domain("ifuwanna.tistory.com")
+                .maxAge(maxAge)
                 .sameSite("None")
                 .secure(true)
                 .path("/")
+                .httpOnly(true)
                 .build();
-        response.addHeader("Set-Cookie", cookie.toString());
+        response.setHeader("Set-Cookie", cookie.toString());
 
         /*Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
