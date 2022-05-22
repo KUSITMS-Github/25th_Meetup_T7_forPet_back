@@ -174,4 +174,16 @@ public class extraData {
         }
     }
 
+    public void geocoding() {
+        Map<String, String> mapEat = new HashMap<String, String>();
+        mapEat.put("서울 은평구 불광로13가길 28-1", "불광근린공원");
+        for(String key : mapEat.keySet()) {
+            Map<String, String> geo = geocoding.getGeoDataByAddress(key);
+            System.out.println("lng:>>>>>>>>>>>>>>>>>>>>>>");
+            System.out.println(geo.get("lng"));
+            System.out.println("lat:>>>>>>>>>>>>>>>>>>>>>>");
+            System.out.println(geo.get("lat"));
+        }
+    }
+
 }

@@ -47,7 +47,8 @@ public class PlaceInfoController {
         List<placeInfo> list = apiRepository.findAllByCategory(category);
 
         //entity -> dto 변환
-        List<OfflineMapDto.CategoryDto> collect = list.stream().map(m -> new OfflineMapDto.CategoryDto(m.getId(), m.getName(), m.getCategory(), m.getAddress(), m.getStarAvg(), m.getReviewCnt()))
+        List<OfflineMapDto.placeDto> collect = list.stream().map(m -> new OfflineMapDto.placeDto(m.getId(), m.getCategory(), m.getName(),
+                        m.getAddress(), m.getLongitude(), m.getLatitude(), m.getStarAvg(), m.getReviewCnt()))
                 .collect(Collectors.toList());
 
         //return collect;
