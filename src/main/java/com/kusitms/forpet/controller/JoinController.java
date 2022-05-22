@@ -96,14 +96,18 @@ public class JoinController {
         // 회원가입을 진행하며 token이 만료되었을 수 있다.
         Long userId = tokenProvider.getUserIdFromExpiredToken(accessToken);
 
-        User user = joinService.createUser(userId, dto, profileImage);
+        User user = joinService.createUser(userId, dto);
+        if(profileImage != null) {
+            String image = joinService.getImageUrl(profileImage);
+            user.updateCustomImage(image);
+        }
+
+        if(petCardImage != null) {
+            PetCard petCard = petCardService.createPetCardByUserId(userId, petCardImage);
+        }
 
         // access token과 refresh token 발급
         accessToken = jwtTokenService.createJWTToken(user, request, response);
-
-        if(!petCardImage.getOriginalFilename().equals("")) {
-            PetCard petCard = petCardService.createPetCardByUserId(userId, petCardImage);
-        }
 
         return ApiResponse.created("token", accessToken);
     }
