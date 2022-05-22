@@ -1,5 +1,6 @@
 package com.kusitms.forpet.util;
 
+import org.springframework.http.ResponseCookie;
 import org.springframework.util.SerializationUtils;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +25,12 @@ public class CookieUtils {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
+        cookie.setSecure(true);
         response.addCookie(cookie);
+
+        // SameSite 설정 추가
+        String cookieString = "SameSite=None;";
+        response.addHeader("Set-Cookie", cookieString);
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
