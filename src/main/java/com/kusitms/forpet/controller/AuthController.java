@@ -86,9 +86,9 @@ public class AuthController {
         boolean isAccessTokenExpired = tokenExceptionHandler(accessToken);
         boolean isRefreshTokenExpired = tokenExceptionHandler(refreshToken);
 
-        // jwt가 만료 기간을 넘지 않았다면 재발급 과정이 필요 없음.
+        // jwt가 만료 기간을 넘지 않았다면 다시 acceetoken을 반환한다
         if(isAccessTokenExpired && isRefreshTokenExpired) {
-            throw new CustomException(ErrorCode.NOT_EXPIRED_TOKEN);
+            return ApiResponse.success("token", accessToken);
         }
 
         // access 토큰 갱신
@@ -113,7 +113,7 @@ public class AuthController {
             CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
             CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken, cookieMaxAge);*/
         }
-        return ApiResponse.success("token", newAccessToken);
+        return ApiResponse.created("token", newAccessToken);
     }
 
     @GetMapping("/logout")
