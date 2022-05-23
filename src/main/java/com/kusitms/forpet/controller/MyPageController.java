@@ -1,5 +1,6 @@
 package com.kusitms.forpet.controller;
 
+import com.kusitms.forpet.domain.BookmarkComm;
 import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.MyPageDto;
 import com.kusitms.forpet.security.TokenProvider;
@@ -99,28 +100,44 @@ public class MyPageController {
     }
 
 
-    //마이페이지
-    @GetMapping("/bookmark/offlineMap")
-    public List<MyPageDto.BookmarkOfflineDto> getBookmarkOfflineMap(HttpServletRequest request) {
+    // 북마크(지도)
+    @GetMapping("/bookmark/offline-map")
+    public ApiResponse getBookmarkOfflineMap(HttpServletRequest request) {
 
         //userid 값 가져오기
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userid = tokenProvider.getUserIdFromToken(accessToken);
 
-        return myPageService.getBookmarkOfflineMap(userid);
+        List<MyPageDto.BookmarkOfflineDto> dto = myPageService.getBookmarkOfflineMap(userid);
+
+        return ApiResponse.success("data", dto);
     }
 
 
-    @GetMapping("/bookmark/board")
+    // 북마크 (퍼펫트 백과)
+    @GetMapping("/bookmark/qna-board")
     public ApiResponse getBookmarkBoard(HttpServletRequest request) {
 
         //userid 값 가져오기
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userid = tokenProvider.getUserIdFromToken(accessToken);
 
-        MyPageService.Result result = myPageService.getBookmarkBoard(userid);
+        List<MyPageDto.HistoryBoardDTO> dto = myPageService.getBookmarkBoard(userid);
 
-        return ApiResponse.success("data", result);
+        return ApiResponse.success("data", dto);
+    }
+
+    // 북마크 (커뮤니티)
+    @GetMapping("/bookmark/community")
+    public ApiResponse getBookmarkComm(HttpServletRequest request) {
+
+        //userid 값 가져오기
+        String accessToken = HeaderUtil.getAccessToken(request);
+        Long userid = tokenProvider.getUserIdFromToken(accessToken);
+
+        List<MyPageDto.HistoryBoardDTO> dto = myPageService.getBookmarkComm(userid);
+
+        return ApiResponse.success("data", dto);
     }
 
 

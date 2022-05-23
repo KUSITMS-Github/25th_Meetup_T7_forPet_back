@@ -74,7 +74,7 @@ public class CertifyController {
      */
     @PostMapping("/address")
     public ApiResponse certifyAddress(HttpServletRequest request,
-                                      @RequestBody String address) {
+                                      @RequestParam String address) {
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
