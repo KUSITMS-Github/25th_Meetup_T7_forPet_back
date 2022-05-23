@@ -176,27 +176,39 @@ public class MyPageService {
 
 
     /**
-     * 마이페이지 북마크(커뮤니티, 백과사전)
+     * 마이페이지 북마크(백과사전)
      * @param userid
      */
-    public Result getBookmarkBoard(Long userid) {
+    public List<MyPageDto.HistoryBoardDTO> getBookmarkBoard(Long userid) {
 
         User user = userRepository.findById(userid).get();
 
-        List<BookmarkComm> bookmarkCommunityList = user.getBookmarkCommList();
         List<BookmarkQna> bookmarkQnaList = user.getBookmarkQnaList();
-
-        //entity -> dto 변환 (커뮤니티)
-        List<MyPageDto.HistoryBoardDTO> CommCollect = bookmarkCommunityList.stream().map(m -> new MyPageDto.HistoryBoardDTO(m.getCommunity().getPostId(),"커뮤니티 - " + m.getCommunity().getCategory(),
-                        m.getCommunity().getTitle()))
-                .collect(Collectors.toList());
 
         //entity -> dto 변환 (퍼펫트 백과사전)
         List<MyPageDto.HistoryBoardDTO> QnaCollect = bookmarkQnaList.stream().map(m -> new MyPageDto.HistoryBoardDTO(m.getQnaBoard().getId(), "퍼펫트 백과" ,
                         m.getQnaBoard().getTitle()))
                 .collect(Collectors.toList());
 
-        return new Result(CommCollect, QnaCollect);
+        return QnaCollect;
+    }
+
+    /**
+     * 마이페이지 북마크(커뮤니티)
+     * @param userid
+     */
+    public List<MyPageDto.HistoryBoardDTO> getBookmarkComm(Long userid) {
+
+        User user = userRepository.findById(userid).get();
+
+        List<BookmarkComm> bookmarkCommunityList = user.getBookmarkCommList();
+
+        //entity -> dto 변환 (커뮤니티)
+        List<MyPageDto.HistoryBoardDTO> CommCollect = bookmarkCommunityList.stream().map(m -> new MyPageDto.HistoryBoardDTO(m.getCommunity().getPostId(),"커뮤니티 - " + m.getCommunity().getCategory(),
+                        m.getCommunity().getTitle()))
+                .collect(Collectors.toList());
+
+        return CommCollect;
     }
 
     @Data
