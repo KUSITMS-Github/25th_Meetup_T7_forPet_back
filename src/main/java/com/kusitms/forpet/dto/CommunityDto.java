@@ -108,13 +108,14 @@ public class CommunityDto {
     @Data
     @AllArgsConstructor
     public static class CommentParentResDto {
-        private Long id;            //댓글 고유 id
-        private String imageUrl;
-        private String nickName;
-        private String comment;
+        private Long parentId;      // 부모 댓글만 개발하니깐 null값 반환
+        private Long commentId;     // 댓글 고유 id
+        private String content;
+        private String username;
+        private Long userId;
+        private String profileImage;
         private String createDate;
-        private int likes;
-        private List<CommentChildResDto> childResDto;
+        private List<CommentChildResDto> children;
     }
 
 
