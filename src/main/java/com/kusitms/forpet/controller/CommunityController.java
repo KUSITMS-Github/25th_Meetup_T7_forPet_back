@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,7 +120,7 @@ public class CommunityController {
         List<Community> searchList = communityService.findByKeyword(keyword, addressList, page, size);
 
         List<CommunityDto.CommunityListResponse> searchResponseList = searchList.stream()
-                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2, m.getDate()))
+                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2, setCreateDate(m.getDate())))
                 .collect(Collectors.toList());
 
 
@@ -158,7 +159,7 @@ public class CommunityController {
 
         // domain -> dto
         List<CommunityDto.CommunityListResponse> categoryResponseList = categoryList.stream()
-                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), m.getCommentCommList().size(), m.getDate()))
+                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), m.getCommentCommList().size(), setCreateDate(m.getDate())))
                 .collect(Collectors.toList());
 
         return ApiResponse.success("data", categoryResponseList);
@@ -200,7 +201,7 @@ public class CommunityController {
         }
 
         CommunityDto.CommunityDetailResponse communityResponse = new CommunityDto.CommunityDetailResponse(
-                community.getPostId(), new CommunityDto.Writer(community.getUser().getUserId(), profile_image, community.getUser().getNickname()), isWriter, community.getTitle(), community.getContent(), community.getDate(), community.getLikesCommList().size(),  community.getBookmarkCommList().size(), community.getImageUrlList().split("#"), community.getCategory(), community.getCommentCommList().size(), isLike, isBookMark);
+                community.getPostId(), new CommunityDto.Writer(community.getUser().getUserId(), profile_image, community.getUser().getNickname()), isWriter, community.getTitle(), community.getContent(), setCreateDate(community.getDate()), community.getLikesCommList().size(),  community.getBookmarkCommList().size(), community.getImageUrlList().split("#"), community.getCategory(), community.getCommentCommList().size(), isLike, isBookMark);
         return ApiResponse.success("data", communityResponse);
     }
 
@@ -308,5 +309,16 @@ public class CommunityController {
         int cnt = communityService.deleteBookMark(user, postId);
 
         return ApiResponse.success("bookmark", cnt);
+    }
+
+    //==LocalDateTime 커스텀==//
+    public String setCreateDate(LocalDateTime localDateTime) {
+        //월, 일
+        String month = String.valueOf(localDateTime.getMonthValue());
+        String day = String.valueOf(localDateTime.getDayOfMonth());
+        //시, 분
+        String hour = String.valueOf(localDateTime.getHour());
+        String min = String.format("%02d", localDateTime.getMinute());
+        return month + "/" + day + " " + hour + ":" + min;
     }
 }

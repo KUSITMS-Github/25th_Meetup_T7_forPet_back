@@ -61,7 +61,7 @@ public class CommunityDto {
         private String category;
         @JsonProperty(value = "comment_cnt")
         private int commentCnt;
-        private LocalDateTime createdDate;
+        private String createdDate;
     }
 
     /**
@@ -77,7 +77,7 @@ public class CommunityDto {
         private Boolean isWriter;
         private String title;
         private String content;
-        private LocalDateTime date;
+        private String date;
         private int likes;
         private int bookmarks;
         @JsonProperty(value = "image_url_list")
