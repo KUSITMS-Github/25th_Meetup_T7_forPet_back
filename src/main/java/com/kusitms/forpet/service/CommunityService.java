@@ -131,6 +131,7 @@ public class CommunityService {
             }
         }
 
+        System.out.println(requestDto.getCategory() + ">>>>>>>>");
         // 포스트 저장
         Community newComm = Community.builder()
                 .user(user)
@@ -150,29 +151,28 @@ public class CommunityService {
     public Long updatePost(Long postId,
                            User user,
                            CommunityDto.CommunityRequest requestDto,
-                           List<MultipartFile> multipartFiles)
+                           List<String> imageNameList)
     {
-        //포스트 이미지 s3 저장
-        List<String> imageNameList = s3Uploader.uploadImage(multipartFiles);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
-        System.out.println(imageNameList);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
-        //포스트 이미지 url로 변경
-        StringBuilder imageUrlList = new StringBuilder();
-        for (String imageName : imageNameList) {
-            imageUrlList.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
-            imageUrlList.append(imageName);
-            imageUrlList.append("#");
+
+
+        StringBuilder imageUrlList = null;
+        if(imageNameList.size() > 0) {
+            //포스트 이미지 url로 변경
+            imageUrlList = new StringBuilder();
+            for (String imageName : imageNameList) {
+                imageUrlList.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
+                imageUrlList.append(imageName);
+                imageUrlList.append("#");
+            }
         }
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
-        System.out.println(imageUrlList);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
 
 
         // 포스트 수정
         Optional<Community> community = communityRepository.findById(postId);
         if(community.isPresent()) {
-            community.get().update(requestDto.getTitle(), requestDto.getContent(), imageUrlList.toString(), requestDto.getCategory(), user.getAddress());
+            community.get().update(requestDto.getTitle(), requestDto.getContent()
+                    , (imageNameList.size() > 0 ? imageUrlList.toString() : null)
+                    , requestDto.getCategory(), user.getAddress());
             communityRepository.saveAndFlush(community.get());
         }
         return community.get().getPostId();

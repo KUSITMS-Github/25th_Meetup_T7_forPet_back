@@ -157,12 +157,19 @@ public class CommunityController {
             // 카테고리가 전체라면 LIKE 검색이 안되게
             category = "";
         }
-        //System.out.println(Category.valueOf(category));
+
         List<Community> categoryList = communityService.findByCategoryAndAddress(category, addressList, page, size);
 
+        System.out.println(">>>>>>>> size : " + categoryList.size());
         // domain -> dto
         List<CommunityDto.CommunityListResponse> categoryResponseList = categoryList.stream()
-                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), m.getCommentCommList().size(), setCreateDate(m.getDate())))
+                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle()
+                        , m.getLikesCommList().size()
+                        , m.getBookmarkCommList().size()
+                        , (m.getImageUrlList() == null ? null : m.getImageUrlList().split("#"))
+                        , m.getCategory()
+                        , m.getCommentCommList().size()
+                        , setCreateDate(m.getDate())))
                 .collect(Collectors.toList());
 
         return ApiResponse.success("data", categoryResponseList);
@@ -204,7 +211,8 @@ public class CommunityController {
         }
 
         CommunityDto.CommunityDetailResponse communityResponse = new CommunityDto.CommunityDetailResponse(
-                community.getPostId(), new CommunityDto.Writer(community.getUser().getUserId(), profile_image, community.getUser().getNickname()), isWriter, community.getTitle(), community.getContent(), setCreateDate(community.getDate()), community.getLikesCommList().size(),  community.getBookmarkCommList().size(), community.getImageUrlList().split("#"), community.getCategory(), community.getCommentCommList().size(), isLike, isBookMark);
+                community.getPostId(), new CommunityDto.Writer(community.getUser().getUserId(), profile_image, community.getUser().getNickname()), isWriter, community.getTitle(), community.getContent(), setCreateDate(community.getDate()), community.getLikesCommList().size(),  community.getBookmarkCommList().size()
+                , (community.getImageUrlList() == null ? null : community.getImageUrlList().split("#")), community.getCategory(), community.getCommentCommList().size(), isLike, isBookMark);
         return ApiResponse.success("data", communityResponse);
     }
 
@@ -223,7 +231,12 @@ public class CommunityController {
         // 글쓴이의 주소를 가져오기
         User user = userService.findByUserId(userId);
 
-        Long id = communityService.updatePost(postId, user, requestDto, multipartFile);
+        List<String> imageNameList = new ArrayList<>();
+        if(multipartFile != null) {
+            imageNameList = s3Uploader.uploadImage(multipartFile);
+        }
+
+        Long id = communityService.updatePost(postId, user, requestDto, imageNameList);
 
         return ApiResponse.updated("post_id", id);
     }
@@ -250,7 +263,7 @@ public class CommunityController {
         User user = userService.findByUserId(userId);
 
         List<String> imageNameList = new ArrayList<>();
-        if(!multipartFile.get(0).getOriginalFilename().equals("")) {
+        if(multipartFile != null) {
             imageNameList = s3Uploader.uploadImage(multipartFile);
         }
 
