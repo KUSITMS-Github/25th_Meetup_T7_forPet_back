@@ -6,6 +6,7 @@ import com.kusitms.forpet.dto.response.ApiResponse;
 import com.kusitms.forpet.dto.CommunityDto;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.CommunityService;
+import com.kusitms.forpet.service.S3Uploader;
 import com.kusitms.forpet.service.UserService;
 import com.kusitms.forpet.util.HeaderUtil;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,7 @@ public class CommunityController {
     private final TokenProvider tokenProvider;
     private final UserService userService;
     private final CommunityService communityService;
+    private final S3Uploader s3Uploader;
 
     /**
      * 전체 게시글 조회 (동네에 해당하는 게시글만)
@@ -239,14 +242,19 @@ public class CommunityController {
     @PostMapping("")
     public ApiResponse createPost(HttpServletRequest request,
                                   @RequestPart(value = "community_request") CommunityDto.CommunityRequest requestDto,
-                                  @RequestPart(value = "imageList") List<MultipartFile> multipartFile) {
+                                  @RequestPart(value = "imageList", required=false) List<MultipartFile> multipartFile) {
         String accessToken = HeaderUtil.getAccessToken(request);
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         // 글쓴이의 주소를 가져오기
         User user = userService.findByUserId(userId);
 
-        Long id = communityService.createPost(user, requestDto, multipartFile);
+        List<String> imageNameList = new ArrayList<>();
+        if(!multipartFile.get(0).getOriginalFilename().equals("")) {
+            imageNameList = s3Uploader.uploadImage(multipartFile);
+        }
+
+        Long id = communityService.createPost(user, requestDto, imageNameList);
 
         return ApiResponse.created("post_id", id);
     }

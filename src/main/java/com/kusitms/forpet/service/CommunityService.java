@@ -118,30 +118,25 @@ public class CommunityService {
     @Transactional
     public Long createPost(User user,
                            CommunityDto.CommunityRequest requestDto,
-                           List<MultipartFile> multipartFiles) {
+                           List<String> imageNameList) {
 
-        //포스트 이미지 s3 저장
-        List<String> imageNameList = s3Uploader.uploadImage(multipartFiles);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
-        System.out.println(imageNameList);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
-        //포스트 이미지 url로 변경
-        StringBuilder imageUrlList = new StringBuilder();
-        for (String imageName : imageNameList) {
-            imageUrlList.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
-            imageUrlList.append(imageName);
-            imageUrlList.append("#");
+        StringBuilder imageUrlList = null;
+        if(imageNameList.size() > 0) {
+            //포스트 이미지 url로 변경
+            imageUrlList = new StringBuilder();
+            for (String imageName : imageNameList) {
+                imageUrlList.append("https://kusitms-forpet.s3.ap-northeast-2.amazonaws.com/");
+                imageUrlList.append(imageName);
+                imageUrlList.append("#");
+            }
         }
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
-        System.out.println(imageUrlList);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>");
 
         // 포스트 저장
         Community newComm = Community.builder()
                 .user(user)
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
-                .imageUrlList(imageUrlList.toString())
+                .imageUrlList(imageNameList.size() > 0 ? imageUrlList.toString() : null)
                 .category(requestDto.getCategory())
                 .address(user.getAddress())
                 .build();
