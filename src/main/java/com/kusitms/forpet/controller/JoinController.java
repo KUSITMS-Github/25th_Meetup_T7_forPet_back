@@ -115,18 +115,4 @@ public class JoinController {
 
         return ApiResponse.created("token", accessToken);
     }
-
-    @GetMapping("/test")
-    public void cookie(HttpServletRequest request) {
-        // access token 확인, 유효성 검사
-        String accessToken = HeaderUtil.getAccessToken(request);
-
-        // refresh token 확인, 유효성 검사
-        String refreshToken = CookieUtils.getCookie(request, REFRESH_TOKEN)
-                .map(Cookie::getValue)
-                .orElse((null));
-
-        System.out.println(accessToken);
-        System.out.println(refreshToken);
-    }
 }
