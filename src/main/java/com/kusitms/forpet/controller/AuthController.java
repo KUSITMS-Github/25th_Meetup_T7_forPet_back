@@ -10,7 +10,6 @@ import com.kusitms.forpet.exception.CustomException;
 import com.kusitms.forpet.security.TokenProvider;
 import com.kusitms.forpet.service.JWTTokenService;
 import com.kusitms.forpet.service.UserService;
-import com.kusitms.forpet.util.CookieUtils;
 import com.kusitms.forpet.util.HeaderUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -33,10 +31,8 @@ public class AuthController {
     private final TokenProvider tokenProvider;
     private final JWTTokenService jwtTokenService;
     private final UserService userService;
-    private final AppProperties appProperties;
 
     private final static long THREE_DAYS_MSEC = 259200000;
-    private final static String REFRESH_TOKEN = "refresh_token";
 
     /*
      리다이렉트된 id를 받아와 회원가입 여부를 반환
