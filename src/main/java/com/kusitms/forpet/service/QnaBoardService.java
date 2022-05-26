@@ -71,6 +71,15 @@ public class QnaBoardService {
      */
     public QnaBoardDto.QnaBoardResByIdDto getBoardById(Long userid, Long boardId) {
         QnaBoard qnaBoard = qnaBoardRepository.findById(boardId).get();
+        User user = userRepository.findById(userid).get();
+
+        // 사용자 프로필
+        String profile_image;
+        if(user.getCustomImageUrl() != null) {
+            profile_image = user.getCustomImageUrl();
+        } else {
+            profile_image = user.getImageUrl();
+        }
 
         // 접속한 사용자가 북마크 했는지 여부 판단
         boolean toggle = false;
@@ -83,12 +92,12 @@ public class QnaBoardService {
 
         if(qnaBoard.getUser().getRole().equals(Role.USER)){
             if(qnaBoard.getImageUrlList() != null) {
-                dto = new QnaBoardDto.QnaBoardResByIdDto(qnaBoard.getId(), toggle, "예비반려인", qnaBoard.getUser().getNickname(),
+                dto = new QnaBoardDto.QnaBoardResByIdDto(qnaBoard.getId(), profile_image, toggle, "예비반려인", qnaBoard.getUser().getNickname(),
                         qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
                         qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
                         qnaBoard.getImageUrlList().split("#"));
             } else {
-                dto = new QnaBoardDto.QnaBoardResByIdDto(qnaBoard.getId(), toggle, "예비반려인", qnaBoard.getUser().getNickname(),
+                dto = new QnaBoardDto.QnaBoardResByIdDto(qnaBoard.getId(), profile_image, toggle, "예비반려인", qnaBoard.getUser().getNickname(),
                         qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
                         qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
                         null);
@@ -97,12 +106,12 @@ public class QnaBoardService {
         }
         if(qnaBoard.getUser().getRole().equals(Role.FORPET_USER)){
             if(qnaBoard.getImageUrlList() != null) {
-                dto = new QnaBoardDto.QnaBoardResByIdDto(qnaBoard.getId(),toggle, "반려인", qnaBoard.getUser().getNickname(),
+                dto = new QnaBoardDto.QnaBoardResByIdDto(qnaBoard.getId(), profile_image, toggle, "반려인", qnaBoard.getUser().getNickname(),
                         qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
                         qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
                         qnaBoard.getImageUrlList().split("#"));
             } else {
-                dto = new QnaBoardDto.QnaBoardResByIdDto(qnaBoard.getId(), toggle,"반려인", qnaBoard.getUser().getNickname(),
+                dto = new QnaBoardDto.QnaBoardResByIdDto(qnaBoard.getId(), profile_image, toggle,"반려인", qnaBoard.getUser().getNickname(),
                         qnaBoard.getTitle(), qnaBoard.getContent(), qnaBoard.getCreateDate(),
                         qnaBoard.getLikes(), qnaBoard.getBookmarkQnaList().size(), qnaBoard.getCommentQnaList().size(),
                         null);

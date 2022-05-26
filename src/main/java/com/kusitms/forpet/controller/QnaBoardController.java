@@ -51,7 +51,7 @@ public class QnaBoardController {
     }
 
 
-    //백과사전 게시글
+    //백과사전 게시글 조회
     @GetMapping("/qnaBoard/{boardId}")
     public ApiResponse getBoardWithComment(HttpServletRequest request, @PathVariable(value = "boardId") Long boardId) {
 

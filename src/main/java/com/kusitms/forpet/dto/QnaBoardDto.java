@@ -41,6 +41,7 @@ public class QnaBoardDto {
     @AllArgsConstructor
     public static class QnaBoardResByIdDto {
         private Long qnaBoardId;
+        private String profileImage;
         private boolean toggle;  //접속한 회원의 게시글 북마크 여부
         private String tag;
         private String nickName;
