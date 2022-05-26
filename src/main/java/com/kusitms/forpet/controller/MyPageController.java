@@ -31,6 +31,11 @@ public class MyPageController {
     public ApiResponse getMyProfile(HttpServletRequest request) {
         //userid 값 가져오기
         String accessToken = HeaderUtil.getAccessToken(request);
+
+        if(accessToken == null) {
+            return ApiResponse.success("data", null);
+        }
+
         Long userId = tokenProvider.getUserIdFromToken(accessToken);
 
         MyPageDto.UserDetailDto dto = myPageService.getUser(userId);
