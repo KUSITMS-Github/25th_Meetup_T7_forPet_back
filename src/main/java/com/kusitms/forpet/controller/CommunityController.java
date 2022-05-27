@@ -111,19 +111,14 @@ public class CommunityController {
         User user = userService.findByUserId(userId);
         String[] addressList = user.getAddress().split("#");
 
-        // 사용자 프로필
-        String profile_image;
-        if(user.getCustomImageUrl() != null) {
-            profile_image = user.getCustomImageUrl();
-        } else {
-            profile_image = user.getImageUrl();
-        }
-
         // 페이지네이션
         List<Community> searchList = communityService.findByKeyword(keyword, addressList, page, size);
 
         List<CommunityDto.CommunityListResponse> searchResponseList = searchList.stream()
-                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2, setCreateDate(m.getDate())))
+                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId()
+                        , (m.getUser().getCustomImageUrl() == null ? m.getUser().getImageUrl() : m.getUser().getCustomImageUrl())
+                        , m.getUser().getNickname())
+                        , m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2, setCreateDate(m.getDate())))
                 .collect(Collectors.toList());
 
 
@@ -145,14 +140,6 @@ public class CommunityController {
         User user = userService.findByUserId(userId);
         String[] addressList = user.getAddress().split("#");
 
-        // 사용자 프로필
-        String profile_image;
-        if(user.getCustomImageUrl() != null) {
-            profile_image = user.getCustomImageUrl();
-        } else {
-            profile_image = user.getImageUrl();
-        }
-
         if(category.equals("all")) {
             // 카테고리가 전체라면 LIKE 검색이 안되게
             category = "";
@@ -163,7 +150,9 @@ public class CommunityController {
         System.out.println(">>>>>>>> size : " + categoryList.size());
         // domain -> dto
         List<CommunityDto.CommunityListResponse> categoryResponseList = categoryList.stream()
-                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId(), profile_image, m.getUser().getNickname()), m.getTitle()
+                .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId()
+                        , (m.getUser().getCustomImageUrl() == null ? m.getUser().getImageUrl() : m.getUser().getCustomImageUrl())
+                        , m.getUser().getNickname()), m.getTitle()
                         , m.getLikesCommList().size()
                         , m.getBookmarkCommList().size()
                         , (m.getImageUrlList() == null ? null : m.getImageUrlList().split("#"))
