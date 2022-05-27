@@ -74,10 +74,14 @@ public class ReviewService {
         //entity -> dto 변환
         for(Review r : list) {
             if(r.getImageUrlList() != null) {
-                collect.add(new OfflineMapDto.ReviewDto(r.getId(), r.getUser().getNickname(), r.getUser().getImageUrl(), r.getStar(), r.getContent(),
+                collect.add(new OfflineMapDto.ReviewDto(r.getId(), r.getUser().getNickname()
+                        , (r.getUser().getCustomImageUrl() == null ? r.getUser().getImageUrl() : r.getUser().getCustomImageUrl())
+                        , r.getStar(), r.getContent(),
                         r.getCreateDate(), r.getImageUrlList().split("#")));
             } else{
-                collect.add(new OfflineMapDto.ReviewDto(r.getId(), r.getUser().getNickname(), r.getUser().getImageUrl(), r.getStar(), r.getContent(),
+                collect.add(new OfflineMapDto.ReviewDto(r.getId(), r.getUser().getNickname()
+                        , (r.getUser().getCustomImageUrl() == null ? r.getUser().getImageUrl() : r.getUser().getCustomImageUrl())
+                        , r.getStar(), r.getContent(),
                         r.getCreateDate(), null));
             }
         }
