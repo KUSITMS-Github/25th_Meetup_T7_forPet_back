@@ -111,14 +111,24 @@ public class CommunityController {
         User user = userService.findByUserId(userId);
         String[] addressList = user.getAddress().split("#");
 
+        System.out.println(" >>>>>>>>>>>>>> " + keyword);
+
         // 페이지네이션
         List<Community> searchList = communityService.findByKeyword(keyword, addressList, page, size);
 
+        for(Community c : searchList) {
+            System.out.println(" >>>>>>>>>>>>>> " + c.getTitle());
+        }
         List<CommunityDto.CommunityListResponse> searchResponseList = searchList.stream()
                 .map(m -> new CommunityDto.CommunityListResponse(m.getPostId(), new CommunityDto.Writer(m.getUser().getUserId()
                         , (m.getUser().getCustomImageUrl() == null ? m.getUser().getImageUrl() : m.getUser().getCustomImageUrl())
                         , m.getUser().getNickname())
-                        , m.getTitle(), m.getLikesCommList().size(), m.getBookmarkCommList().size(), m.getImageUrlList().split("#"), m.getCategory(), 2, setCreateDate(m.getDate())))
+                        , m.getTitle(), m.getLikesCommList().size()
+                        , m.getBookmarkCommList().size()
+                        , (m.getImageUrlList() == null ? null : m.getImageUrlList().split("#"))
+                        , m.getCategory()
+                        , m.getCommentCommList().size()
+                        , setCreateDate(m.getDate())))
                 .collect(Collectors.toList());
 
 
