@@ -73,7 +73,11 @@ public class PlaceInfoController {
     @GetMapping("/offline-map/search")
     public ApiResponse search(@RequestParam(value = "keyword") String keyword) {
         List<placeInfo> list = apiRepository.findByKeyword(keyword);
-        return ApiResponse.success("data", list);
+
+        List<OfflineMapDto.placeDto> dto =  list.stream().map(m -> new OfflineMapDto.placeDto(m.getId(), m.getCategory(), m.getName(),
+                        m.getAddress(), m.getLongitude(), m.getLatitude(), m.getStarAvg(), m.getReviewCnt()))
+                .collect(Collectors.toList());
+        return ApiResponse.success("data", dto);
     }
 
 }
