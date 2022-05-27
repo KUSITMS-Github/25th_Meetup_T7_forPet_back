@@ -50,7 +50,9 @@ public class CommentCommService {
 
         //entity -> dto 변환
         List<CommunityDto.CommentParentResDto> collect = list.stream().map(m -> new CommunityDto.CommentParentResDto(null, m.getId(), m.getContent(),
-                m.getUser().getNickname(), m.getUser().getUserId(), m.getUser().getCustomImageUrl(), m.getCreateDate(), childList))
+                m.getUser().getNickname(), m.getUser().getUserId()
+                        , (m.getUser().getCustomImageUrl() == null ? m.getUser().getImageUrl() : m.getUser().getCustomImageUrl())
+                        , m.getCreateDate(), childList))
                 .collect(Collectors.toList());
 
         return collect;
