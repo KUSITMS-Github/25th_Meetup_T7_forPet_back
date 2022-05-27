@@ -78,7 +78,7 @@ public class QnaBoardController {
                 if(q.getImageUrlList() != null) {
                     collect.add(new QnaBoardDto.QnaBoardResponseDto(q.getId(),
                             "반려인",
-                            q.getUser().getNickname(),
+                            q.getUser().getNickname(), q.getUser().getCustomImageUrl() == null ?  q.getUser().getImageUrl() :  q.getUser().getCustomImageUrl(),
                             q.getTitle(), q.getContent(), q.getCreateDate(),
                             q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
                             q.getImageUrlList().split("#")));
@@ -86,7 +86,7 @@ public class QnaBoardController {
                 else {
                     collect.add(new QnaBoardDto.QnaBoardResponseDto(q.getId(),
                             "반려인",
-                            q.getUser().getNickname(),
+                            q.getUser().getNickname(), q.getUser().getCustomImageUrl() == null ?  q.getUser().getImageUrl() :  q.getUser().getCustomImageUrl(),
                             q.getTitle(), q.getContent(), q.getCreateDate(),
                             q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
                             null));
@@ -98,14 +98,14 @@ public class QnaBoardController {
                 if(q.getImageUrlList() != null) {
                     collect.add(new QnaBoardDto.QnaBoardResponseDto(q.getId(),
                             "예비반려인",
-                            q.getUser().getNickname(),
+                            q.getUser().getNickname(), q.getUser().getCustomImageUrl() == null ?  q.getUser().getImageUrl() :  q.getUser().getCustomImageUrl(),
                             q.getTitle(), q.getContent(), q.getCreateDate(),
                             q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
                             q.getImageUrlList().split("#")));
                 } else {
                     collect.add(new QnaBoardDto.QnaBoardResponseDto(q.getId(),
                             "예비반려인",
-                            q.getUser().getNickname(),
+                            q.getUser().getNickname(), q.getUser().getCustomImageUrl() == null ?  q.getUser().getImageUrl() :  q.getUser().getCustomImageUrl(),
                             q.getTitle(), q.getContent(), q.getCreateDate(),
                             q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
                             null));
@@ -134,7 +134,7 @@ public class QnaBoardController {
                 if(q.getImageUrlList() != null) {
                     collect.add(new QnaBoardDto.QnaBoardResponseDto(q.getId(),
                             "반려인",
-                            q.getUser().getNickname(),
+                            q.getUser().getNickname(), q.getUser().getCustomImageUrl() == null ?  q.getUser().getImageUrl() :  q.getUser().getCustomImageUrl(),
                             q.getTitle(), q.getContent(), q.getCreateDate(),
                             q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
                             q.getImageUrlList().split("#")));
@@ -142,7 +142,7 @@ public class QnaBoardController {
                 else {
                     collect.add(new QnaBoardDto.QnaBoardResponseDto(q.getId(),
                             "반려인",
-                            q.getUser().getNickname(),
+                            q.getUser().getNickname(), q.getUser().getCustomImageUrl() == null ?  q.getUser().getImageUrl() :  q.getUser().getCustomImageUrl(),
                             q.getTitle(), q.getContent(), q.getCreateDate(),
                             q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
                             null));
@@ -154,14 +154,14 @@ public class QnaBoardController {
                 if(q.getImageUrlList() != null) {
                     collect.add(new QnaBoardDto.QnaBoardResponseDto(q.getId(),
                             "예비반려인",
-                            q.getUser().getNickname(),
+                            q.getUser().getNickname(), q.getUser().getCustomImageUrl() == null ?  q.getUser().getImageUrl() :  q.getUser().getCustomImageUrl(),
                             q.getTitle(), q.getContent(), q.getCreateDate(),
                             q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
                             q.getImageUrlList().split("#")));
                 } else {
                     collect.add(new QnaBoardDto.QnaBoardResponseDto(q.getId(),
                             "예비반려인",
-                            q.getUser().getNickname(),
+                            q.getUser().getNickname(), q.getUser().getCustomImageUrl() == null ?  q.getUser().getImageUrl() :  q.getUser().getCustomImageUrl(),
                             q.getTitle(), q.getContent(), q.getCreateDate(),
                             q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
                             null));
@@ -202,7 +202,7 @@ public class QnaBoardController {
                 if(q.getImageUrlList() != null) {
                     collect.add(new QnaBoardDto.QnaBoardResponseDto(q.getId(),
                             "반려인",
-                            q.getUser().getNickname(),
+                            q.getUser().getNickname(), q.getUser().getCustomImageUrl() == null ?  q.getUser().getImageUrl() :  q.getUser().getCustomImageUrl(),
                             q.getTitle(), q.getContent(), q.getCreateDate(),
                             q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
                             q.getImageUrlList().split("#")));
@@ -210,7 +210,7 @@ public class QnaBoardController {
                 else {
                     collect.add(new QnaBoardDto.QnaBoardResponseDto(q.getId(),
                             "반려인",
-                            q.getUser().getNickname(),
+                            q.getUser().getNickname(), q.getUser().getCustomImageUrl() == null ?  q.getUser().getImageUrl() :  q.getUser().getCustomImageUrl(),
                             q.getTitle(), q.getContent(), q.getCreateDate(),
                             q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
                             null));
@@ -222,14 +222,14 @@ public class QnaBoardController {
                 if(q.getImageUrlList() != null) {
                     collect.add(new QnaBoardDto.QnaBoardResponseDto(q.getId(),
                             "예비반려인",
-                            q.getUser().getNickname(),
+                            q.getUser().getNickname(), q.getUser().getCustomImageUrl() == null ?  q.getUser().getImageUrl() :  q.getUser().getCustomImageUrl(),
                             q.getTitle(), q.getContent(), q.getCreateDate(),
                             q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
                             q.getImageUrlList().split("#")));
                 } else {
                     collect.add(new QnaBoardDto.QnaBoardResponseDto(q.getId(),
                             "예비반려인",
-                            q.getUser().getNickname(),
+                            q.getUser().getNickname(), q.getUser().getCustomImageUrl() == null ?  q.getUser().getImageUrl() :  q.getUser().getCustomImageUrl(),
                             q.getTitle(), q.getContent(), q.getCreateDate(),
                             q.getLikes(), q.getBookmarkQnaList().size(), q.getCommentQnaList().size(),
                             null));

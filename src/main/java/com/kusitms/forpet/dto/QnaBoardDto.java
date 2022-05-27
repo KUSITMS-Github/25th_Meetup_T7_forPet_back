@@ -62,6 +62,7 @@ public class QnaBoardDto {
         private Long qnaBoardId;
         private String tag;
         private String nickName;
+        private String profileImage;
         private String title;
         private String content;
         private String createDate;
